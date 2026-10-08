@@ -516,7 +516,7 @@ let h=`<h2 style="margin-bottom:6px">🎲 Traits</h2>
 <p style="color:#888;font-size:11px;margin-bottom:4px">Trait hanya menambah CD/DMG/Range</p>
 <div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between">
 <span style="color:#aaa">🎲 Token</span><b style="color:#f1c40f">${S.rr||0}</b></div>
-<p style="color:#666;font-size:10px;margin-bottom:6px">Reroll: pakai 🎲 token dulu, kalau habis pakai 30 💎</p>
+<p style="color:#666;font-size:10px;margin-bottom:6px">Reroll hanya pakai 🎲 token (1 token = 1 reroll). Dapatkan token dari kode redeem.</p>
 <div style="max-height:55vh;overflow-y:auto;width:min(460px,88vw)">`;
 if(!S.inv.length)h+='<p style="color:#888">Belum ada unit.</p>';
 const sorted=[...S.inv].sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar));
@@ -528,26 +528,28 @@ h+=`<div class="card" style="cursor:default;text-align:left;margin:5px 0;border-
 <div><b style="color:#fff">${d.icon} ${d.name}</b> <span style="color:${r.c};font-size:10px">${r.n}</span></div>
 <div style="color:${tr.c};font-size:12px;margin-top:3px">${tr.i} <b>${tr.n}${tl}</b> <span style="color:${rc};font-size:9px">[${tr.rar}]</span></div>
 <div style="color:#aaa;font-size:10px">${tr.f?tr.f(tr):''}</div></div>
-<button class="y rr" data-i="${u.iid}" style="margin:0;padding:6px 10px;font-size:12px;flex-shrink:0" ${((S.rr||0)<=0&&S.gems<30)?'disabled':''}>${(S.rr||0)>0?'🎲 '+S.rr:'30💎'}</button>
+<button class="y rr" data-i="${u.iid}" style="margin:0;padding:6px 10px;font-size:12px;flex-shrink:0" ${((S.rr||0)<=0)?'disabled':''}>🎲 Reroll (${S.rr||0})</button>
 </div>`}
 h+=`<div style="border-top:1px solid #2a3a6a;margin-top:10px;padding-top:8px;font-size:10px;color:#888;line-height:1.7">
-<b style="color:#f1c40f">📖 Drop Rate:</b><br>
-Common total ${sums.common.toFixed(1)}% (Vigor/Swift/Range masing-masing 26%)<br>
-Legendary ${(sums.legendary).toFixed(2)}% · Mythic ${sums.mythic.toFixed(2)}%</div>`;
+<b style="color:#f1c40f">📖 Chance Trait (per roll):</b><br>
+💪 Vigor 26% · 💨 Swift 26% · 🎯 Range 26% <span style="color:#666">(Common, 3 tier)</span><br>
+🏹 Marksman 6.5% · ⚡ Blitz 1.85% <span style="color:#666">(Legendary)</span><br>
+☀️ Solar 0.5% · 🎯 Deadeye 0.375% · 👻 Ethereal 0.175% · 👑 Monarch 0.1%<br>
+<b style="color:#f1c40f">🎲 Token saat ini: ${S.rr||0}</b></div>`;
 $('ob').innerHTML=h+'</div><button id="trx" class="r" style="margin-top:8px">Tutup</button>';
 $('trx').onclick=()=>{$('ov').style.display='none';updMenu()};
-document.querySelectorAll('.rr').forEach(b=>b.onclick=()=>{const hasTok=(S.rr||0)>0;
-if(!hasTok&&S.gems<30)return toast('❌ Tidak cukup token/💎!');
+document.querySelectorAll('.rr').forEach(b=>b.onclick=()=>{
+if((S.rr||0)<=0)return toast('❌ Token 🎲 habis! Butuh token untuk reroll.');
 const u=S.inv.find(x=>x.iid==b.dataset.i);if(!u)return;
 u.trait=rndTrait();
-if(hasTok){S.rr--;toast('🎲 -1 token')}else{S.gems-=30;toast('💎 -30')}
+S.rr--;
 const tr=getTrait(u);
 const tl=tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';
 save();
-setTimeout(()=>toast(`${tr.i} Reroll → ${tr.n}${tl}!`),400);
+setTimeout(()=>toast(`${tr.i} Reroll → ${tr.n}${tl}! Sisa 🎲 ${S.rr}`),300);
 traitMenu();updMenu()})}
 $('evb').onclick=evMenu;
-$('trb').onclick=traitMenu;   // ← TAMBAHKAN BARIS INI
+$('trb').onclick=traitMenu;
 $('rdb').onclick=redeemMenu;
 $('mb').onclick=()=>pmenu(true);$('set').onclick=()=>pmenu(false);
 $('play').onclick=startStage;
