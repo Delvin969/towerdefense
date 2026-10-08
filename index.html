@@ -389,37 +389,43 @@ let TM={selected:null,pending:null,old:null};
 function resetTM(){TM.selected=null;TM.pending=null;TM.old=null;}
 function traitMenu(){resetTM();$('ov').style.display='flex';renderTraitMenu();}
 function renderTraitMenu(){
-  let h='';
-  if(TM.selected===null){
-    h=`<h2 style="margin-bottom:6px">🎲 Trait Manager</h2>
-    <div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between">
-      <span style="color:#aaa">🎲 Token</span><b style="color:#f1c40f">${S.rr||0}</b>
-    </div>
-    <p style="color:#888;font-size:11px;margin-bottom:8px">Klik unit → Reroll trait-nya</p>
-    <div style="max-height:50vh;overflow-y:auto;width:min(460px,88vw)">`;
-    if(!S.inv.length)h+='<p style="color:#888;text-align:center">Belum ada unit.</p>';
-    const sorted=[...S.inv].sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar));
-    for(const u of sorted){
-      const d=DEF[u.id],r=R[u.rar],tr=getTrait(u);
-      const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';
-      h+=`<div style="background:#0a0e27;border:1px solid ${r.c};border-radius:6px;padding:8px;margin:4px 0;display:flex;justify-content:space-between;align-items:center;gap:8px">
-        <div style="flex:1;min-width:0">
-          <div><b style="color:#fff;font-size:13px">${d.icon} ${d.name}</b> <span style="color:${r.c};font-size:10px">${r.n}</span></div>
-          <div style="font-size:11px;color:${tr?tr.c:'#666'};margin-top:2px">${tr?`${tr.i} <b>${tr.n}${tl}</b>`:'— belum ada trait —'}</div>
-        </div>
-        <button class="tm-pick" data-i="${u.iid}" style="margin:0;padding:6px 12px;font-size:12px;flex-shrink:0;background:linear-gradient(#9b59b6,#8e44ad)">Reroll ▶</button>
-      </div>`;
-    }
-    h+=`</div><button id="tmClose" class="r" style="width:100%;margin-top:10px">Tutup</button>`;
-    $('ob').innerHTML=h;
-    document.querySelectorAll('.tm-pick').forEach(b=>{
-      b.onclick=()=>{
-        TM.selected=+b.dataset.i;
-        TM.old=S.inv.find(x=>x.iid===TM.selected).trait;
-        renderTraitReroll();
-      };
-    });
+  if (TM.selected !== null) {
+    renderTraitReroll();
+    return;
   }
+  let h='';
+  h=`<h2 style="margin-bottom:6px">🎲 Trait Manager</h2>
+  <div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between">
+    <span style="color:#aaa">🎲 Token</span><b style="color:#f1c40f">${S.rr||0}</b>
+  </div>
+  <p style="color:#888;font-size:11px;margin-bottom:8px">Klik unit → Reroll trait-nya</p>
+  <div style="max-height:50vh;overflow-y:auto;width:min(460px,88vw)">`;
+  if(!S.inv.length)h+='<p style="color:#888;text-align:center">Belum ada unit.</p>';
+  const sorted=[...S.inv].sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar));
+  for(const u of sorted){
+    const d=DEF[u.id],r=R[u.rar],tr=getTrait(u);
+    const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';
+    h+=`<div style="background:#0a0e27;border:1px solid ${r.c};border-radius:6px;padding:8px;margin:4px 0;display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <div style="flex:1;min-width:0">
+        <div><b style="color:#fff;font-size:13px">${d.icon} ${d.name}</b> <span style="color:${r.c};font-size:10px">${r.n}</span></div>
+        <div style="font-size:11px;color:${tr?tr.c:'#666'};margin-top:2px">${tr?`${tr.i} <b>${tr.n}${tl}</b>`:'— belum ada trait —'}</div>
+      </div>
+      <button class="tm-pick" data-i="${u.iid}" style="margin:0;padding:6px 12px;font-size:12px;flex-shrink:0;background:linear-gradient(#9b59b6,#8e44ad)">Reroll ▶</button>
+    </div>`;
+  }
+  h+=`</div><button id="tmClose" class="r" style="width:100%;margin-top:10px">Tutup</button>`;
+  $('ob').innerHTML=h;
+  
+  // FIX: Tambahkan event listener untuk tombol Tutup
+  if($('tmClose')) $('tmClose').onclick = () => { $('ov').style.display='none'; resetTM(); };
+  
+  document.querySelectorAll('.tm-pick').forEach(b=>{
+    b.onclick=()=>{
+      TM.selected=+b.dataset.i;
+      TM.old=S.inv.find(x=>x.iid===TM.selected).trait;
+      renderTraitReroll();
+    };
+  });
 }
 
 function renderTraitReroll(){
@@ -444,12 +450,18 @@ function renderTraitReroll(){
         </div>
         <button id="tmApply" class="g" style="width:100%;margin-bottom:6px">✅ Terapkan</button>
         <button id="tmRerollAgain" class="y" style="width:100%;margin-bottom:6px">🎲 Reroll Lagi (1 🎲)</button>
-        <button id="tmCancel" class="r" style="width:100%">❌ Batal</button>`;
+        <button id="tmCancel" class="r" style="width:100%;margin-bottom:6px">❌ Batal</button>
+        <button id="tmCloseReroll" class="r" style="width:100%;background:linear-gradient(#555,#333)">Tutup</button>`;
     }else{
         h+=`<button id="tmDoReroll" class="y" style="width:100%;margin-bottom:6px" ${S.rr<1?'disabled':''}>🎲 Reroll Trait (1 🎲)</button>
-        <button id="tmBack" style="width:100%">← Kembali</button>`;
+        <button id="tmBack" style="width:100%;margin-bottom:6px">← Kembali</button>
+        <button id="tmCloseReroll" class="r" style="width:100%;background:linear-gradient(#555,#333)">Tutup</button>`;
     }
     $('ob').innerHTML=h;
+    
+    // FIX: Event listener untuk tombol tutup di halaman reroll
+    if($('tmCloseReroll')) $('tmCloseReroll').onclick = () => { $('ov').style.display='none'; resetTM(); };
+    
     if($('tmDoReroll'))$('tmDoReroll').onclick=()=>{if(S.rr<1)return toast('❌ Token kurang!');S.rr--;TM.pending=rndTrait();save();renderTraitReroll()};
     if($('tmRerollAgain'))$('tmRerollAgain').onclick=()=>{if(S.rr<1)return toast('❌ Token kurang!');S.rr--;TM.pending=rndTrait();save();renderTraitReroll()};
     if($('tmApply'))$('tmApply').onclick=()=>{u.trait=TM.pending;TM.pending=null;save();updMenu();toast('✅ Trait diterapkan!');renderTraitMenu()};
