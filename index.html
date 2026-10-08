@@ -547,6 +547,7 @@ save();
 setTimeout(()=>toast(`${tr.i} Reroll → ${tr.n}${tl}!`),400);
 traitMenu();updMenu()})}
 $('evb').onclick=evMenu;
+$('trb').onclick=traitMenu;   // ← TAMBAHKAN BARIS INI
 $('rdb').onclick=redeemMenu;
 $('mb').onclick=()=>pmenu(true);$('set').onclick=()=>pmenu(false);
 $('play').onclick=startStage;
