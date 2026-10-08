@@ -124,7 +124,7 @@ epic:[['fire_wizard','Fire Wizard','🔥',24,100,1.2,'aoe'],['assassin','Assassi
 legendary:[['dragon_kn','Dragon Knight','🐉',40,110,.9,'aoe'],['storm_cal','Storm Caller','🌩️',32,130,1.1,'chain'],['shadow_bl','Shadow Blade','🌑',56,95,1,'crit'],['ice_queen','Ice Queen','👑',29,130,1,'slow'],['treasurer','Treasurer','💎',18,120,1.4,'economy'],['archangel','Archangel','😇',48,125,1,'single'],['druid','Druid','🌿',10,170,2.0,'support']],
 mythic:[['void_reaper','Void Reaper','👁️',56,120,.8,'chain'],['celestial_g','Celestial Guardian','✨',48,140,1,'aoe'],['phantom_lord','Phantom Lord','👻',64,110,.9,'crit'],['chronomancer','Chronomancer','⏳',51,145,.9,'slow'],['soul_weaver','Soul Weaver','🧵',52,135,.85,'chain'],['abyss_walker','Abyss Walker','🐙',60,130,.9,'aoe'],['gold_empress','Gold Empress','👸',30,130,1.5,'economy'],['oracle','Oracle','🔮',15,190,2.2,'support']],
 td:[['void_emperor','Void Emperor','🕳️',104,160,.6,'chain'],['celestial_avatar','Celestial Avatar','🌟',93,180,.8,'aoe'],['phantom_god','Phantom God','💀',120,140,.7,'crit'],['time_lord','Time Lord','⏰',96,175,.75,'slow'],['eternal_flame','Eternal Flame','🔥',110,170,.7,'aoe'],['frost_empress','Frost Empress','❄️',98,190,.75,'slow'],['archdruid','Archdruid','🌳',20,210,2.5,'support']],
-secret:[['void_sovereign','Void Sovereign','👑',168,190,.5,'chain'],['star_emperor','Star Emperor','🌠',160,210,.55,'aoe'],['death_reaper','Death Reaper','⚰️',208,170,.45,'crit'],['light_emperor','Light Emperor','☀️',180,200,.5,'chain']],
+secret:[['void_sovereign','Void Sovereign','👑',168,190,.5,'chain'],['star_emperor','Star Emperor','🌠',160,210,.55,'aoe'],['death_reaper','Death Reaper','⚰️',208,170,.45,'crit'],['light_emperor','Light Emperor','☀️',180,200,.5,'chain'],['cosmic_sovereign','Cosmic Sovereign','🌌',175,195,.5,'aoe'],['abyss_sovereign','Abyss Sovereign','🕳️',195,180,.48,'crit']],
 transcendent:[['void_god','Void God','🌌',288,240,.35,'chain'],['star_god','Star God','💫',272,260,.4,'aoe'],['death_god','Death God','☠️',352,220,.35,'crit']],
 primordial:[['void_primordial','Void Primordial','🕳️',450,300,.3,'chain'],['star_primordial','Star Primordial','🌌',430,320,.33,'aoe'],['death_primordial','Death Primordial','💀',550,280,.3,'crit']],
 eternal:[['eternal_dragon','Eternal Dragon','🐲',800,350,.25,'chain'],['eternal_angel','Eternal Angel','👼',750,380,.28,'aoe'],['eternal_demon','Eternal Demon','😈',900,320,.25,'crit']],
@@ -161,9 +161,11 @@ eternal_demon:{name:'Hellfire',icon:'😈',desc:'Crit x15 + execute',color:'#00f
 exotic_nidhogg:{name:'Dragon Apocalypse',icon:'🐉',desc:'Chain 12 + AOE 200 + instant kill',color:'#ff00aa',ult:'🐉 RAGNAROK'},
 exotic_metatron:{name:'Divine Ascension',icon:'👁️',desc:'AOE 700 + heal 20 + stun',color:'#ff00aa',ult:'👁️ DIVINE ASCENSION'},
 exotic_lucifer:{name:'Infernal Judgement',icon:'🦇',desc:'Crit x30 + execute 95%',color:'#ff00aa',ult:'🦇 INFERNAL JUDGEMENT'},
-archdruid:{name:'Nature Blessing',icon:'🌳',desc:'Massive Buff Aura',color:'#00ffaa',ult:'🌳 WORLD TREE'}};
+archdruid:{name:'Nature Blessing',icon:'🌳',desc:'Massive Buff Aura',color:'#00ffaa',ult:'🌳 WORLD TREE'},
+cosmic_sovereign:{name:'Cosmic Supremacy',icon:'🌌',desc:'AOE + heal',color:'#ff00ff',ult:'🌌 COSMIC SUPREMACY'},
+abyss_sovereign:{name:'Abyss Devour',icon:'🕳️',desc:'Crit + execute',color:'#ff00ff',ult:'🕳️ ABYSS DEVOUR'}};
 
-const SECRET_DROPS={void_core:'void_sovereign',star_fragment:'star_emperor',death_crystal:'death_reaper'};
+const SECRET_DROPS={void_core:'void_sovereign',star_fragment:'star_emperor',death_crystal:'death_reaper',cosmic_essence:'cosmic_sovereign',eternal_shard:'abyss_sovereign'};
 const SECRET_CHANCE=0.0085;
 const TOKEN_DROP_MATS=['void_core','star_fragment','death_crystal','cosmic_essence','eternal_shard'];
 const ET={normal:{hp:30,sp:55,rw:25,c:'#e74c3c',r:10},fast:{hp:20,sp:95,rw:20,c:'#f1c40f',r:8},tank:{hp:100,sp:35,rw:45,c:'#9b59b6',r:14},flying:{hp:40,sp:80,rw:30,c:'#1abc9c',r:9},boss:{hp:500,sp:30,rw:400,c:'#c0392b',r:22}};
@@ -328,7 +330,7 @@ function shake(i,d){if(!S.fx)return;G.sk=Math.max(G.sk,i);G.shake=Math.max(G.sha
 function flash(c,d){if(!S.fx)return;G.fc=c;G.flash=d}
 function beam(a,b,c,w=2){G.bm.push({x1:a.x,y1:a.y,x2:b.x,y2:b.y,c,w,l:.15,m:.15})}
 function bolt(a,b,c,w=3){const dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy)||1,n=Math.max(3,Math.floor(L/18)),nx=-dy/L,ny=dx/L,pts=[{x:a.x,y:a.y}];for(let i=1;i<n;i++){const t=i/n,o=(Math.random()-.5)*22;pts.push({x:a.x+dx*t+nx*o,y:a.y+dy*t+ny*o})}pts.push({x:b.x,y:b.y});G.bm.push({pts,c,w:w+1,l:.22,m:.22})}
-const TH={void_reaper:'#a040ff',void_emperor:'#c060ff',celestial_g:'#ffd84a',celestial_avatar:'#fff08a',phantom_lord:'#ff3ccf',phantom_god:'#ff6fe0',chronomancer:'#3fe0ff',time_lord:'#9ff0ff',void_sovereign:'#ff00ff',star_emperor:'#ff66ff',death_reaper:'#cc00ff',void_god:'#ff00aa',star_god:'#ffe0ff',death_god:'#aa00ff',void_primordial:'#ff0066',star_primordial:'#ffaa00',death_primordial:'#6600ff',eternal_dragon:'#00ffaa',eternal_angel:'#ffffff',eternal_demon:'#00ffaa',light_emperor:'#ffffaa',soul_weaver:'#a060ff',abyss_walker:'#0099aa',gold_empress:'#ffd700',eternal_flame:'#ff5500',frost_empress:'#aaeeff',exotic_nidhogg:'#ff00aa',exotic_metatron:'#ff00aa',exotic_lucifer:'#ff00aa',archdruid:'#00ffaa'};
+const TH={void_reaper:'#a040ff',void_emperor:'#c060ff',celestial_g:'#ffd84a',celestial_avatar:'#fff08a',phantom_lord:'#ff3ccf',phantom_god:'#ff6fe0',chronomancer:'#3fe0ff',time_lord:'#9ff0ff',void_sovereign:'#ff00ff',star_emperor:'#ff66ff',death_reaper:'#cc00ff',void_god:'#ff00aa',star_god:'#ffe0ff',death_god:'#aa00ff',void_primordial:'#ff0066',star_primordial:'#ffaa00',death_primordial:'#6600ff',eternal_dragon:'#00ffaa',eternal_angel:'#ffffff',eternal_demon:'#00ffaa',light_emperor:'#ffffaa',soul_weaver:'#a060ff',abyss_walker:'#0099aa',gold_empress:'#ffd700',eternal_flame:'#ff5500',frost_empress:'#aaeeff',exotic_nidhogg:'#ff00aa',exotic_metatron:'#ff00aa',exotic_lucifer:'#ff00aa',archdruid:'#00ffaa',cosmic_sovereign:'#ff00ff',abyss_sovereign:'#ff00ff'};
 const tc=u=>TH[u.i.id]||R[u.i.rar].c;
 function trail(a,b,c){if(!S.fx)return;for(let i=1;i<9;i++){const k=i/9;G.par.push({x:a.x+(b.x-a.x)*k,y:a.y+(b.y-a.y)*k,vx:(Math.random()-.5)*50,vy:(Math.random()-.5)*50,l:.35,m:.35,c,z:3})}}
 function sigil(u,c){const t=performance.now()/1000,hi=u.i.rar==='td'||u.i.rar==='secret'||u.i.rar==='transcendent'||u.i.rar==='primordial'||u.i.rar==='eternal'||u.i.rar==='exotic',n=hi?6:5;ctx.save();ctx.translate(u.x,u.y+6);ctx.scale(1,.55);ctx.globalCompositeOperation='lighter';ctx.strokeStyle=c;ctx.shadowColor=c;ctx.shadowBlur=10;ctx.globalAlpha=.8;ctx.lineWidth=2;ctx.setLineDash([6,5]);ctx.rotate(t*.6);ctx.beginPath();ctx.arc(0,0,hi?42:36,0,6.283);ctx.stroke();ctx.setLineDash([]);ctx.rotate(-t*1.2);ctx.beginPath();for(let i=0;i<=n;i++){const a=((i*2)%n)/n*6.283,x=Math.cos(a)*30,y=Math.sin(a)*30;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.stroke();if(hi){ctx.rotate(t*2);ctx.beginPath();ctx.arc(0,0,22,0,6.283);ctx.stroke()}ctx.restore()}
@@ -344,15 +346,13 @@ function fireUltimate(u,st){const i=u.i,es=EVO_SKILL[i.id],def=ULT_DEF[st.skill]
 function update(dt){
     if(!G||G.paused||G.over)return;
     
-    // Reset buffs sebelum menghitung aura
     for (const u of G.pl) { u.buff = 0; }
     
-    // Hitung Support Aura
     for (const supp of G.pl) {
         const suppDef = DEF[supp.i.id];
         if (suppDef.skill === 'support') {
             const suppStats = stats(supp.i);
-            const buffAmount = 0.25 + (supp.i.lv * 0.03); // 25% + 3% per level
+            const buffAmount = 0.25 + (supp.i.lv * 0.03);
             const buffRange = suppStats.rng * 1.5;
             
             for (const target of G.pl) {
@@ -375,7 +375,6 @@ function ui(soft){const now=performance.now();if(soft&&now-lastUi<200)return;las
 function hand(){
     const h=$('hand');
     h.innerHTML='';
-    // FIX: Jangan hapus unit yang sudah ditempatkan dari tangan
     const hand=S.inv.filter(u=>S.load.includes(u.iid));
     if(!hand.length){
         h.innerHTML='<div style="color:#666;font-size:11px;padding:8px">Semua unit di field / loadout kosong</div>';
@@ -556,22 +555,16 @@ $('rotateForce').onclick=()=>{if(screen.orientation&&screen.orientation.lock)scr
 let lastT=performance.now();
 function loop(t){const dt=Math.min((t-lastT)/1000,.1);lastT=t;if(G&&!G.paused&&!G.over)update(dt);draw();requestAnimationFrame(loop)}
 function draw(){if(!G)return;ctx.clearRect(0,0,900,550);ctx.fillStyle='#111';ctx.fillRect(0,0,900,550);
-  // Draw path
   ctx.strokeStyle='#2a3a6a';ctx.lineWidth=40;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();G.wp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
   ctx.strokeStyle='#1a2050';ctx.lineWidth=36;ctx.beginPath();G.wp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
-  // Draw enemies
   for(const e of G.en){if(e.dead)continue;ctx.fillStyle=e.hf>0?'#fff':e.c;ctx.shadowColor=e.c;ctx.shadowBlur=10;ctx.beginPath();ctx.arc(e.x,e.y,e.r,0,6.283);ctx.fill();ctx.shadowBlur=0;
-    // HP bar
     const hpPct=e.hp/e.mx;ctx.fillStyle='#333';ctx.fillRect(e.x-20,e.y-e.r-10,40,4);ctx.fillStyle=hpPct>.5?'#2ecc71':hpPct>.25?'#f1c40f':'#e74c3c';ctx.fillRect(e.x-20,e.y-e.r-10,40*hpPct,4);
-    // Slow effect
     if(e.sl>0){ctx.strokeStyle='#66ccff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,e.r+3,0,6.283);ctx.stroke()}
   }
-  // Draw units
   for(const u of G.pl){const d=DEF[u.i.id],r=R[u.i.rar],c=tc(u),hi=isHi(u.i);
     if(hi)aura(u,c);
     sigil(u,c);
     
-    // Draw support aura
     if (DEF[u.i.id].skill === 'support') {
         const st = stats(u.i);
         ctx.fillStyle = 'rgba(0, 255, 204, 0.08)';
@@ -588,10 +581,8 @@ function draw(){if(!G)return;ctx.clearRect(0,0,900,550);ctx.fillStyle='#111';ctx
     }
 
     ctx.font='24px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(d.icon,u.x,u.y);
-    // Range indicator for selected
     if(G.selP===u.pid){const st=stats(u.i);ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=2;ctx.setLineDash([5,5]);ctx.beginPath();ctx.arc(u.x,u.y,st.rng,0,6.283);ctx.stroke();ctx.setLineDash([])}
   }
-  // Draw FX
   for(const f of G.fx){const a=f.l/(f.m||1);ctx.globalAlpha=a;
     if(f.t==='ring'){ctx.strokeStyle=f.c;ctx.lineWidth=f.w||4;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a)*2,0,6.283);ctx.stroke()}
     else if(f.t==='nova'){ctx.fillStyle=f.c;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a),0,6.283);ctx.fill()}
@@ -602,18 +593,13 @@ function draw(){if(!G)return;ctx.clearRect(0,0,900,550);ctx.fillStyle='#111';ctx
     else if(f.t==='banner'){ctx.fillStyle=f.c;ctx.font='bold 24px sans-serif';ctx.textAlign='center';ctx.fillText(f.s,450,100+(1-a)*50)}
     ctx.globalAlpha=1;
   }
-  // Draw Beams
   for(const b of G.bm){const a=b.l/(b.m||1);ctx.globalAlpha=a;ctx.strokeStyle=b.c;ctx.lineWidth=b.w||2;ctx.beginPath();if(b.pts){b.pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y))}else{ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.x2,b.y2)}ctx.stroke();ctx.globalAlpha=1}
-  // Draw Particles
   for(const p of G.par){const a=p.l/(p.m||1);ctx.globalAlpha=a;ctx.fillStyle=p.c;ctx.fillRect(p.x,p.y,p.z,p.z);ctx.globalAlpha=1}
-  // Screen shake
   if(G.shake>0){ctx.translate((Math.random()-.5)*G.shake,(Math.random()-.5)*G.shake)}
-  // Flash
   if(G.flash>0){ctx.fillStyle=G.fc;ctx.globalAlpha=G.flash*.5;ctx.fillRect(0,0,900,550);ctx.globalAlpha=1}
 }
 requestAnimationFrame(loop);
 
-// Handle window resize for canvas
 window.addEventListener('resize',()=>{});
 </script>
 </body>
