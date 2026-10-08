@@ -5,21 +5,21 @@
 html,body{background:#0a0e27}
 body{color:#fff;font-family:'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden}
 .sc{display:none;padding:14px}.sc.on{display:block}
-h1{font-size:clamp(24px,5vw,42px);text-align:center;background:linear-gradient(90deg,#00ffff,#ff00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:10px 0;font-weight:900;letter-spacing:3px;text-shadow:0 0 30px rgba(255,0,255,.3)}
-h3{font-size:14px;margin-bottom:6px}
-.bar,.top{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-size:15px}
+h1{font-size:clamp(22px,4.5vw,34px);text-align:center;background:linear-gradient(90deg,#00ffff,#ff00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:10px 0;font-weight:900;letter-spacing:2px;text-shadow:0 0 30px rgba(255,0,255,.3)}
+h3{font-size:13px;margin-bottom:6px}
+.bar,.top{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-size:14px}
 b{color:#f1c40f}
-.pn{background:#151a3a;border:2px solid #2a3a6a;border-radius:10px;padding:12px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:6px;max-height:300px;overflow-y:auto}
-.card{background:#0a0e27;border:2px solid #2a3a6a;border-radius:8px;padding:6px;cursor:pointer;font-size:11px;transition:.15s}
+.pn{background:#151a3a;border:2px solid #2a3a6a;border-radius:10px;padding:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:5px;max-height:200px;overflow-y:auto}
+.card{background:#0a0e27;border:2px solid #2a3a6a;border-radius:8px;padding:5px;cursor:pointer;font-size:10px;transition:.15s}
 .card:hover{border-color:#3498db;transform:translateY(-2px)}
 .card.dim{opacity:.5;border-style:dashed}
 button{background:linear-gradient(#3498db,#2980b9);color:#fff;border:0;padding:8px 16px;font-weight:bold;border-radius:8px;cursor:pointer;margin:3px;transition:.15s}
 button:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.15)}
 button:disabled{opacity:.4;cursor:not-allowed}
 button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-gradient(#e74c3c,#c0392b)}button.y{background:linear-gradient(#f39c12,#d68910)}
-#rates{display:flex;gap:5px;flex-wrap:wrap;font-size:11px;margin-bottom:6px}
-#rates span{padding:3px 8px;border:1px solid;border-radius:5px;transition:.15s;user-select:none;cursor:pointer}
+#rates{display:flex;gap:4px;flex-wrap:wrap;font-size:10px;margin-bottom:6px}
+#rates span{padding:2px 6px;border:1px solid;border-radius:5px;transition:.15s;user-select:none;cursor:pointer}
 #cv{display:block;width:100%;max-width:900px;margin:0 auto;background:#111;border:2px solid #2a3a6a;border-radius:8px;cursor:pointer}
 #ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9;align-items:center;justify-content:center;padding:14px}
 .box{background:#151a3a;border:2px solid #2a3a6a;border-radius:12px;padding:24px;text-align:center;max-width:min(460px,92vw);max-height:90vh;overflow-y:auto}
@@ -48,30 +48,36 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 .evo-cinema{position:fixed;inset:0;z-index:999;pointer-events:none;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;opacity:0;transition:opacity .3s}
 .evo-cinema.on{opacity:1}
 .evo-rays{position:absolute;inset:0;background:conic-gradient(from 0deg,transparent 0deg,currentColor 15deg,transparent 30deg,transparent 60deg,currentColor 75deg,transparent 90deg,transparent 120deg,currentColor 135deg,transparent 150deg,transparent 180deg,currentColor 195deg,transparent 210deg,transparent 240deg,currentColor 255deg,transparent 270deg,transparent 300deg,currentColor 315deg,transparent 330deg);opacity:.35;animation:evoRays 6s linear infinite;filter:blur(2px)}
-.evo-title{font-size:clamp(32px,7vw,60px);font-weight:900;letter-spacing:4px;animation:evoZoom .8s cubic-bezier(.2,1.4,.5,1) forwards,evoGlow 1.2s ease-in-out infinite;position:relative;z-index:2}
-.evo-sub{font-size:clamp(14px,3vw,20px);color:#fff;margin-top:8px;animation:evoSlide .8s .3s ease-out backwards;position:relative;z-index:2}
-.evo-icon{font-size:clamp(60px,15vw,120px);margin-bottom:16px;animation:evoZoom 1s cubic-bezier(.2,1.4,.5,1) forwards;filter:drop-shadow(0 0 30px currentColor);position:relative;z-index:2}
-.menu-grid{display:grid;grid-template-columns:1fr 1fr 96px;gap:10px;max-width:1100px;margin:0 auto 10px}
-@media(max-width:900px){.menu-grid{grid-template-columns:1fr 1fr 80px}}
-@media(max-width:640px){.menu-grid{grid-template-columns:1fr;}.menu-side{flex-direction:row!important}}
-.menu-side{display:flex;flex-direction:column;gap:8px}
-.menu-side button{flex:1;font-size:12px;padding:10px 4px;width:100%;letter-spacing:1px}
+.evo-title{font-size:clamp(28px,6vw,52px);font-weight:900;letter-spacing:3px;animation:evoZoom .8s cubic-bezier(.2,1.4,.5,1) forwards,evoGlow 1.2s ease-in-out infinite;position:relative;z-index:2}
+.evo-sub{font-size:clamp(13px,2.6vw,18px);color:#fff;margin-top:8px;animation:evoSlide .8s .3s ease-out backwards;position:relative;z-index:2}
+.evo-icon{font-size:clamp(60px,14vw,100px);margin-bottom:14px;animation:evoZoom 1s cubic-bezier(.2,1.4,.5,1) forwards;filter:drop-shadow(0 0 30px currentColor);position:relative;z-index:2}
 .eq-stats{background:#0a0e27;border-radius:6px;padding:10px;margin:8px 0;font-size:12px}
 .pn h3.pn-h{cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center;gap:6px;padding:2px 0}
 .pn h3.pn-h::after{content:'▼';font-size:10px;color:#888;transition:.2s}
 .pn.collapsed h3.pn-h::after{content:'▶'}
 .pn.collapsed .pn-body{display:none}
-.pn-body{margin-top:6px}
-@media(max-width:640px){.pn{padding:8px}.pn h3{font-size:13px}}
+.pn-body{margin-top:4px}
+/* === LAYOUT BARU — PANEL CENTER === */
+.main-panel{max-width:580px;margin:0 auto;background:#151a3a;border:2px solid #2a3a6a;border-radius:14px;padding:12px}
+.main-panel .pn{background:#0a0e27;border:2px solid #2a3a6a}
+.row-2col{display:grid;grid-template-columns:1fr 78px;gap:8px;margin-top:8px}
+.row-2col .pn{margin:0}
+.side-btn{width:100%;height:100%;font-size:11px;letter-spacing:1px;line-height:1.3;padding:10px 4px;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80px}
+.main-panel .grid{max-height:180px}
+.main-panel #rates span{font-size:10px;padding:2px 6px}
+.top-bar{display:flex;justify-content:space-between;align-items:center;max-width:580px;margin:0 auto 6px}
+.main-panel .footer{text-align:center;margin-top:8px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.main-panel .footer button{margin:0;font-size:12px;padding:8px 12px}
+@media(max-width:640px){.main-panel{padding:10px}.row-2col{grid-template-columns:1fr 68px}.side-btn{font-size:10px;padding:8px 2px}.main-panel .grid{max-height:150px}}
 </style></head><body>
 <div id="toast"></div>
 
 <div id="login" class="sc">
 <h1 style="margin-top:40px">⚔️ HERO TOWER DEFENSE ⚔️</h1>
-<div class="pn" style="max-width:420px;margin:30px auto;text-align:center">
+<div class="pn" style="max-width:420px;margin:30px auto;text-align:center;background:#151a3a">
 <div style="font-size:60px;margin-bottom:10px">🎮</div>
 <h3 style="font-size:18px;margin-bottom:6px">Login dengan Email</h3>
-<p style="color:#888;font-size:12px;margin-bottom:14px">Data tersimpan di browser — tidak perlu login lagi setelah ini</p>
+<p style="color:#888;font-size:12px;margin-bottom:14px">Data tersimpan di browser</p>
 <input id="loginEmail" type="email" placeholder="nama@email.com" style="width:100%;padding:12px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#fff;font-size:14px;outline:none;margin-bottom:10px;text-align:center" maxlength="60" autocomplete="email">
 <button id="loginBtn" class="g" style="width:100%;padding:12px;font-size:16px">▶ Masuk</button>
 <div id="loginMsg" style="font-size:12px;margin-top:8px;min-height:16px"></div>
@@ -79,33 +85,45 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 </div>
 
 <div id="menu" class="sc">
-<div style="display:flex;justify-content:space-between;align-items:center;max-width:1100px;margin:0 auto 4px">
-<button id="rdb" class="y" style="margin:0;padding:8px 16px;font-size:13px">🎁 REDEEM</button>
-<div style="font-size:13px">👤 <b id="mu" style="color:#66ccff">Guest</b></div>
+<div class="top-bar">
+<button id="rdb" class="y" style="margin:0;padding:6px 14px;font-size:12px">🎁 REDEEM</button>
+<div style="font-size:12px">👤 <b id="mu" style="color:#66ccff">Guest</b></div>
 </div>
 <h1>⚔️ HERO TOWER DEFENSE ⚔️</h1>
 <div class="bar">💎 <b id="mg"></b> 🎲 <b id="mr"></b> 🪙 <b id="mc"></b> <span id="mt"></span></div>
 
-<button id="play" class="g" style="display:block;width:min(460px,92%);margin:18px auto;font-size:26px;padding:22px;letter-spacing:2px">▶ PLAY</button>
+<div class="main-panel">
+  <button id="play" class="g" style="display:block;width:100%;margin:0 0 8px;font-size:22px;padding:18px;letter-spacing:2px">▶ PLAY</button>
 
-<div class="menu-grid">
-<div class="pn" id="invPanel"><h3 class="pn-h" onclick="togglePanel('invPanel')">🎒 INVENTORY <span style="font-size:11px;color:#888">(klik = equip)</span></h3>
-<div class="pn-body"><div id="inv" class="grid"></div></div></div>
-<div class="pn" id="loPanel"><h3 class="pn-h" onclick="togglePanel('loPanel')">⚔️ LOADOUT <span id="ls" style="color:#f1c40f">0/5</span></h3>
-<div class="pn-body"><div id="lo" class="grid"></div></div></div>
-<div class="menu-side">
-<button id="trb" class="y">🎲<br>TRAIT</button>
-<button id="evb" class="y">🧬<br>EVOLVE</button>
-</div>
-</div>
+  <div class="row-2col">
+    <div class="pn" id="invPanel">
+      <h3 class="pn-h" onclick="togglePanel('invPanel')">🎒 INVENTORY <span style="font-size:10px;color:#888">(klik = equip)</span></h3>
+      <div class="pn-body"><div id="inv" class="grid"></div></div>
+    </div>
+    <button id="trb" class="y side-btn">🎲<br><span style="font-size:10px">TRAIT</span></button>
+  </div>
 
-<div class="pn" id="sumPanel" style="max-width:1100px;margin:0 auto 10px"><h3 class="pn-h" onclick="togglePanel('sumPanel')">🔮 SUMMON</h3>
-<div class="pn-body"><div id="rates"></div><button id="s1" class="y">Summon (100 💎)</button><button id="s10" class="y">Summon 10x (1000 💎)</button></div></div>
+  <div class="row-2col">
+    <div class="pn" id="sumPanel">
+      <h3 class="pn-h" onclick="togglePanel('sumPanel')">🔮 SUMMON</h3>
+      <div class="pn-body"><div id="rates"></div>
+        <button id="s1" class="y" style="font-size:12px;padding:6px 12px">Summon (100 💎)</button>
+        <button id="s10" class="y" style="font-size:12px;padding:6px 12px">Summon 10x (1000 💎)</button>
+      </div>
+    </div>
+    <button id="evb" class="y side-btn">🧬<br><span style="font-size:10px">EVOLVE</span></button>
+  </div>
 
-<div class="pn" style="max-width:1100px;margin:0 auto;text-align:center">
-<button id="set">⚙️ Settings</button>
-<button id="logoutBtn" class="r">🚪 Logout</button>
-<button id="rst" class="r">Reset Progress</button>
+  <div class="pn" id="loPanel" style="margin-top:8px">
+    <h3 class="pn-h" onclick="togglePanel('loPanel')">⚔️ LOADOUT <span id="ls" style="color:#f1c40f;font-size:11px">0/5</span></h3>
+    <div class="pn-body"><div id="lo" class="grid"></div></div>
+  </div>
+
+  <div class="footer">
+    <button id="set">⚙️ Settings</button>
+    <button id="logoutBtn" class="r">🚪 Logout</button>
+    <button id="rst" class="r">Reset</button>
+  </div>
 </div>
 </div>
 
@@ -116,7 +134,7 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 <div style="width:90px"></div>
 </div>
 <div class="pn" style="max-width:920px;margin:0 auto 10px"><h3>Mode</h3><div id="maps"></div></div>
-<div class="pn" style="max-width:920px;margin:0 auto 10px"><h3>Level / Act</h3><div id="acts" class="grid" style="margin:8px 0"></div><div id="sel" style="color:#aaa;font-size:13px"></div></div>
+<div class="pn" style="max-width:920px;margin:0 auto 10px"><h3>Level / Act</h3><div id="acts" class="grid" style="margin:8px 0;max-height:400px"></div><div id="sel" style="color:#aaa;font-size:13px"></div></div>
 <button id="playStart" class="g" style="display:block;width:min(460px,92%);margin:18px auto;font-size:22px;padding:18px;letter-spacing:2px">▶ MULAI</button>
 </div>
 
@@ -177,7 +195,7 @@ const EVO_SKILL={
 void_emperor:{name:'Void Collapse',icon:'🕳️',desc:'Chain meledak AOE di setiap target + 2 target ekstra',color:'#c060ff',ult:'☄️ VOID ANNIHILATION'},
 celestial_avatar:{name:'Divine Judgement',icon:'🌟',desc:'AOE besar + heal 1 base HP setiap serangan',color:'#fff08a',ult:'🕊️ GENESIS'},
 phantom_god:{name:'Soul Harvest',icon:'💀',desc:'Crit + bonus 🪙 setiap kill + crit damage ekstra',color:'#ff6fe0',ult:'🔥 ARMAGEDDON'},
-time_lord:{name:'Temporal Rift',icon:'⏰',desc:'Slow + near-freeze (musuh hampir berhenti)',color:'#9ff0ff',ult:'⏰ TIME STOP'},
+time_lord:{name:'Temporal Rift',icon:'⏰',desc:'Slow + near-freeze',color:'#9ff0ff',ult:'⏰ TIME STOP'},
 void_sovereign:{name:'Void Supremacy',icon:'👑',desc:'Chain + AOE collapse + slow di setiap hit + 3 target ekstra',color:'#ff00ff',ult:'👑 VOID DOMINION'},
 star_emperor:{name:'Cosmic Judgement',icon:'🌠',desc:'AOE raksasa + heal 2 HP per serangan',color:'#ff00ff',ult:'🌌 GALAXY BURST'},
 death_reaper:{name:'Grim Harvest',icon:'⚰️',desc:'Crit + execute musuh <30% HP + bonus 🪙 per kill',color:'#ff00ff',ult:'💀 REAPER DUE'},
@@ -453,10 +471,10 @@ setTimeout(()=>$('rdi').focus(),100);
 function card(u,fn){const d=DEF[u.id],r=R[u.rar],s=stats(u),tr=s.trait,e=document.createElement('div');e.className='card';e.style.borderColor=r.c;
 const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';
 const trHTML=tr?`<div style="font-size:9px;color:${tr.c}">${tr.i} ${tr.n}${tl}</div>`:`<div style="font-size:9px;color:#666">— no trait —</div>`;
-e.innerHTML=`<div style="font-size:20px">${d.icon}</div><b style="color:#fff">${d.name}</b><div style="color:${r.c};font-size:10px">${r.n} · ${ROLE[role(d)][0]}</div>${trHTML}<div style="color:#f1c40f;font-size:10px">Max ${maxDep(u)} · 🪙${placeCost(u)}</div><div style="font-size:10px;color:#aaa">DMG ${s.dmg} · RNG ${s.rng}</div>`;e.onclick=fn;return e}
+e.innerHTML=`<div style="font-size:18px">${d.icon}</div><b style="color:#fff;font-size:11px">${d.name}</b><div style="color:${r.c};font-size:9px">${r.n} · ${ROLE[role(d)][0]}</div>${trHTML}<div style="color:#f1c40f;font-size:9px">Max ${maxDep(u)} · 🪙${placeCost(u)}</div><div style="font-size:9px;color:#aaa">DMG ${s.dmg} · RNG ${s.rng}</div>`;e.onclick=fn;return e}
 function updMenu(){
 $('mg').textContent=S.gems;$('mr').textContent=S.rr||0;$('mc').textContent=Math.floor(S.coins);
-$('mt').innerHTML=Object.keys(MATS).filter(k=>S.mats[k]).map(k=>`<span style="border:1px solid #2a3a6a;border-radius:10px;padding:2px 7px;font-size:12px">${MATS[k][1]} ${S.mats[k]}</span>`).join(' ');
+$('mt').innerHTML=Object.keys(MATS).filter(k=>S.mats[k]).map(k=>`<span style="border:1px solid #2a3a6a;border-radius:10px;padding:2px 7px;font-size:11px">${MATS[k][1]} ${S.mats[k]}</span>`).join(' ');
 $('s1').disabled=S.gems<100;$('s10').disabled=S.gems<1000;$('ls').textContent=S.load.length+'/5';
 const iv=$('inv');iv.innerHTML='';
 [...S.inv].sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar)).forEach(u=>{
@@ -473,7 +491,7 @@ lo.appendChild(c);
 $('play').disabled=!S.load.length;
 $('play').textContent=S.load.length?'▶ PLAY':'▶ PLAY (loadout kosong)';
 renderStage();
-$('rates').innerHTML=Object.keys(R).map(k=>{const r=R[k];const isLocked=r.p===0;const src=(k==='secret')?'(Legend drop)':(k==='transcendent'||k==='primordial')?'(Evolve only)':(r.p*100).toFixed(2)+'%';return `<span style="color:${r.c}" data-rar="${k}">${r.n} ${isLocked?src:(r.p*100).toFixed(2)+'%'}</span>`}).join('');
+$('rates').innerHTML=Object.keys(R).map(k=>{const r=R[k];const isLocked=r.p===0;const src=(k==='secret')?'(Legend)':(k==='transcendent'||k==='primordial')?'(Evolve)':(r.p*100).toFixed(2)+'%';return `<span style="color:${r.c}" data-rar="${k}">${r.n} ${isLocked?src:(r.p*100).toFixed(2)+'%'}</span>`}).join('');
 document.querySelectorAll('#rates span').forEach(el=>{
 el.onmouseover=()=>{el.style.background=R[el.dataset.rar].c+'22';el.style.transform='translateY(-2px)'};
 el.onmouseout=()=>{el.style.background='transparent';el.style.transform=''};
@@ -490,28 +508,27 @@ m.appendChild(document.createElement('br'));
 const a=$('acts');a.innerHTML='';
 if(S.mode==='i'){
 a.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:14px;color:#f1c40f;font-size:13px;line-height:1.6;background:#0a0e27;border-radius:8px;border:2px solid #f1c40f">
-♾️ <b>Infinite Mode</b><br>Wave tanpa batas — musuh makin banyak & kuat<br>👑 Boss setiap 10 wave<br>🏆 Rekor terbaik: <b>Wave ${S.best||0}</b></div>`;
-$('sel').innerHTML=S.stage?`Dipilih: <b style="color:#f1c40f">♾️ Infinite Mode</b> · Rekor: Wave ${S.best||0}`:'Belum ada stage dipilih.';return}
+♾️ <b>Infinite Mode</b><br>Wave tanpa batas<br>👑 Boss setiap 10 wave<br>🏆 Rekor: <b>Wave ${S.best||0}</b></div>`;
+$('sel').innerHTML=S.stage?`Dipilih: <b style="color:#f1c40f">♾️ Infinite</b> · Rekor: Wave ${S.best||0}`:'Belum ada stage dipilih.';return}
 const L=S.mode==='l',list=L?REALMS:MAPS;
 list.forEach((mp,i)=>mk(mp.n,i===(L?S.ri:S.mi),()=>{if(L)S.ri=i;else S.mi=i;renderStage()}));
 (L?REALMS[S.ri].d:MAPS[S.mi].d).forEach((df,j)=>{const dv=L?df[0]:df,k=(L?'L'+S.ri:S.mi)+'_'+j,c=S.clr[k]||0,e=document.createElement('div');e.className='card';
-e.innerHTML=`<b style="color:#fff">${L?'Level '+(j+1):'Act '+(j+1)+(j===6?' 👑':'')}</b><div style="font-size:10px;color:#aaa">Diff x${dv}<br>${L?MATS[REALMS[S.ri].m][1]+' x'+df[1]+'<br>':''}${c?'✅ '+c+'x':'baru (150 💎)'}</div>`;
+e.innerHTML=`<b style="color:#fff;font-size:11px">${L?'Level '+(j+1):'Act '+(j+1)+(j===6?' 👑':'')}</b><div style="font-size:9px;color:#aaa">Diff x${dv}<br>${L?MATS[REALMS[S.ri].m][1]+' x'+df[1]+'<br>':''}${c?'✅ '+c+'x':'baru (150 💎)'}</div>`;
 if(S.stage&&S.stage.k===k)e.style.borderColor='#f1c40f';
 e.onclick=()=>{const nm=L?`${REALMS[S.ri].n} - Lv ${j+1}`:`${MAPS[S.mi].n} - Act ${j+1}${j===6?' (BOSS)':''}`;S.stage={k,n:nm,diff:dv,boss:!L&&j===6,mat:L?REALMS[S.ri].m:null,drop:L?df[1]:0,wp:L?'legend':MAP_WP[S.mi]};renderStage()};a.appendChild(e)});
 if(L){const rm=REALMS[S.ri].m;
 const hasToken=TOKEN_DROP_MATS.includes(rm);
 if(SECRET_DROPS[rm]){const sID=SECRET_DROPS[rm];
-a.insertAdjacentHTML('beforeend',`<div style="grid-column:1/-1;background:linear-gradient(135deg,#1a0033,#0a0e27);border:2px solid #ff00ff;border-radius:8px;padding:12px;margin-top:6px;text-align:center;box-shadow:0 0 15px rgba(255,0,255,.4)">
-<div style="font-size:13px;color:#ff00ff;font-weight:bold">🌟 SECRET DROP (0.85%)</div>
-<div style="font-size:26px;margin:6px 0">${DEF[sID].icon}</div>
-<div style="color:#fff;font-weight:bold">${DEF[sID].name}</div>
-<div style="font-size:10px;color:#aaa;margin-top:4px">Rarity: <b style="color:#ff00ff">SECRET</b> · ${STAT_HINT(sID)}</div>
-<div style="font-size:10px;color:#ffd700;margin-top:4px">🧬 Bisa di-Evolve jadi TRANSCENDENT!</div></div>`)}
+a.insertAdjacentHTML('beforeend',`<div style="grid-column:1/-1;background:linear-gradient(135deg,#1a0033,#0a0e27);border:2px solid #ff00ff;border-radius:8px;padding:10px;margin-top:6px;text-align:center">
+<div style="font-size:12px;color:#ff00ff;font-weight:bold">🌟 SECRET DROP (0.85%)</div>
+<div style="font-size:22px;margin:4px 0">${DEF[sID].icon}</div>
+<div style="color:#fff;font-weight:bold;font-size:13px">${DEF[sID].name}</div>
+<div style="font-size:10px;color:#f1c40f;margin-top:4px">🧬 Bisa di-Evolve jadi TRANSCENDENT!</div></div>`)}
 if(hasToken){
-a.insertAdjacentHTML('beforeend',`<div style="grid-column:1/-1;background:linear-gradient(135deg,#003344,#0a0e27);border:2px solid #66ccff;border-radius:8px;padding:10px;margin-top:6px;text-align:center;box-shadow:0 0 15px rgba(102,204,255,.4)">
-<div style="font-size:13px;color:#66ccff;font-weight:bold">🎲 TRAIT REROLL DROP</div>
-<div style="font-size:24px;margin:4px 0">🎲</div>
-<div style="color:#fff;font-weight:bold">0-3 Token per clear</div></div>`)}}
+a.insertAdjacentHTML('beforeend',`<div style="grid-column:1/-1;background:linear-gradient(135deg,#003344,#0a0e27);border:2px solid #66ccff;border-radius:8px;padding:10px;margin-top:6px;text-align:center">
+<div style="font-size:12px;color:#66ccff;font-weight:bold">🎲 TRAIT REROLL DROP</div>
+<div style="font-size:22px;margin:4px 0">🎲</div>
+<div style="color:#fff;font-weight:bold;font-size:13px">0-3 Token per clear</div></div>`)}}
 $('sel').textContent=S.stage?'Dipilih: '+S.stage.n:'Belum ada stage dipilih.'}
 function summon(n){
 if(S.gems<100*n)return;
