@@ -114,7 +114,8 @@ ethereal:{n:'Ethereal',i:'👻',c:'#aa66ff',rar:'mythic',chance:0.175,tiers:[{dm
 monarch:{n:'Monarch',i:'👑',c:'#ff00ff',rar:'mythic',chance:0.1,tiers:[{dmg:300,cd:-10,rng:5}],f:t=>`+${t.dmg}% DMG · ${t.cd}% CD · +${t.rng}% RNG · ⚠️ Max 1`,special:'monarch'}
 };
 const RAR_COLOR_TRAIT={common:'#b0b0b0',legendary:'#f39c12',mythic:'#e74c3c'};
-function mkTrait(id){const t=TRAITS[id];if(!t)return null;const ti=Math.floor(Math.random()*t.tiers.length);return{id,tier:ti,...t.tiers[ti]}}
+/* Trait disimpan sebagai {id, tier}. Field tampilan diambil dari TRAITS[id]. */
+function mkTrait(id){const t=TRAITS[id];if(!t)return null;const ti=Math.floor(Math.random()*t.tiers.length);return{id,tier:ti}}
 function rollTrait(){const r=Math.random()*100;
 if(r<0.1)return mkTrait('monarch');
 if(r<0.275)return mkTrait('ethereal');
@@ -124,7 +125,14 @@ if(r<3.0)return mkTrait('blitz');
 if(r<9.5)return mkTrait('marksman');
 const c=Math.random()*3;if(c<1)return mkTrait('vigor');if(c<2)return mkTrait('swift');return mkTrait('range')}
 const rndTrait=()=>rollTrait();
-const getTrait=u=>{if(!u.trait)return null;if(typeof u.trait==='string')return mkTrait(u.trait);const t=TRAITS[u.trait.id];if(!t)return null;return{...u.trait,f:t.f,special:t.special,n:t.n,i:t.i,c:t.c,rar:t.rar}};
+function getTrait(u){
+  if(!u.trait)return null;
+  const id=typeof u.trait==='string'?u.trait:u.trait.id;
+  const t=TRAITS[id];if(!t)return null;
+  const tier=typeof u.trait==='object'&&u.trait.tier!==undefined?u.trait.tier:0;
+  const tt=t.tiers[tier]||t.tiers[0];
+  return{id,tier,...tt,f:t.f,special:t.special,n:t.n,i:t.i,c:t.c,rar:t.rar};
+}
 const REDEEM_CODES={
 HTD2026:{gems:1000,rr:25,desc:'1000 💎 + 25 🎲'},
 TDREROLL:{gems:0,rr:100,desc:'100 🎲'},
@@ -136,8 +144,12 @@ function save(){try{localStorage.setItem('td2',JSON.stringify({gems:S.gems,coins
 try{const d=JSON.parse(localStorage.getItem('td2'));if(d)Object.assign(S,d)}catch(e){}
 if(!S.usedCodes)S.usedCodes={};
 if(typeof S.rr!=='number')S.rr=0;
-if(!S.inv.length)for(const id of['archer','swordsman','hunter'])S.inv.push({iid:S.nid++,id,rar:'common',lv:1,trait:rndTrait()});
-S.inv.forEach(u=>{u.lv=1;if(!u.trait||typeof u.trait==='string')u.trait=rndTrait()});
+if(!S.inv.length)for(const id of['archer','swordsman','hunter'])S.inv.push({iid:S.nid++,id,rar:'common',lv:1,trait:null});
+/* Fix legacy: konversi trait string ke null, jangan reset level */
+S.inv.forEach(u=>{
+  if(typeof u.trait==='string')u.trait=null;
+  if(u.lv===undefined||u.lv===null||u.lv<1)u.lv=1;
+});
 S.load=S.load.filter(i=>S.inv.some(u=>u.iid===i));
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400)}
 function show(n){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));$(n).classList.add('on')}
@@ -192,7 +204,8 @@ setTimeout(()=>$('rdi').focus(),100);
 /* ===== MENU ===== */
 function card(u,fn){const d=DEF[u.id],r=R[u.rar],s=stats(u),tr=s.trait,e=document.createElement('div');e.className='card';e.style.borderColor=r.c;
 const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';
-e.innerHTML=`<div style="font-size:20px">${d.icon}</div><b style="color:#fff">${d.name}</b><div style="color:${r.c};font-size:10px">${r.n} · ${ROLE[role(d)][0]}</div>${tr?`<div style="font-size:9px;color:${tr.c}">${tr.i} ${tr.n}${tl}</div>`:''}<div style="color:#f1c40f;font-size:10px">Max ${maxDep(u)} · 🪙${placeCost(u)}</div><div style="font-size:10px;color:#aaa">DMG ${s.dmg} · RNG ${s.rng} · CD ${s.cd.toFixed(2)}s</div>`;e.onclick=fn;return e}
+const trHTML=tr?`<div style="font-size:9px;color:${tr.c}">${tr.i} ${tr.n}${tl}</div>`:`<div style="font-size:9px;color:#666">— no trait —</div>`;
+e.innerHTML=`<div style="font-size:20px">${d.icon}</div><b style="color:#fff">${d.name}</b><div style="color:${r.c};font-size:10px">${r.n} · ${ROLE[role(d)][0]}</div>${trHTML}<div style="color:#f1c40f;font-size:10px">Max ${maxDep(u)} · 🪙${placeCost(u)}</div><div style="font-size:10px;color:#aaa">DMG ${s.dmg} · RNG ${s.rng} · CD ${s.cd.toFixed(2)}s</div>`;e.onclick=fn;return e}
 function updMenu(){
 $('mg').textContent=S.gems;$('mr').textContent=S.rr||0;$('mc').textContent=Math.floor(S.coins);
 $('mt').innerHTML=Object.keys(MATS).filter(k=>S.mats[k]).map(k=>`<span style="border:1px solid #2a3a6a;border-radius:10px;padding:2px 7px;font-size:12px">${MATS[k][1]} ${S.mats[k]}</span>`).join(' ');
@@ -236,7 +249,7 @@ for(const k of['common','rare','epic','legendary','mythic','td']){a+=R[k].p;if(x
 const p=POOL[r],d=p[Math.floor(Math.random()*p.length)];
 const dup=S.inv.some(u=>u.id===d[0]);
 if(dup){S.gems+=25;soldCount++;soldGems+=25;soldNames[d[0]]=(soldNames[d[0]]||0)+1;continue}
-const u={iid:S.nid++,id:d[0],rar:r,lv:1,trait:rndTrait()};S.inv.push(u);got.push(u);}
+const u={iid:S.nid++,id:d[0],rar:r,lv:1,trait:null};S.inv.push(u);got.push(u);}
 let msg='';
 if(got.length){got.sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar));const best=got[0];msg=`${DEF[best.id].icon} ${DEF[best.id].name} (${R[best.rar].n})!`;if(got.length>1)msg=`✨ ${got.length} unit baru! Terbaik: `+msg}
 if(soldCount>0){const soldList=Object.keys(soldNames).map(id=>`${DEF[id].icon}${DEF[id].name}×${soldNames[id]}`).join(' ');msg+=(msg?' · ':'')+`♻️ Duplikat: ${soldList} (+${soldGems}💎)`}
@@ -287,7 +300,7 @@ if(es&&u.i.id==='void_sovereign'){ring(t.x,t.y,80,'#ff00ff',.7,5);parts(t.x,t.y,
 ring(u.x,u.y,td?34:28,c,.3,3)}
 /* ===== GAME CORE ===== */
 function startStage(){if(!S.stage||!S.load.length)return;
-S.coins=200;S.inv.forEach(u=>u.lv=1);
+S.coins=200;
 G={pl:[],en:[],fx:[],par:[],bm:[],wave:0,lives:BASE,act:false,q:[],qt:0,hp:1,over:false,paused:false,cd:15,sel:null,selP:null,shake:0,sk:0,flash:0,fc:'#fff',we:0,skipped:false,inf:S.mode==='i',wp:WPS[S.stage.wp]||WPS.forest};
 $('sk').style.display='none';pop.style.display='none';$('ov').style.display='none';show('game');ui()}
 function startWave(){
@@ -403,7 +416,7 @@ if(dup){S.gems+=500;secretHTML=`<div style="border:2px solid #ff00ff;border-radi
 <div style="font-size:28px">${DEF[id].icon}</div><b style="color:#ff00ff;font-size:16px">🌟 SECRET DUPLICATE!</b>
 <div style="color:#aaa;font-size:12px;margin-top:4px">${DEF[id].name} (duplikat)</div>
 <div style="color:#f1c40f;font-weight:bold;margin-top:4px">+500 💎 (kompensasi)</div></div>`;save()}
-else{S.inv.push({iid:S.nid++,id,rar:'secret',lv:1,trait:rndTrait()});
+else{S.inv.push({iid:S.nid++,id,rar:'secret',lv:1,trait:null});
 secretHTML=`<div style="border:3px solid #ff00ff;border-radius:10px;padding:14px;margin:10px 0;background:linear-gradient(135deg,#2a0033,#0a0e27);box-shadow:0 0 25px #ff00ff;animation:glow 1.5s infinite alternate">
 <div style="font-size:36px">${DEF[id].icon}</div><b style="color:#ff00ff;font-size:20px;text-shadow:0 0 15px #ff00ff">✨ SECRET UNIT! ✨</b>
 <div style="color:#fff;font-size:15px;margin-top:6px;font-weight:bold">${DEF[id].name}</div>
@@ -423,14 +436,17 @@ $('sw').disabled=G.act||G.over||(!G.inf&&G.wave>=MAXW);if(soft)return;hand();inf
 function hand(){const h=$('hand');h.innerHTML='';
 for(const id of S.load){const u=S.inv.find(x=>x.iid===id);if(!u)continue;const d=DEF[u.id],r=R[u.rar],ro=ROLE[role(d)],c=cnt(u),m=maxDep(u),full=c>=m,tr=getTrait(u),e=document.createElement('div');
 const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';
+const trHTML=tr?`<div style="color:${tr.c};font-size:9px">${tr.i} ${tr.n}${tl}</div>`:`<div style="color:#666;font-size:9px">— no trait —</div>`;
 e.className='hc'+(full?' dim':'')+(G.sel===id?' sel':'');e.style.borderColor=G.sel===id?'#f1c40f':r.c;
-e.innerHTML=`<span>${d.icon}</span><div><b style="color:#fff">${d.name}</b><div style="color:${ro[1]}">${ro[0]}</div>${tr?`<div style="color:${tr.c};font-size:9px">${tr.i} ${tr.n}${tl}</div>`:''}<div style="color:#f1c40f">🪙 ${placeCost(u)}</div></div><i>${m-c}/${m}</i>`;
+e.innerHTML=`<span>${d.icon}</span><div><b style="color:#fff">${d.name}</b><div style="color:${ro[1]}">${ro[0]}</div>${trHTML}<div style="color:#f1c40f">🪙 ${placeCost(u)}</div></div><i>${m-c}/${m}</i>`;
 e.onclick=()=>{if(full)return toast('Batas '+ro[0]+' penuh ('+m+')');G.sel=G.sel===id?null:id;G.selP=null;hand();info()};h.appendChild(e)}}
 function info(){const u=G.pl.find(x=>x.pid===G.selP);if(!u){pop.style.display='none';return}
 const i=u.i,st=stats(i),mx=MAXL[i.rar],c=upCost(i),d=DEF[i.id],rc=RECIPES[i.id],ro=ROLE[role(d)];let ev='';
 const tr=st.trait;
 const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';
-const traitHTML=tr?`<div class="row"><span>🎲 Trait</span><b style="color:${tr.c}">${tr.i} ${tr.n}${tl}</b></div><div style="font-size:10px;color:#888;margin:0 0 4px">${tr.f?tr.f(tr):''}</div>`:'';
+const traitHTML=tr
+  ?`<div class="row"><span>🎲 Trait</span><b style="color:${tr.c}">${tr.i} ${tr.n}${tl}</b></div><div style="font-size:10px;color:#888;margin:0 0 4px">${tr.f?tr.f(tr):''}</div>`
+  :`<div class="row"><span>🎲 Trait</span><b style="color:#666">— Belum ada —</b></div><div style="font-size:10px;color:#888;margin:0 0 4px">Reroll di menu 🎲 Traits</div>`;
 const es=EVO_SKILL[i.id];
 const skillName=es?`${es.icon} ${es.name}`:st.skill;
 const skillDesc=es?`<div style="font-size:10px;color:#888;margin:2px 0 4px">${es.desc}</div>`:'';
@@ -520,14 +536,19 @@ let h=`<h2 style="margin-bottom:6px">🎲 Traits</h2>
 <div style="max-height:55vh;overflow-y:auto;width:min(460px,88vw)">`;
 if(!S.inv.length)h+='<p style="color:#888">Belum ada unit.</p>';
 const sorted=[...S.inv].sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar));
-for(const u of sorted){const d=DEF[u.id],r=R[u.rar],tr=getTrait(u);if(!tr)continue;
-const tl=tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';
-const rc=RAR_COLOR_TRAIT[tr.rar]||'#888';
+for(const u of sorted){
+const d=DEF[u.id],r=R[u.rar],tr=getTrait(u);
+const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';
+const rc=tr?(RAR_COLOR_TRAIT[tr.rar]||'#888'):'#666';
 h+=`<div class="card" style="cursor:default;text-align:left;margin:5px 0;border-color:${r.c};display:flex;justify-content:space-between;align-items:center;gap:8px">
 <div style="flex:1;min-width:0">
 <div><b style="color:#fff">${d.icon} ${d.name}</b> <span style="color:${r.c};font-size:10px">${r.n}</span></div>
-<div style="color:${tr.c};font-size:12px;margin-top:3px">${tr.i} <b>${tr.n}${tl}</b> <span style="color:${rc};font-size:9px">[${tr.rar}]</span></div>
-<div style="color:#aaa;font-size:10px">${tr.f?tr.f(tr):''}</div></div>
+${tr
+  ?`<div style="color:${tr.c};font-size:12px;margin-top:3px">${tr.i} <b>${tr.n}${tl}</b> <span style="color:${rc};font-size:9px">[${tr.rar}]</span></div>
+    <div style="color:#aaa;font-size:10px">${tr.f?tr.f(tr):''}</div>`
+  :`<div style="color:#666;font-size:12px;margin-top:3px"><b>— Belum ada trait —</b></div>
+    <div style="color:#888;font-size:10px">Klik Reroll untuk mendapatkan trait</div>`}
+</div>
 <button class="y rr" data-i="${u.iid}" style="margin:0;padding:6px 10px;font-size:12px;flex-shrink:0" ${((S.rr||0)<=0)?'disabled':''}>🎲 Reroll (${S.rr||0})</button>
 </div>`}
 h+=`<div style="border-top:1px solid #2a3a6a;margin-top:10px;padding-top:8px;font-size:10px;color:#888;line-height:1.7">
