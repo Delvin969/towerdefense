@@ -38,6 +38,7 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 .tg{display:flex;justify-content:space-between;align-items:center;gap:20px;background:#0a0e27;padding:10px;border-radius:8px;margin:8px 0;text-align:left;font-size:14px}
 .tg small{color:#888}.tg input{width:22px;height:22px}
 @keyframes glow{from{box-shadow:0 0 10px #ff00ff}to{box-shadow:0 0 30px #ff00ff,0 0 50px #ff00ff}}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
 </style></head><body>
 <div id="toast"></div>
 <div id="menu" class="sc on">
@@ -239,7 +240,8 @@ a.innerHTML+=`<div style="grid-column:1/-1;background:linear-gradient(135deg,#1a
 <div style="font-size:13px;color:#ff00ff;font-weight:bold">🌟 SECRET DROP (0.85%)</div>
 <div style="font-size:26px;margin:6px 0">${DEF[sID].icon}</div>
 <div style="color:#fff;font-weight:bold">${DEF[sID].name}</div>
-<div style="font-size:10px;color:#aaa;margin-top:4px">Rarity: <b style="color:#ff00ff">SECRET</b> · ${STAT_HINT(sID)}</div></div>`}
+<div style="font-size:10px;color:#aaa;margin-top:4px">Rarity: <b style="color:#ff00ff">SECRET</b> · ${STAT_HINT(sID)}</div>
+<div style="font-size:10px;color:#f1c40f;margin-top:4px">🧬 Bisa di-Evolve jadi God!</div></div>`}
 if(hasToken){
 a.innerHTML+=`<div style="grid-column:1/-1;background:linear-gradient(135deg,#003344,#0a0e27);border:2px solid #66ccff;border-radius:8px;padding:10px;margin-top:6px;text-align:center;box-shadow:0 0 15px rgba(102,204,255,.4)">
 <div style="font-size:13px;color:#66ccff;font-weight:bold">🎲 TRAIT REROLL DROP</div>
@@ -475,13 +477,9 @@ const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?['
 const trHTML=tr?`<div style="color:${tr.c};font-size:9px">${tr.i} ${tr.n}${tl}</div>`:`<div style="color:#666;font-size:9px">— no trait —</div>`;
 e.className='hc'+(full?' dim':'')+(G.sel===id?' sel':'');e.style.borderColor=G.sel===id?'#f1c40f':r.c;
 e.innerHTML=`<span>${d.icon}</span><div><b style="color:#fff">${d.name}</b><div style="color:${ro[1]}">${ro[0]}</div>${trHTML}<div style="color:#f1c40f">🪙 ${placeCost(u)}</div></div><i>${m-c}/${m}</i>`;
-e.onclick=()=>{
-if(full){toast('Batas '+ro[0]+' penuh ('+m+')');return}
-G.sel=G.sel===id?null:id;G.selP=null;
-/* Update class tanpa re-render (hindari bug freeze) */
-[...h.children].forEach(c=>c.classList.remove('sel'));
-if(G.sel===id)e.classList.add('sel');
-info()};
+e.onclick=()=>{if(full){toast('Batas '+ro[0]+' penuh ('+m+')');return}
+G.sel=G.sel===id?null:id;G.selP=null;[...h.children].forEach(c=>c.classList.remove('sel'));
+if(G.sel===id)e.classList.add('sel');info()};
 h.appendChild(e)}}
 function info(){
 try{
@@ -585,54 +583,177 @@ $('ob').innerHTML=`<h2 style="color:#ff00ff;text-shadow:0 0 20px #ff00ff">🌟 E
 <button id="evx" class="g">OK</button>`;
 $('evx').onclick=()=>{$('ov').style.display='none';evMenu()};
 toast('🌟 '+DEF[u.id].name+' — Skill: '+es.name)})}
-function traitMenu(){
-$('ov').style.display='flex';
-const sums={common:0,legendary:0,mythic:0};
-Object.values(TRAITS).forEach(t=>sums[t.rar]+=t.chance);
-let h=`<h2 style="margin-bottom:6px">🎲 Traits</h2>
-<p style="color:#888;font-size:11px;margin-bottom:4px">Trait hanya menambah CD/DMG/Range</p>
+/* ===== TRAIT MANAGER (REWORK) ===== */
+let TM={selected:null,pending:null,old:null,lockUntil:0,lockTimer:null,auto:false};
+function clearTMLock(){if(TM.lockTimer){clearInterval(TM.lockTimer);TM.lockTimer=null}}
+function resetTM(){clearTMLock();TM.selected=null;TM.pending=null;TM.old=null;TM.auto=false}
+function traitMenu(){$('ov').style.display='flex';renderTraitMenu()}
+function pickerMenu(){
+let h=`<h2 style="margin-bottom:6px">🎯 Pilih Unit</h2>
 <div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between">
 <span style="color:#aaa">🎲 Token</span><b style="color:#f1c40f">${S.rr||0}</b></div>
-<p style="color:#666;font-size:10px;margin-bottom:6px">Reroll hanya pakai 🎲 token. Dapatkan dari kode redeem atau Legend Stage (Void Core/Star Realm/Death Realm).</p>
 <div style="max-height:55vh;overflow-y:auto;width:min(460px,88vw)">`;
 if(!S.inv.length)h+='<p style="color:#888">Belum ada unit.</p>';
 const sorted=[...S.inv].sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar));
 for(const u of sorted){
 const d=DEF[u.id],r=R[u.rar],tr=getTrait(u);
 const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';
-const rc=tr?(RAR_COLOR_TRAIT[tr.rar]||'#888'):'#666';
-h+=`<div class="card" style="cursor:default;text-align:left;margin:5px 0;border-color:${r.c};display:flex;justify-content:space-between;align-items:center;gap:8px">
-<div style="flex:1;min-width:0">
+h+=`<div class="card tmc" data-i="${u.iid}" style="text-align:left;margin:5px 0;border-color:${r.c}">
 <div><b style="color:#fff">${d.icon} ${d.name}</b> <span style="color:${r.c};font-size:10px">${r.n}</span></div>
-${tr
-  ?`<div style="color:${tr.c};font-size:12px;margin-top:3px">${tr.i} <b>${tr.n}${tl}</b> <span style="color:${rc};font-size:9px">[${tr.rar}]</span></div>
-    <div style="color:#aaa;font-size:10px">${tr.f?tr.f(tr):''}</div>`
-  :`<div style="color:#666;font-size:12px;margin-top:3px"><b>— Belum ada trait —</b></div>
-    <div style="color:#888;font-size:10px">Klik Reroll untuk mendapatkan trait</div>`}
-</div>
-<button class="y rr" data-i="${u.iid}" style="margin:0;padding:6px 10px;font-size:12px;flex-shrink:0" ${((S.rr||0)<=0)?'disabled':''}>🎲 Reroll (${S.rr||0})</button>
+${tr?`<div style="color:${tr.c};font-size:12px">${tr.i} <b>${tr.n}${tl}</b> <span style="color:${RAR_COLOR_TRAIT[tr.rar]||'#888'};font-size:9px">[${tr.rar}]</span></div><div style="color:#aaa;font-size:10px">${tr.f?tr.f(tr):''}</div>`
+:`<div style="color:#666;font-size:11px">— belum ada trait —</div>`}
 </div>`}
-h+=`<div style="border-top:1px solid #2a3a6a;margin-top:10px;padding-top:8px;font-size:10px;color:#888;line-height:1.7">
-<b style="color:#f1c40f">📖 Chance Trait:</b><br>
-💪 Vigor 26% · 💨 Swift 26% · 🎯 Range 26% <span style="color:#666">(Common, 3 tier)</span><br>
-🏹 Marksman 6.5% · ⚡ Blitz 1.85% <span style="color:#666">(Legendary)</span><br>
-☀️ Solar 0.5% · 🎯 Deadeye 0.375% · 👻 Ethereal 0.175% · 👑 Monarch 0.1%<br>
-<b style="color:#f1c40f">🎲 Token: ${S.rr||0}</b></div>`;
-$('ob').innerHTML=h+'</div><button id="trx" class="r" style="margin-top:8px">Tutup</button>';
-$('trx').onclick=()=>{$('ov').style.display='none';updMenu()};
-document.querySelectorAll('.rr').forEach(b=>b.onclick=()=>{
-if((S.rr||0)<=0)return toast('❌ Token 🎲 habis!');
-const u=S.inv.find(x=>x.iid==b.dataset.i);if(!u)return;
-u.trait=rndTrait();
-S.rr--;
-/* Sync trait ke unit di field juga */
-if(G)G.pl.forEach(p=>{if(p.i.iid===u.iid){p.i.trait=u.trait?{...u.trait}:null}});
-const tr=getTrait(u);
-const tl=tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';
+h+=`</div><button id="tmCancel" class="r" style="margin-top:8px;width:100%">← Kembali</button>`;
+$('ob').innerHTML=h;
+document.querySelectorAll('.tmc').forEach(el=>el.onclick=()=>{
+TM.selected=+el.dataset.i;TM.pending=null;TM.old=null;
+renderTraitMenu();
+});
+$('tmCancel').onclick=()=>{TM.selected=null;renderTraitMenu()};
+}
+function renderTraitMenu(){
+clearTMLock();
+let h=`<h2 style="margin-bottom:6px">🎲 Trait Manager</h2>
+<div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between;align-items:center">
+<span style="color:#aaa">🎲 Token</span><span><b style="color:#f1c40f">${S.rr||0}</b>${TM.auto?' <span style="color:#2ecc71;font-size:10px;font-weight:bold">▶ AUTO</span>':''}</span></div>`;
+
+if(TM.selected===null){
+h+=`<button id="tmAdd" class="y" style="width:100%;font-size:26px;padding:16px;margin:10px 0;animation:pulse 1.5s infinite">➕</button>
+<p style="color:#888;font-size:11px;text-align:center;margin-top:8px">Klik tombol + untuk pilih unit yang mau di-reroll trait-nya</p>`;
+$('ob').innerHTML=h+`<button id="tmClose" class="r" style="width:100%;margin-top:10px">Tutup</button>`;
+$('tmAdd').onclick=()=>pickerMenu();
+$('tmClose').onclick=()=>{resetTM();$('ov').style.display='none';updMenu()};
+return;
+}
+
+const u=S.inv.find(x=>x.iid===TM.selected);
+if(!u){TM.selected=null;return renderTraitMenu()}
+const d=DEF[u.id],r=R[u.rar];
+const showTrait=TM.pending||getTrait(u);
+const isPending=!!TM.pending;
+const locked=isPending&&Date.now()<TM.lockUntil;
+const remain=locked?Math.max(0,(TM.lockUntil-Date.now())/1000):0;
+
+h+=`<div class="card" style="cursor:default;text-align:center;border-color:${r.c};margin-bottom:8px">
+<div style="font-size:30px">${d.icon}</div>
+<b style="color:#fff;font-size:15px">${d.name}</b>
+<div style="color:${r.c};font-size:11px">${r.n}</div>
+</div>`;
+
+if(showTrait){
+const tl=showTrait.tier!==undefined&&TRAITS[showTrait.id]&&TRAITS[showTrait.id].tiers.length>1?[' I',' II',' III'][showTrait.tier]:'';
+const rc=RAR_COLOR_TRAIT[showTrait.rar]||'#888';
+h+=`<div style="background:${isPending?'linear-gradient(135deg,#2a0033,#0a0e27)':'#0a0e27'};border:2px solid ${showTrait.c};border-radius:8px;padding:10px;margin-bottom:8px;text-align:center;${isPending?'animation:glow 1.2s infinite alternate':''}">
+<div style="font-size:10px;color:#888;margin-bottom:2px">${isPending?'✨ TRAIT BARU ✨':'TRAIT SAAT INI'}</div>
+<div style="font-size:26px">${showTrait.i}</div>
+<b style="color:${showTrait.c};font-size:16px">${showTrait.n}${tl}</b>
+<div style="color:${rc};font-size:10px">[${showTrait.rar}]</div>
+<div style="color:#aaa;font-size:10px;margin-top:3px">${showTrait.f?showTrait.f(showTrait):''}</div>
+</div>`;
+}else{
+h+=`<div style="background:#0a0e27;border:2px dashed #2a3a6a;border-radius:8px;padding:16px;margin-bottom:8px;text-align:center">
+<div style="font-size:11px;color:#666">— Belum ada trait —</div></div>`;
+}
+
+if(isPending){
+h+=`<div style="background:rgba(241,196,15,.15);border:1px solid #f1c40f;border-radius:6px;padding:6px;margin-bottom:6px;text-align:center;font-size:11px;color:#f1c40f;font-weight:bold">⚠️ Pilih KEEP atau SKIP</div>
+<div style="display:flex;gap:6px;margin-bottom:6px">
+<button id="tmKeep" class="g" style="flex:1;font-size:14px;padding:12px" ${locked?'disabled':''}>✓ KEEP${locked?' ('+remain.toFixed(1)+'s)':''}</button>
+<button id="tmSkip" class="r" style="flex:1;font-size:14px;padding:12px" ${locked?'disabled':''}>✗ SKIP${locked?' ('+remain.toFixed(1)+'s)':''}</button>
+</div>`;
+}else{
+const noToken=(S.rr||0)<=0;
+h+=`<div style="display:flex;gap:6px;margin-bottom:6px;align-items:stretch">
+<button id="tmRoll" class="y" style="flex:1;font-size:15px;padding:12px" ${noToken?'disabled':''}>🎲 Reroll (${S.rr||0})</button>
+<button id="tmAuto" class="y" style="width:58px;padding:4px;font-size:10px;flex-shrink:0;line-height:1.15;${TM.auto?'background:linear-gradient(#e74c3c,#c0392b)':''}" ${noToken&&!TM.auto?'disabled':''}>${TM.auto?'⏸<br>STOP':'▶<br>AUTO'}</button>
+</div>`;
+}
+
+h+=`<button id="tmBack" style="width:100%;margin-top:4px;padding:6px;font-size:12px">← Ganti Unit</button>
+<button id="tmClose" class="r" style="width:100%;margin-top:4px;padding:6px;font-size:12px">Tutup</button>`;
+
+$('ob').innerHTML=h;
+
+$('tmClose').onclick=()=>{resetTM();$('ov').style.display='none';updMenu()};
+$('tmBack').onclick=()=>{clearTMLock();TM.selected=null;TM.pending=null;TM.old=null;renderTraitMenu()};
+
+if(isPending){
+if(locked){
+TM.lockTimer=setInterval(()=>{
+const now=Date.now();
+if(now>=TM.lockUntil){clearTMLock();renderTraitMenu()}
+else{
+const rem=Math.max(0,(TM.lockUntil-now)/1000);
+const k=$('tmKeep'),sk=$('tmSkip');
+if(k)k.textContent='✓ KEEP ('+rem.toFixed(1)+'s)';
+if(sk)sk.textContent='✗ SKIP ('+rem.toFixed(1)+'s)';
+}
+},100);
+}else if(TM.auto){
+/* Auto decide after lock expired */
+const pt=TM.pending;
+const tr=TRAITS[pt.id];
+const isGood=tr&&(tr.rar==='legendary'||tr.rar==='mythic');
+setTimeout(()=>{
+if(!TM.auto||TM.pending!==pt)return;
+if(isGood){
+u.trait=pt;
+if(G)G.pl.forEach(p=>{if(p.i.iid===u.iid){p.i.trait={...pt}}});
 save();
-setTimeout(()=>toast(`${tr.i} Reroll → ${tr.n}${tl}! Sisa 🎲 ${S.rr}`),300);
-traitMenu();updMenu();
-if(G)ui()})}
+const nt=getTrait(u);
+const tl=nt.tier!==undefined&&TRAITS[nt.id]&&TRAITS[nt.id].tiers.length>1?[' I',' II',' III'][nt.tier]:'';
+TM.pending=null;TM.old=null;TM.auto=false;
+toast(`✅ Auto: ${nt.i} ${nt.n}${tl}`);
+renderTraitMenu();
+}else{
+u.trait=TM.old;
+if(G)G.pl.forEach(p=>{if(p.i.iid===u.iid){p.i.trait=TM.old?{...TM.old}:null}});
+TM.pending=null;TM.old=null;
+if((S.rr||0)<=0){TM.auto=false;toast('❌ Token habis');renderTraitMenu();return}
+setTimeout(()=>{if(TM.auto&&TM.selected!==null){const uu=S.inv.find(x=>x.iid===TM.selected);if(uu)doRoll(uu)}},120);
+}
+},200);
+}
+if(!TM.auto){
+$('tmKeep').onclick=()=>{
+clearTMLock();
+u.trait=TM.pending;
+if(G)G.pl.forEach(p=>{if(p.i.iid===u.iid){p.i.trait={...u.trait}}});
+const nt=getTrait(u);
+const tl=nt.tier!==undefined&&TRAITS[nt.id]&&TRAITS[nt.id].tiers.length>1?[' I',' II',' III'][nt.tier]:'';
+save();toast(`✓ KEEP: ${nt.i} ${nt.n}${tl}!`);
+TM.pending=null;TM.old=null;
+renderTraitMenu();
+};
+$('tmSkip').onclick=()=>{
+clearTMLock();
+u.trait=TM.old;
+if(G)G.pl.forEach(p=>{if(p.i.iid===u.iid){p.i.trait=TM.old?{...TM.old}:null}});
+save();toast('✗ SKIP');
+TM.pending=null;TM.old=null;
+renderTraitMenu();
+};
+}
+}else{
+$('tmRoll').onclick=()=>doRoll(u);
+$('tmAuto').onclick=()=>{
+TM.auto=!TM.auto;
+if(TM.auto){toast('▶ Auto Roll ON — cari Legendary/Mythic');doRoll(u)}
+else{toast('⏸ Auto Roll OFF');renderTraitMenu()}
+};
+}
+}
+
+function doRoll(u){
+if((S.rr||0)<=0){toast('❌ Token habis!');return}
+TM.old=u.trait?JSON.parse(JSON.stringify(u.trait)):null;
+TM.pending=rndTrait();
+S.rr--;
+TM.lockUntil=Date.now()+1500;
+save();
+renderTraitMenu();
+}
+
 $('evb').onclick=evMenu;
 $('trb').onclick=traitMenu;
 $('rdb').onclick=redeemMenu;
