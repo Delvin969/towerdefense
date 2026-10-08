@@ -494,7 +494,7 @@ const traitHTML=tr
 const es=EVO_SKILL[i.id];
 const skillName=es?`${es.icon} ${es.name}`:st.skill;
 const skillDesc=es?`<div style="font-size:10px;color:#888;margin:2px 0 4px">${es.desc}</div>`:'';
-const ultName=es?es.ult:ULT[st.skill].n;
+const ultName=es?es.ult:(ULT[st.skill]?ULT[st.skill].n:'ULTIMATE');
 if(rc){let can=true;ev=`<div style="margin-top:4px;color:#aaa">🧬 → ${DEF[rc.r].name}</div>`;
 for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;ev+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}
 ev+=`<button id="ev" class="y" ${can?'':'disabled'}>Evolve</button>`}
