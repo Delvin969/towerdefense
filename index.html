@@ -39,24 +39,24 @@ button.purple{background:linear-gradient(180deg,#9b59b6,#8e44ad)}
 .stage-card{background:#0a0e27;border:2px solid #2a3a6a;border-radius:8px;padding:10px;cursor:pointer;transition:.2s}
 .stage-card:hover{border-color:#f1c40f;transform:translateY(-2px)}
 .stage-card.cleared{border-color:#2ecc71}
-.stage-card.selected{border-color:#f1c40f;background:#1a2050}
-.stage-card .sname{font-weight:bold;font-size:13px}
-.stage-card .sinfo{font-size:11px;color:#aaa;margin-top:4px}
 .game-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;max-width:950px;margin-left:auto;margin-right:auto}
 .game-stats{display:flex;gap:14px;font-size:14px;flex-wrap:wrap;align-items:center}
 .game-stats b{color:#f1c40f}
 .canvas-wrap{position:relative;width:900px;max-width:100%;margin:0 auto}
 #gameCanvas{background:#111;border:2px solid #2a3a6a;border-radius:8px;display:block;cursor:pointer;width:100%}
 #pauseBtn{position:absolute;top:10px;right:10px;width:46px;height:46px;border-radius:50%;background:rgba(52,152,219,.85);padding:0;font-size:20px;border:2px solid #fff;z-index:5}
-.game-bottom{display:grid;grid-template-columns:1fr 280px;gap:10px;margin-top:10px;max-width:950px;margin-left:auto;margin-right:auto}
+.game-bottom{display:grid;grid-template-columns:1fr 300px;gap:10px;margin-top:10px;max-width:950px;margin-left:auto;margin-right:auto}
 @media(max-width:750px){.game-bottom{grid-template-columns:1fr}}
 .hand{background:#151a3a;border:2px solid #2a3a6a;border-radius:8px;padding:10px;min-height:100px}
 .hand h3{font-size:12px;color:#aaa;margin-bottom:6px}
 .hand-grid{display:flex;gap:6px;flex-wrap:wrap}
-.hand-unit{background:#0a0e27;border:2px solid #2a3a6a;border-radius:6px;padding:5px 9px;cursor:pointer;font-size:11px;transition:.2s;min-width:85px}
+.hand-unit{background:#0a0e27;border:2px solid #2a3a6a;border-radius:6px;padding:5px 9px;cursor:pointer;font-size:11px;transition:.2s;min-width:95px;position:relative}
 .hand-unit:hover{border-color:#3498db}
 .hand-unit.selected{border-color:#f1c40f;background:#1a2050}
-.info-panel{background:#151a3a;border:2px solid #2a3a6a;border-radius:8px;padding:10px;font-size:12px}
+.hand-unit.full{opacity:.4;cursor:not-allowed}
+.hand-unit .limit{position:absolute;top:2px;right:4px;font-size:9px;color:#f1c40f}
+.hand-unit.full .limit{color:#e74c3c}
+.info-panel{background:#151a3a;border:2px solid #2a3a6a;border-radius:8px;padding:10px;font-size:12px;max-height:520px;overflow-y:auto}
 .info-panel h3{font-size:12px;color:#aaa;margin-bottom:6px}
 .stat-row{display:flex;justify-content:space-between;margin:3px 0}
 .stat-row span:last-child{color:#f1c40f;font-weight:bold}
@@ -66,9 +66,9 @@ button.purple{background:linear-gradient(180deg,#9b59b6,#8e44ad)}
 #toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#151a3a;border:2px solid #3498db;border-radius:8px;padding:12px 24px;font-size:15px;opacity:0;transition:.3s;pointer-events:none;z-index:100;max-width:90%}
 #toast.show{opacity:1}
 #pauseOverlay,#resultOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:center;justify-content:center}
-.pause-box{background:#151a3a;border:2px solid #2a3a6a;border-radius:12px;padding:30px;text-align:center;max-width:400px}
+.pause-box{background:#151a3a;border:2px solid #2a3a6a;border-radius:12px;padding:30px;text-align:center;max-width:440px}
 .pause-box h2{margin-bottom:15px;font-size:26px}
-.pause-box button{display:block;width:220px;margin:8px auto;font-size:16px;padding:12px}
+.pause-box button{display:block;width:230px;margin:8px auto;font-size:16px;padding:12px}
 .empty-hint{color:#888;font-size:11px;text-align:center;grid-column:1/-1;padding:15px}
 .slots-info{font-size:12px;color:#aaa;margin-bottom:6px}
 </style>
@@ -96,6 +96,7 @@ button.purple{background:linear-gradient(180deg,#9b59b6,#8e44ad)}
     <div class="col">
       <h2>🎒 Inventori</h2>
       <div class="slots-info">Klik unit → masukkan ke Loadout</div>
+      <div id="roleFilter" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px"></div>
       <div class="unit-grid" id="inventoryGrid"></div>
     </div>
     <div class="col">
@@ -107,7 +108,7 @@ button.purple{background:linear-gradient(180deg,#9b59b6,#8e44ad)}
 
   <div class="panel" style="margin-top:15px">
     <h2>📍 Stage Terpilih</h2>
-    <div id="selectedStageBox" style="color:#aaa;font-size:14px;margin-bottom:10px">Belum ada stage dipilih. Pilih dari Campaign atau Legend.</div>
+    <div id="selectedStageBox" style="color:#aaa;font-size:14px;margin-bottom:10px">Belum ada stage dipilih.</div>
     <button id="playBtn" class="green" style="font-size:18px;padding:14px 36px">▶ MULAI PERTARUNGAN</button>
     <button id="campaignBtn" class="purple">🗺️ Campaign</button>
     <button id="legendBtn" class="gold">⚔️ Legend Stages</button>
@@ -168,7 +169,7 @@ button.purple{background:linear-gradient(180deg,#9b59b6,#8e44ad)}
   </div>
   <div class="game-bottom">
     <div class="hand">
-      <h3>🎒 Loadout (klik → klik canvas)</h3>
+      <h3>🎒 Loadout · Kuning = sisa slot</h3>
       <div class="hand-grid" id="handGrid"></div>
     </div>
     <div class="info-panel" id="infoPanel"></div>
@@ -188,61 +189,244 @@ button.purple{background:linear-gradient(180deg,#9b59b6,#8e44ad)}
 </div>
 
 <script>
-/* ============ DATA ============ */
+/* ============ RARITIES ============ */
 const RARITIES={
   common:{name:'Common',color:'#b0b0b0',chance:.500,dmg:1.0,rng:1.0,spd:1.0,cost:1.0},
   rare:{name:'Rare',color:'#4a90e2',chance:.250,dmg:1.35,rng:1.10,spd:1.10,cost:1.3},
   epic:{name:'Epic',color:'#9b59b6',chance:.150,dmg:1.8,rng:1.2,spd:1.2,cost:1.7},
-  legendary:{name:'Legendary',color:'#f39c12',chance:.070,dmg:2.5,rng:1.35,spd:1.3,cost:2.3},
-  mythic:{name:'Mythic',color:'#e74c3c',chance:.025,dmg:3.5,rng:1.5,spd:1.45,cost:3.2},
-  td:{name:'TD',color:'#00ffff',chance:.005,dmg:5.5,rng:1.75,spd:1.65,cost:4.5}
+  legendary:{name:'Legendary',color:'#f39c12',chance:.075,dmg:2.5,rng:1.35,spd:1.3,cost:2.3},
+  mythic:{name:'Mythic',color:'#e74c3c',chance:.024,dmg:3.5,rng:1.5,spd:1.45,cost:3.2},
+  td:{name:'TD',color:'#00ffff',chance:.001,dmg:5.5,rng:1.75,spd:1.65,cost:4.5}
 };
+
+/* ============ UNIT POOL ============ */
 const UNIT_POOL={
   common:[
     {id:'archer',name:'Archer',damage:8,range:90,cooldown:.7,skill:'single',cost:40,icon:'🏹'},
     {id:'swordsman',name:'Swordsman',damage:12,range:60,cooldown:.9,skill:'single',cost:40,icon:'⚔️'},
     {id:'apprentice',name:'Apprentice',damage:10,range:100,cooldown:1,skill:'single',cost:40,icon:'🔮'},
     {id:'spearman',name:'Spearman',damage:11,range:80,cooldown:.8,skill:'single',cost:40,icon:'🔱'},
-    {id:'hunter',name:'Hunter',damage:9,range:110,cooldown:.85,skill:'single',cost:40,icon:'🎯'}],
+    {id:'hunter',name:'Hunter',damage:9,range:110,cooldown:.85,skill:'single',cost:40,icon:'🎯'},
+    {id:'shieldman',name:'Shieldman',damage:6,range:55,cooldown:1.2,skill:'slow',cost:40,icon:'🛡️'},
+    {id:'crossbow',name:'Crossbowman',damage:10,range:115,cooldown:.95,skill:'single',cost:40,icon:'🎣'},
+    {id:'trainee_mage',name:'Trainee Mage',damage:9,range:95,cooldown:.85,skill:'single',cost:40,icon:'📖'}
+  ],
   rare:[
     {id:'ice_mage',name:'Ice Mage',damage:9,range:110,cooldown:.9,skill:'slow',cost:70,icon:'❄️'},
     {id:'knight',name:'Knight',damage:18,range:70,cooldown:1,skill:'single',cost:70,icon:'🛡️'},
     {id:'ranger',name:'Ranger',damage:11,range:130,cooldown:.6,skill:'single',cost:70,icon:'🏹'},
     {id:'monk',name:'Monk',damage:14,range:75,cooldown:.85,skill:'single',cost:70,icon:'🧘'},
-    {id:'wind_mage',name:'Wind Mage',damage:10,range:120,cooldown:.7,skill:'chain',cost:70,icon:'🌪️'}],
+    {id:'wind_mage',name:'Wind Mage',damage:10,range:120,cooldown:.7,skill:'chain',cost:70,icon:'🌪️'},
+    {id:'cleric',name:'Cleric',damage:6,range:90,cooldown:1.2,skill:'economy',cost:70,icon:'⛪'},
+    {id:'berserker',name:'Berserker',damage:22,range:65,cooldown:1.1,skill:'crit',cost:70,icon:'🪓'},
+    {id:'paladin',name:'Paladin',damage:20,range:80,cooldown:1.1,skill:'single',cost:70,icon:'⚜️'}
+  ],
   epic:[
     {id:'fire_wizard',name:'Fire Wizard',damage:15,range:100,cooldown:1.2,skill:'aoe',cost:110,icon:'🔥'},
     {id:'assassin',name:'Assassin',damage:30,range:80,cooldown:1.5,skill:'crit',cost:110,icon:'🗡️'},
     {id:'gold_miner',name:'Gold Miner',damage:5,range:80,cooldown:2,skill:'economy',cost:110,icon:'⛏️'},
     {id:'frost_kn',name:'Frost Knight',damage:20,range:90,cooldown:1,skill:'slow',cost:110,icon:'🧊'},
-    {id:'alchemist',name:'Alchemist',damage:12,range:100,cooldown:1.1,skill:'economy',cost:110,icon:'⚗️'}],
+    {id:'alchemist',name:'Alchemist',damage:12,range:100,cooldown:1.1,skill:'economy',cost:110,icon:'⚗️'},
+    {id:'thunder_mage',name:'Thunder Mage',damage:14,range:115,cooldown:1.1,skill:'chain',cost:110,icon:'⚡'},
+    {id:'poison_archer',name:'Poison Archer',damage:8,range:125,cooldown:.9,skill:'slow',cost:110,icon:'☠️'},
+    {id:'battle_mage',name:'Battle Mage',damage:17,range:95,cooldown:1.3,skill:'aoe',cost:110,icon:'🪄'}
+  ],
   legendary:[
     {id:'dragon_kn',name:'Dragon Knight',damage:25,range:110,cooldown:.9,skill:'aoe',cost:170,icon:'🐉'},
-    {id:'storm_cal',name:'Storm Caller',damage:20,range:130,cooldown:1.1,skill:'chain',cost:170,icon:'⚡'},
+    {id:'storm_cal',name:'Storm Caller',damage:20,range:130,cooldown:1.1,skill:'chain',cost:170,icon:'🌩️'},
     {id:'treasure_h',name:'Treasure Hunter',damage:8,range:100,cooldown:1.5,skill:'economy',cost:170,icon:'💰'},
-    {id:'shadow_bl',name:'Shadow Blade',damage:35,range:95,cooldown:1,skill:'crit',cost:170,icon:'🌑'}],
+    {id:'shadow_bl',name:'Shadow Blade',damage:35,range:95,cooldown:1,skill:'crit',cost:170,icon:'🌑'},
+    {id:'phoenix_mage',name:'Phoenix Mage',damage:22,range:120,cooldown:1,skill:'aoe',cost:170,icon:'🦅'},
+    {id:'ice_queen',name:'Ice Queen',damage:18,range:130,cooldown:1,skill:'slow',cost:170,icon:'👑'},
+    {id:'necromancer',name:'Necromancer',damage:19,range:115,cooldown:1.1,skill:'chain',cost:170,icon:'💀'},
+    {id:'holy_paladin',name:'Holy Paladin',damage:32,range:90,cooldown:1,skill:'single',cost:170,icon:'✝️'}
+  ],
   mythic:[
     {id:'void_reaper',name:'Void Reaper',damage:35,range:120,cooldown:.8,skill:'chain',cost:300,icon:'👁️'},
     {id:'celestial_g',name:'Celestial Guardian',damage:30,range:140,cooldown:1,skill:'aoe',cost:300,icon:'✨'},
-    {id:'phantom_lord',name:'Phantom Lord',damage:40,range:110,cooldown:.9,skill:'crit',cost:300,icon:'👻'}],
+    {id:'phantom_lord',name:'Phantom Lord',damage:40,range:110,cooldown:.9,skill:'crit',cost:300,icon:'👻'},
+    {id:'chaos_bringer',name:'Chaos Bringer',damage:38,range:130,cooldown:.9,skill:'aoe',cost:300,icon:'🌀'},
+    {id:'chronomancer',name:'Chronomancer',damage:32,range:145,cooldown:.9,skill:'slow',cost:300,icon:'⏳'},
+    {id:'elemental_lord',name:'Elemental Lord',damage:36,range:135,cooldown:.85,skill:'chain',cost:300,icon:'🌊'}
+  ],
   td:[
     {id:'void_emperor',name:'Void Emperor',damage:65,range:160,cooldown:.6,skill:'chain',cost:600,icon:'🕳️'},
     {id:'celestial_avatar',name:'Celestial Avatar',damage:58,range:180,cooldown:.8,skill:'aoe',cost:600,icon:'🌟'},
-    {id:'phantom_god',name:'Phantom God',damage:75,range:140,cooldown:.7,skill:'crit',cost:600,icon:'💀'}]
+    {id:'phantom_god',name:'Phantom God',damage:75,range:140,cooldown:.7,skill:'crit',cost:600,icon:'💀'},
+    {id:'chaos_titan',name:'Chaos Titan',damage:70,range:155,cooldown:.75,skill:'aoe',cost:600,icon:'🌌'},
+    {id:'time_lord',name:'Time Lord',damage:60,range:175,cooldown:.75,skill:'slow',cost:600,icon:'⏰'},
+    {id:'primordial_god',name:'Primordial God',damage:80,range:170,cooldown:.65,skill:'chain',cost:600,icon:'🌠'}
+  ]
 };
+
+/* ============ ROLES ============ */
+const ROLES={
+  dps:    {name:'DPS',     icon:'⚔️', color:'#e74c3c', desc:'Damage tinggi per detik'},
+  sniper: {name:'Sniper',  icon:'🎯', color:'#2ecc71', desc:'Range sangat jauh'},
+  aoe:    {name:'AOE',     icon:'💣', color:'#f39c12', desc:'Damage area luas'},
+  chain:  {name:'Chain',   icon:'⛓️', color:'#9b59b6', desc:'Serangan berantai'},
+  crit:   {name:'Crit',    icon:'⚡', color:'#f1c40f', desc:'Fokus critical damage'},
+  cc:     {name:'CC',      icon:'❄️', color:'#66ccff', desc:'Slow / kontrol musuh'},
+  economy:{name:'Economy', icon:'💰', color:'#f1c40f', desc:'Penghasil koin tiap wave'},
+  support:{name:'Support', icon:'✨', color:'#ff66cc', desc:'Buff / aura untuk unit lain'},
+  tank:   {name:'Tank',    icon:'🛡️', color:'#95a5a6', desc:'HP tinggi / slow musuh'}
+};
+const UNIT_ROLES={
+  archer:['dps'], swordsman:['dps'], apprentice:['dps'], spearman:['dps'],
+  hunter:['sniper','dps'], shieldman:['tank','cc'], crossbow:['sniper'],
+  trainee_mage:['dps'],
+  ice_mage:['cc'], knight:['dps'], ranger:['sniper'], monk:['dps'],
+  wind_mage:['chain'], cleric:['economy','support'], berserker:['crit','dps'],
+  paladin:['dps','tank'],
+  fire_wizard:['aoe'], assassin:['crit','dps'], gold_miner:['economy'],
+  frost_kn:['cc','dps'], alchemist:['economy'], thunder_mage:['chain'],
+  poison_archer:['cc','sniper'], battle_mage:['aoe','dps'],
+  dragon_kn:['aoe','dps'], storm_cal:['chain'], treasure_h:['economy'],
+  shadow_bl:['crit','dps'], phoenix_mage:['aoe'], ice_queen:['cc','sniper'],
+  necromancer:['chain','dps'], holy_paladin:['dps','tank'],
+  void_reaper:['chain','dps'], celestial_g:['aoe','support'],
+  phantom_lord:['crit','dps'], chaos_bringer:['aoe','dps'],
+  chronomancer:['cc','support'], elemental_lord:['chain','dps'],
+  void_emperor:['chain','aoe'], celestial_avatar:['aoe','support'],
+  phantom_god:['crit','dps'], chaos_titan:['aoe','dps'],
+  time_lord:['cc','support'], primordial_god:['chain','aoe','dps']
+};
+function getRoles(id){return UNIT_ROLES[id]||['dps'];}
+function roleBadges(id,size){
+  const s=size||10;
+  return getRoles(id).map(r=>{
+    const R=ROLES[r];
+    return `<span style="display:inline-block;font-size:${s}px;background:${R.color}22;color:${R.color};border:1px solid ${R.color};padding:1px 4px;border-radius:4px;margin-right:2px">${R.icon} ${R.name}</span>`;
+  }).join('');
+}
+
+/* ============ DEPLOY & LEVEL LIMITS ============ */
+const MAX_DEPLOY_RARITY={common:8,rare:6,epic:5,legendary:4,mythic:3,td:2};
+const MAX_DEPLOY_UNIT={gold_miner:2,alchemist:2,treasure_h:2,cleric:2,
+  void_emperor:1,celestial_avatar:1,phantom_god:1,chaos_titan:1,time_lord:1,primordial_god:1};
+function getMaxDeploy(unitId,rarity){return MAX_DEPLOY_UNIT[unitId]||MAX_DEPLOY_RARITY[rarity];}
+
+const MAX_LEVEL_RARITY={common:10,rare:12,epic:15,legendary:18,mythic:20,td:25};
+const MAX_LEVEL_UNIT={gold_miner:20,alchemist:20,treasure_h:22,cleric:18};
+function getMaxLevel(unitId,rarity){return MAX_LEVEL_UNIT[unitId]||MAX_LEVEL_RARITY[rarity];}
+
+/* ============ SPECIAL SKILLS ============ */
+const SPECIAL_SKILLS={
+  void_reaper:[
+    {lv:5,id:'soul_harvest',name:'Soul Harvest',desc:'Setiap kill +3 🪙',icon:'💀'},
+    {lv:10,id:'void_pull',name:'Void Pull',desc:'Chain +1 target',icon:'🌀'},
+    {lv:15,id:'dark_rift',name:'Dark Rift',desc:'Chain damage tidak berkurang',icon:'🕳️'},
+    {lv:20,id:'singularity',name:'Singularity',desc:'Setiap 5 kill → ledakan AOE',icon:'💥'}
+  ],
+  celestial_g:[
+    {lv:5,id:'holy_aura',name:'Holy Aura',desc:'+10% DMG tower dalam radius 100',icon:'✨'},
+    {lv:10,id:'star_fall',name:'Star Fall',desc:'AOE radius +40',icon:'🌟'},
+    {lv:15,id:'blessing',name:'Blessing',desc:'+1 life setiap 10 wave',icon:'💖'},
+    {lv:20,id:'supernova',name:'Supernova',desc:'Setiap 8 attack → AOE 2x DMG',icon:'☀️'}
+  ],
+  phantom_lord:[
+    {lv:5,id:'phantom_strike',name:'Phantom Strike',desc:'Crit chance +10%',icon:'👻'},
+    {lv:10,id:'death_mark',name:'Death Mark',desc:'Musuh crit +25% DMG 3s',icon:'🎯'},
+    {lv:15,id:'ghost_step',name:'Ghost Step',desc:'15% chance attack dobel',icon:'💨'},
+    {lv:20,id:'reaper_edge',name:"Reaper's Edge",desc:'Crit damage x3',icon:'⚔️'}
+  ],
+  chaos_bringer:[
+    {lv:5,id:'chaos_aoe',name:'Chaos Blast',desc:'AOE radius +30',icon:'🌀'},
+    {lv:10,id:'chaos_mark',name:'Chaos Mark',desc:'Musuh +25% DMG taken 3s',icon:'🔥'},
+    {lv:15,id:'reality_tear',name:'Reality Tear',desc:'10% chance instant kill musuh kecil',icon:'⚡'},
+    {lv:20,id:'chaos_crit',name:'Chaos Crit',desc:'Crit chance +15%',icon:'💥'}
+  ],
+  chronomancer:[
+    {lv:5,id:'time_slow',name:'Time Slow',desc:'Slow +0.5s durasi',icon:'⏳'},
+    {lv:10,id:'haste',name:'Haste Aura',desc:'Tower +15% atk speed (radius 100)',icon:'⚡'},
+    {lv:15,id:'time_freeze',name:'Time Freeze',desc:'Setiap 10 attack → freeze 2s',icon:'🧊'},
+    {lv:20,id:'rewind',name:'Rewind',desc:'Setiap 12s → +1 life',icon:'💖'}
+  ],
+  elemental_lord:[
+    {lv:5,id:'elem_mastery',name:'Elemental Mastery',desc:'Chain +1 target',icon:'🌊'},
+    {lv:10,id:'storm_surge',name:'Storm Surge',desc:'Chain damage tidak berkurang',icon:'⚡'},
+    {lv:15,id:'primal_fury',name:'Primal Fury',desc:'15% chance attack dobel',icon:'💨'},
+    {lv:20,id:'elem_chaos',name:'Elemental Chaos',desc:'Chain damage +50%',icon:'🔥'}
+  ],
+  void_emperor:[
+    {lv:5,id:'soul_harvest_2',name:'Soul Harvest II',desc:'Setiap kill +8 🪙',icon:'💀'},
+    {lv:10,id:'void_pull_2',name:'Void Pull II',desc:'Chain +2 target',icon:'🌀'},
+    {lv:15,id:'dark_rift_2',name:'Dark Rift',desc:'Chain damage tidak berkurang',icon:'🕳️'},
+    {lv:20,id:'singularity_2',name:'Singularity',desc:'Setiap 3 kill → ledakan AOE',icon:'💥'},
+    {lv:25,id:'void_annihilation',name:'Void Annihilation',desc:'Ultimate: tiap 30s semua musuh -300 HP',icon:'☄️'}
+  ],
+  celestial_avatar:[
+    {lv:5,id:'holy_aura_2',name:'Holy Aura II',desc:'+20% DMG radius 120',icon:'✨'},
+    {lv:10,id:'star_fall_2',name:'Star Fall II',desc:'AOE radius +60',icon:'🌟'},
+    {lv:15,id:'blessing_2',name:'Blessing II',desc:'+1 life setiap 5 wave',icon:'💖'},
+    {lv:20,id:'supernova_2',name:'Supernova II',desc:'Setiap 5 attack → AOE 2.5x DMG',icon:'☀️'},
+    {lv:25,id:'genesis',name:'Genesis',desc:'Ultimate: tiap 45s semua tower +50% DMG 5s',icon:'🕊️'}
+  ],
+  phantom_god:[
+    {lv:5,id:'phantom_strike_2',name:'Phantom Strike II',desc:'Crit chance +20%',icon:'👻'},
+    {lv:10,id:'death_mark_2',name:'Death Mark II',desc:'Musuh crit +40% DMG 4s',icon:'🎯'},
+    {lv:15,id:'ghost_step_2',name:'Ghost Step II',desc:'25% chance attack dobel',icon:'💨'},
+    {lv:20,id:'reaper_edge_2',name:"Reaper's Edge II",desc:'Crit damage x3.5',icon:'⚔️'},
+    {lv:25,id:'armageddon',name:'Armageddon',desc:'Ultimate: tiap 40s semua musuh kena CRIT',icon:'🔥'}
+  ],
+  chaos_titan:[
+    {lv:5,id:'chaos_aoe_2',name:'Chaos Blast II',desc:'AOE radius +50',icon:'🌀'},
+    {lv:10,id:'chaos_mark_2',name:'Chaos Mark II',desc:'Musuh +40% DMG taken 4s',icon:'🔥'},
+    {lv:15,id:'reality_tear_2',name:'Reality Tear II',desc:'20% chance instant kill musuh kecil',icon:'⚡'},
+    {lv:20,id:'chaos_crit_2',name:'Chaos Crit II',desc:'Crit chance +25%',icon:'💥'},
+    {lv:25,id:'chaos_nova',name:'Chaos Nova',desc:'Ultimate: tiap 35s semua musuh -300 HP + slow',icon:'🌌'}
+  ],
+  time_lord:[
+    {lv:5,id:'time_slow_2',name:'Time Slow II',desc:'Slow +1s durasi',icon:'⏳'},
+    {lv:10,id:'haste_2',name:'Haste Aura II',desc:'Tower +30% atk speed (radius 130)',icon:'⚡'},
+    {lv:15,id:'time_freeze_2',name:'Time Freeze II',desc:'Setiap 7 attack → freeze 3s',icon:'🧊'},
+    {lv:20,id:'rewind_2',name:'Rewind II',desc:'Setiap 8s → +1 life',icon:'💖'},
+    {lv:25,id:'time_stop',name:'Time Stop',desc:'Ultimate: tiap 50s freeze semua musuh 3s',icon:'⏰'}
+  ],
+  primordial_god:[
+    {lv:5,id:'elem_mastery_2',name:'Elemental Mastery II',desc:'Chain +2 target',icon:'🌊'},
+    {lv:10,id:'storm_surge_2',name:'Storm Surge II',desc:'Chain full +20% damage',icon:'⚡'},
+    {lv:15,id:'primal_fury_2',name:'Primal Fury II',desc:'25% chance attack dobel',icon:'💨'},
+    {lv:20,id:'elem_chaos_2',name:'Elemental Chaos II',desc:'Chain damage +80%',icon:'🔥'},
+    {lv:25,id:'creation',name:'Creation',desc:'Ultimate: tiap 40s semua tower +100% DMG 6s',icon:'🌠'}
+  ]
+};
+function hasSpecialSkill(u,id){
+  const list=SPECIAL_SKILLS[u.unitId];if(!list)return false;
+  const e=list.find(s=>s.id===id);return e&&u.level>=e.lv;
+}
+function getUnlockedSkills(u){return (SPECIAL_SKILLS[u.unitId]||[]).filter(s=>u.level>=s.lv);}
+
+/* ============ RECIPES ============ */
+const RECIPES={
+  void_reaper:{result:'void_emperor',mats:{void_shard:5,void_core:2}},
+  celestial_g:{result:'celestial_avatar',mats:{celestial_tear:5,star_fragment:2}},
+  phantom_lord:{result:'phantom_god',mats:{phantom_essence:5,death_crystal:2}}
+};
+const ALL_MATS=[
+  {id:'void_shard',name:'Void Shard',icon:'🔷'},
+  {id:'celestial_tear',name:'Celestial Tear',icon:'💧'},
+  {id:'phantom_essence',name:'Phantom Essence',icon:'🌀'},
+  {id:'void_core',name:'Void Core',icon:'⚫'},
+  {id:'star_fragment',name:'Star Fragment',icon:'⭐'},
+  {id:'death_crystal',name:'Death Crystal',icon:'💎'}
+];
+
+/* ============ ENEMY TYPES ============ */
 const ENEMY_TYPES={
-  normal:{hp:30,speed:55,reward:15,color:'#e74c3c',radius:10},
-  fast:{hp:20,speed:95,reward:12,color:'#f1c40f',radius:8},
-  tank:{hp:100,speed:35,reward:30,color:'#9b59b6',radius:14},
-  flying:{hp:40,speed:80,reward:20,color:'#1abc9c',radius:9},
-  boss:{hp:500,speed:30,reward:250,color:'#c0392b',radius:22}
+  normal:{hp:30,speed:55,reward:25,color:'#e74c3c',radius:10},
+  fast:{hp:20,speed:95,reward:20,color:'#f1c40f',radius:8},
+  tank:{hp:100,speed:35,reward:45,color:'#9b59b6',radius:14},
+  flying:{hp:40,speed:80,reward:30,color:'#1abc9c',radius:9},
+  boss:{hp:500,speed:30,reward:400,color:'#c0392b',radius:22}
 };
 const WAYPOINTS=[{x:0,y:275},{x:220,y:275},{x:220,y:90},{x:520,y:90},{x:520,y:460},{x:900,y:460}];
 const MAX_LOADOUT=6;
 const MAX_WAVE=20;
 const SKIP_DELAY=30;
+const START_COUNTDOWN=15;
 
-/* Campaign maps */
+/* ============ STAGES ============ */
 const MAPS=[
   {id:'forest',name:'🌲 Forest',color:'#2ecc71',acts:[
     {act:1,diff:1.0},{act:2,diff:1.15},{act:3,diff:1.3},{act:4,diff:1.45},
@@ -254,7 +438,6 @@ const MAPS=[
     {act:1,diff:5.0},{act:2,diff:5.5},{act:3,diff:6.0},{act:4,diff:6.5},
     {act:5,diff:7.2},{act:6,diff:8.0},{act:7,diff:9.0,boss:true}]}
 ];
-/* Legend realms */
 const REALMS=[
   {id:'void',name:'🕳️ Void Realm',mat:'void_shard',matName:'Void Shard',matIcon:'🔷',
    levels:[{lv:1,diff:3.0,drop:1},{lv:2,diff:4.5,drop:2},{lv:3,diff:6.5,drop:3}]},
@@ -269,36 +452,18 @@ const REALMS=[
   {id:'death',name:'💀 Death Realm',mat:'death_crystal',matName:'Death Crystal',matIcon:'💎',
    levels:[{lv:1,diff:6.0,drop:1},{lv:2,diff:8.0,drop:1},{lv:3,diff:11.0,drop:2}]}
 ];
-/* Evolve recipes */
-const RECIPES={
-  void_reaper:{result:'void_emperor',mats:{void_shard:5,void_core:2}},
-  celestial_g:{result:'celestial_avatar',mats:{celestial_tear:5,star_fragment:2}},
-  phantom_lord:{result:'phantom_god',mats:{phantom_essence:5,death_crystal:2}}
-};
-/* All materials list */
-const ALL_MATS=[
-  {id:'void_shard',name:'Void Shard',icon:'🔷'},
-  {id:'celestial_tear',name:'Celestial Tear',icon:'💧'},
-  {id:'phantom_essence',name:'Phantom Essence',icon:'🌀'},
-  {id:'void_core',name:'Void Core',icon:'⚫'},
-  {id:'star_fragment',name:'Star Fragment',icon:'⭐'},
-  {id:'death_crystal',name:'Death Crystal',icon:'💎'}
-];
 
 /* ============ STATE ============ */
 let state={
   gems:500,coins:0,
   inventory:[],loadout:[],
-  materials:{},
-  cleared:{}, /* stageKey:{times} */
-  currentStage:null,
-  /* gameplay */
+  materials:{},cleared:{},currentStage:null,
   placedUnits:[],enemies:[],projectiles:[],effects:[],
   wave:0,lives:20,waveActive:false,spawnQueue:[],spawnTimer:0,
   hpScale:1,gameOver:false,victory:false,
-  nextInstanceId:1,
-  selectedInventoryId:null,selectedPlacedId:null,
-  paused:false,waveElapsed:0,skipUsed:false
+  nextInstanceId:1,selectedInventoryId:null,selectedPlacedId:null,
+  paused:false,waveElapsed:0,skipUsed:false,
+  countdown:0,filterRole:'all'
 };
 
 /* ============ HELPERS ============ */
@@ -319,6 +484,7 @@ function summonUnit(){const rar=rollRarity(),pool=UNIT_POOL[rar];
   return{instanceId:state.nextInstanceId++,unitId:def.id,rarity:rar,level:1};}
 function getMatInfo(id){return ALL_MATS.find(m=>m.id===id);}
 function stageKey(s){if(!s)return'';return s.type+'_'+(s.mapId||s.realmId)+'_'+(s.act||s.lv);}
+function countDeployed(unitId){return state.placedUnits.filter(p=>p.unitId===unitId).length;}
 
 /* ============ UI ============ */
 function toast(msg,d=2200){const t=document.getElementById('toast');t.textContent=msg;
@@ -343,11 +509,31 @@ function renderMatBar(){
   }
 }
 function renderInventory(){
+  const fb=document.getElementById('roleFilter');
+  if(fb){
+    fb.innerHTML='';
+    const mkBtn=(key,label,color,active)=>{
+      const b=document.createElement('button');
+      b.textContent=label;
+      b.style.cssText=`padding:3px 8px;font-size:10px;margin:0;background:${active?color:'#0a0e27'};border:1px solid ${color};color:${active?'#000':color};border-radius:10px`;
+      b.onclick=()=>{state.filterRole=key;renderInventory();};
+      fb.appendChild(b);
+    };
+    mkBtn('all','Semua','#b0b0b0',state.filterRole==='all');
+    for(const k in ROLES){
+      const R=ROLES[k];
+      mkBtn(k,`${R.icon} ${R.name}`,R.color,state.filterRole===k);
+    }
+  }
   const g=document.getElementById('inventoryGrid');g.innerHTML='';
   if(!state.inventory.length){g.innerHTML='<div class="empty-hint">Belum ada unit. Summon!</div>';return;}
   const ord=['td','mythic','legendary','epic','rare','common'];
-  const sorted=[...state.inventory].sort((a,b)=>ord.indexOf(a.rarity)-ord.indexOf(b.rarity));
-  for(const u of sorted){
+  let list=[...state.inventory].sort((a,b)=>ord.indexOf(a.rarity)-ord.indexOf(b.rarity));
+  if(state.filterRole&&state.filterRole!=='all'){
+    list=list.filter(u=>getRoles(u.unitId).includes(state.filterRole));
+  }
+  if(!list.length){g.innerHTML='<div class="empty-hint">Tidak ada unit dengan role ini.</div>';return;}
+  for(const u of list){
     const d=getUnitDef(u.unitId),s=computeStats(u),r=RARITIES[u.rarity];
     const inL=state.loadout.includes(u.instanceId);
     const c=document.createElement('div');
@@ -356,7 +542,8 @@ function renderInventory(){
       <div style="font-size:20px">${d.icon}</div>
       <div class="name">${d.name}</div>
       <div class="rarity" style="color:${r.color}">${r.name}</div>
-      <div class="lvl">Lv ${u.level}</div>
+      <div style="margin:2px 0">${roleBadges(u.unitId,9)}</div>
+      <div class="lvl">Lv ${u.level}/${getMaxLevel(u.unitId,u.rarity)} · Deploy ${getMaxDeploy(u.unitId,u.rarity)}</div>
       <div class="stats">DMG ${s.damage}·RNG ${s.range}</div>`;
     c.onclick=()=>toggleLoadout(u.instanceId);
     g.appendChild(c);
@@ -372,7 +559,8 @@ function renderLoadout(){
     c.innerHTML=`<div style="font-size:20px">${d.icon}</div>
       <div class="name">${d.name}</div>
       <div class="rarity" style="color:${r.color}">${r.name}</div>
-      <div class="lvl">Lv ${u.level}</div>
+      <div style="margin:2px 0">${roleBadges(u.unitId,9)}</div>
+      <div class="lvl">Lv ${u.level}/${getMaxLevel(u.unitId,u.rarity)} · Deploy ${getMaxDeploy(u.unitId,u.rarity)}</div>
       <div class="stats">DMG ${s.damage}·RNG ${s.range}</div>
       <div style="font-size:9px;color:#e74c3c;margin-top:3px">Klik keluar</div>`;
     c.onclick=()=>toggleLoadout(id);
@@ -408,15 +596,17 @@ function doSummon(count){
   toast(`${d.icon} ${d.name} (${RARITIES[b.rarity].name})!`);
 }
 function doUpgrade(u){
+  const maxLv=getMaxLevel(u.unitId,u.rarity);
+  if(u.level>=maxLv){toast(`❌ ${getUnitDef(u.unitId).name} sudah MAX Lv${maxLv}!`);return;}
   const c=upgradeCost(u);if(state.coins<c)return;
   state.coins-=c;u.level++;
-  if((u.rarity==='mythic'||u.rarity==='td')&&u.level%3===0)toast(`✨ Skill diperkuat! Lv${u.level}`);
+  if(u.level>=maxLv)toast(`🏆 MAX LEVEL! ${getUnitDef(u.unitId).name} Lv${u.level}`);
+  else if((u.rarity==='mythic'||u.rarity==='td')&&u.level%3===0)toast(`✨ Skill diperkuat! Lv${u.level}`);
   else toast(`⬆️ Lv${u.level}`);
   updateGameUI();
 }
 function doEvolve(u){
   const recipe=RECIPES[u.unitId];if(!recipe)return;
-  const d=getUnitDef(u.unitId);
   for(const[mat,cnt]of Object.entries(recipe.mats)){
     if((state.materials[mat]||0)<cnt){toast('❌ Bahan tidak cukup!');return;}
   }
@@ -436,8 +626,7 @@ function renderCampaign(){
   for(const m of MAPS){
     const c=document.createElement('div');c.className='stage-card';c.style.borderColor=m.color;
     const totalCleared=m.acts.filter(a=>state.cleared['campaign_'+m.id+'_'+a.act]).length;
-    c.innerHTML=`<div class="sname">${m.name}</div>
-      <div class="sinfo">${totalCleared}/7 act cleared</div>`;
+    c.innerHTML=`<div class="sname">${m.name}</div><div class="sinfo">${totalCleared}/7 act cleared</div>`;
     c.onclick=()=>renderActs(m);
     g.appendChild(c);
   }
@@ -456,10 +645,8 @@ function renderActs(m){
       <div class="sinfo">Diff x${a.diff} · 20 wave<br>
       ${cl>0?`✅ Cleared ${cl}x`:'✨ Belum dimainkan (150 💎)'}</div>`;
     c.onclick=()=>{
-      state.currentStage={
-        type:'campaign',mapId:m.id,act:a.act,diff:a.diff,boss:!!a.boss,
-        name:`${m.name} - Act ${a.act}${a.boss?' (BOSS)':''}`
-      };
+      state.currentStage={type:'campaign',mapId:m.id,act:a.act,diff:a.diff,boss:!!a.boss,
+        name:`${m.name} - Act ${a.act}${a.boss?' (BOSS)':''}`};
       updateMenuUI();showScreen('menu');
       toast('Stage dipilih: '+state.currentStage.name);
     };
@@ -492,11 +679,9 @@ function renderLevels(r){
       🎁 Drop: ${r.matIcon} x${l.drop}<br>
       ${cl>0?`✅ Cleared ${cl}x`:'✨ Belum dimainkan (150 💎)'}</div>`;
     c.onclick=()=>{
-      state.currentStage={
-        type:'legend',realmId:r.id,lv:l.lv,diff:l.diff,
+      state.currentStage={type:'legend',realmId:r.id,lv:l.lv,diff:l.diff,
         mat:r.mat,matName:r.matName,matIcon:r.matIcon,drop:l.drop,
-        name:`${r.name} - Lv ${l.lv}`
-      };
+        name:`${r.name} - Lv ${l.lv}`};
       updateMenuUI();showScreen('menu');
       toast('Stage dipilih: '+state.currentStage.name);
     };
@@ -510,7 +695,8 @@ function updateGameUI(){
   document.getElementById('gameLives').textContent=state.lives;
   document.getElementById('gameWave').textContent=state.wave;
   document.getElementById('gameStageName').textContent=state.currentStage?.name||'';
-  document.getElementById('startWaveBtn').disabled=state.waveActive||state.gameOver||state.victory;
+  const canStart=!state.waveActive&&!state.gameOver&&!state.victory&&state.wave<MAX_WAVE&&state.countdown<=0;
+  document.getElementById('startWaveBtn').disabled=!canStart;
   renderHand();renderInfoPanel();
 }
 function renderHand(){
@@ -520,12 +706,19 @@ function renderHand(){
   if(!hand.length){g.innerHTML='<div class="empty-hint">Semua unit sudah ditempatkan.</div>';return;}
   for(const u of hand){
     const d=getUnitDef(u.unitId),r=RARITIES[u.rarity];
+    const maxD=getMaxDeploy(u.unitId,u.rarity);
+    const cur=countDeployed(u.unitId);
+    const remaining=maxD-cur;
+    const full=remaining<=0;
     const el=document.createElement('div');
-    el.className='hand-unit'+(state.selectedInventoryId===u.instanceId?' selected':'');
+    el.className='hand-unit'+(state.selectedInventoryId===u.instanceId?' selected':'')+(full?' full':'');
     el.style.borderColor=state.selectedInventoryId===u.instanceId?'#f1c40f':r.color;
-    el.innerHTML=`<div>${d.icon} <span class="name">${d.name}</span></div>
-      <div style="font-size:9px;color:${r.color}">${r.name} Lv${u.level}</div>`;
+    el.innerHTML=`<div class="limit">${remaining}/${maxD}</div>
+      <div>${d.icon} <span class="name">${d.name}</span></div>
+      <div style="margin:1px 0">${roleBadges(u.unitId,8)}</div>
+      <div style="font-size:9px;color:${r.color}">${r.name} Lv${u.level}/${getMaxLevel(u.unitId,u.rarity)}</div>`;
     el.onclick=()=>{
+      if(full){toast(`❌ Batas ${d.name} sudah penuh (${maxD})!`);return;}
       state.selectedInventoryId=state.selectedInventoryId===u.instanceId?null:u.instanceId;
       state.selectedPlacedId=null;renderHand();renderInfoPanel();
     };
@@ -540,8 +733,13 @@ function renderInfoPanel(){
       const s=computeStats(u),d=getUnitDef(u.unitId),r=RARITIES[u.rarity];
       const cost=upgradeCost(u);
       const recipe=RECIPES[u.unitId];
-      let matHTML='';
-      let canEvolve=false;
+      const maxD=getMaxDeploy(u.unitId,u.rarity);
+      const cur=countDeployed(u.unitId);
+      const maxLv=getMaxLevel(u.unitId,u.rarity);
+      const atMax=u.level>=maxLv;
+      const econPerWave=(s.skill==='economy')?Math.floor((40+u.level*20)*(1+skillTier(u)*0.5)):0;
+      const roleHTML=roleBadges(u.unitId,11);
+      let matHTML='',canEvolve=false;
       if(recipe){
         canEvolve=true;
         for(const[mat,cnt]of Object.entries(recipe.mats)){
@@ -549,20 +747,34 @@ function renderInfoPanel(){
           const mi=getMatInfo(mat);
           const ok=have>=cnt;
           if(!ok)canEvolve=false;
-          matHTML+=`<div class="mat-row ${ok?'ok':'no'}">
-            <span>${mi.icon} ${mi.name}</span><span>${have}/${cnt}</span></div>`;
+          matHTML+=`<div class="mat-row ${ok?'ok':'no'}"><span>${mi.icon} ${mi.name}</span><span>${have}/${cnt}</span></div>`;
+        }
+      }
+      const allSkills=SPECIAL_SKILLS[u.unitId]||[];
+      let skillsHTML='';
+      if(allSkills.length){
+        skillsHTML='<div style="margin-top:8px;font-size:10px;color:#f1c40f;font-weight:bold">⭐ SKILL KHUSUS</div>';
+        for(const sk of allSkills){
+          const ok=u.level>=sk.lv;
+          skillsHTML+=`<div class="mat-row ${ok?'ok':'no'}" style="font-size:10px">
+            <span>${sk.icon} ${sk.name}</span><span>Lv${sk.lv} ${ok?'✓':''}</span></div>
+            <div style="font-size:9px;color:#888;margin:-2px 0 4px 6px">${sk.desc}</div>`;
         }
       }
       p.innerHTML=`<h3>ℹ️ ${d.icon} ${d.name}</h3>
+        <div style="text-align:center;margin:4px 0">${roleHTML}</div>
         <div class="stat-row"><span>Rarity</span><span style="color:${r.color}">${r.name}</span></div>
-        <div class="stat-row"><span>Level</span><span>${u.level}</span></div>
+        <div class="stat-row"><span>Level</span><span>${u.level}/${maxLv}${atMax?' 🏆':''}</span></div>
         <div class="stat-row"><span>DMG</span><span>${s.damage}</span></div>
         <div class="stat-row"><span>Range</span><span>${s.range}</span></div>
         <div class="stat-row"><span>CD</span><span>${s.cooldown.toFixed(2)}s</span></div>
         <div class="stat-row"><span>Skill</span><span>${s.skill}</span></div>
-        <button id="upgradeBtn" style="width:100%;margin-top:8px" ${state.coins<cost?'disabled':''}>Upgrade (${cost} 🪙)</button>
+        ${econPerWave?`<div class="stat-row"><span>🪙/Wave</span><span>+${econPerWave}</span></div>`:''}
+        <div class="stat-row"><span>Terpasang</span><span>${cur}/${maxD}</span></div>
+        <button id="upgradeBtn" style="width:100%;margin-top:8px" ${atMax||state.coins<cost?'disabled':''}>${atMax?'🏆 MAX LEVEL':`Upgrade (${cost} 🪙)`}</button>
         ${recipe?`<div style="margin-top:8px;font-size:11px;color:#aaa">🧬 Evolve → ${getUnitDef(recipe.result).name}</div>${matHTML}
           <button id="evolveBtn" class="gold" style="width:100%;margin-top:5px" ${canEvolve?'':'disabled'}>Evolve</button>`:''}
+        ${skillsHTML}
         <button id="pickupBtn" style="width:100%;margin-top:5px">Angkat Kembali</button>`;
       document.getElementById('upgradeBtn').onclick=()=>doUpgrade(u);
       const eb=document.getElementById('evolveBtn');if(eb)eb.onclick=()=>doEvolve(u);
@@ -570,13 +782,22 @@ function renderInfoPanel(){
       return;
     }
   }
+  let roleHTMLList='<h3>🏷️ Tipe Unit</h3>';
+  for(const k in ROLES){
+    const R=ROLES[k];
+    roleHTMLList+=`<div style="display:flex;align-items:center;gap:6px;margin:3px 0;font-size:10px">
+      <span style="color:${R.color};font-weight:bold;min-width:70px">${R.icon} ${R.name}</span>
+      <span style="color:#888">${R.desc}</span></div>`;
+  }
   p.innerHTML=`<h3>ℹ️ Info</h3>
     <p style="color:#888;font-size:11px;line-height:1.7">
     Wave 1-20 · Wave 20 = Boss 👑<br>
-    🪙 Selesai wave: +250<br>
+    🪙 Selesai wave: +250 + bonus ekonomi<br>
+    🪙 Kill: 20-400 tergantung tipe<br>
     💎 Clear: 150 pertama, 50 selanjutnya<br>
     ⏩ Skip muncul setelah 30 detik<br>
-    🧬 Mythic bisa evolve jadi TD dengan bahan dari Legend Stage</p>`;
+    🧬 Mythic → TD dengan bahan Legend</p>
+    <div style="border-top:1px solid #2a3a6a;margin-top:8px;padding-top:8px">${roleHTMLList}</div>`;
 }
 
 /* ============ CANVAS ============ */
@@ -594,8 +815,12 @@ canvas.addEventListener('click',e=>{
     if(isOnPath(x,y)){toast('❌ Tidak bisa di jalan!');return;}
     if(isNearPlaced(x,y)){toast('❌ Terlalu dekat!');return;}
     const u=state.inventory.find(v=>v.instanceId===state.selectedInventoryId);if(!u)return;
+    const d=getUnitDef(u.unitId);
+    const maxD=getMaxDeploy(u.unitId,u.rarity);
+    const cur=countDeployed(u.unitId);
+    if(cur>=maxD){toast(`❌ Batas ${d.name} sudah penuh (${maxD})!`);return;}
     state.placedUnits.push({instanceId:u.instanceId,unitId:u.unitId,rarity:u.rarity,level:u.level,
-      x,y,cooldownTimer:0,aimAngle:0,econTimer:0});
+      x,y,cooldownTimer:0,aimAngle:0,auraBonus:0,atkCount:0,killCount:0,ultTimer:0,buffTimer:0,healTimer:0});
     state.selectedInventoryId=null;updateGameUI();return;
   }
   state.selectedPlacedId=null;updateGameUI();
@@ -617,6 +842,7 @@ function startStage(){
   state.gameOver=false;state.victory=false;state.hpScale=1;state.paused=false;
   state.selectedInventoryId=null;state.selectedPlacedId=null;
   state.waveElapsed=0;state.skipUsed=false;
+  state.countdown=START_COUNTDOWN;
   document.getElementById('skipBtn').style.display='none';
   showScreen('game');updateGameUI();
 }
@@ -625,6 +851,7 @@ function startStage(){
 function startWave(){
   if(state.waveActive||state.gameOver||state.victory)return;
   if(state.wave>=MAX_WAVE)return;
+  state.countdown=0;
   state.wave++;
   state.waveActive=true;state.spawnTimer=0;state.spawnQueue=[];state.waveElapsed=0;state.skipUsed=false;
   document.getElementById('skipBtn').style.display='none';
@@ -650,21 +877,23 @@ function startWave(){
 }
 function spawnEnemy(type){
   const d=ENEMY_TYPES[type];
-  let hpMul=1;
-  if(type==='boss')hpMul=state.currentStage?.boss?1.5:1;
+  const hpMul=(type==='boss'&&state.currentStage?.boss)?1.5:1;
   state.enemies.push({x:WAYPOINTS[0].x,y:WAYPOINTS[0].y,
     hp:d.hp*state.hpScale*hpMul,maxHp:d.hp*state.hpScale*hpMul,
     speed:d.speed,reward:d.reward,color:d.color,radius:d.radius,
-    type,waypointIndex:1,slowTimer:0,slowFactor:1});
+    type,waypointIndex:1,slowTimer:0,slowFactor:1,deathMark:0,deathMarkBonus:0});
 }
 function skipWave(){
   if(!state.waveActive)return;
-  while(state.spawnQueue.length){const t=state.spawnQueue.shift();
+  while(state.spawnQueue.length){
+    const t=state.spawnQueue.shift();
+    const hpMul=(t==='boss'&&state.currentStage?.boss)?1.5:1;
     state.enemies.push({x:WAYPOINTS[0].x,y:WAYPOINTS[0].y,
-      hp:ENEMY_TYPES[t].hp*state.hpScale*(t==='boss'&&state.currentStage?.boss?1.5:1),
-      maxHp:ENEMY_TYPES[t].hp*state.hpScale*(t==='boss'&&state.currentStage?.boss?1.5:1),
-      speed:ENEMY_TYPES[t].speed,reward:ENEMY_TYPES[t].reward,color:ENEMY_TYPES[t].color,
-      radius:ENEMY_TYPES[t].radius,type:t,waypointIndex:1,slowTimer:0,slowFactor:1});
+      hp:ENEMY_TYPES[t].hp*state.hpScale*hpMul,
+      maxHp:ENEMY_TYPES[t].hp*state.hpScale*hpMul,
+      speed:ENEMY_TYPES[t].speed,reward:ENEMY_TYPES[t].reward,
+      color:ENEMY_TYPES[t].color,radius:ENEMY_TYPES[t].radius,
+      type:t,waypointIndex:1,slowTimer:0,slowFactor:1,deathMark:0,deathMarkBonus:0});
   }
   state.skipUsed=true;document.getElementById('skipBtn').style.display='none';
   toast('⏩ Wave dipercepat!');
@@ -674,6 +903,11 @@ function skipWave(){
 function update(dt){
   if(state.paused)return;
   if(state.gameOver||state.victory)return;
+
+  if(state.countdown>0){
+    state.countdown-=dt;
+    if(state.countdown<=0){state.countdown=0;startWave();}
+  }
 
   if(state.waveActive){
     state.waveElapsed+=dt;
@@ -687,20 +921,42 @@ function update(dt){
     }
   }
 
-  // wave finished
+  /* Wave finished */
   if(state.waveActive&&!state.spawnQueue.length&&!state.enemies.length){
     state.waveActive=false;
-    state.coins+=250;
+    let waveCoins=250;
+    let econCoins=0;
+    for(const u of state.placedUnits){
+      const s=computeStats(u);
+      if(s.skill==='economy'){
+        const tier=skillTier(u);
+        const reward=Math.floor((40+u.level*20)*(1+tier*0.5));
+        econCoins+=reward;
+        state.effects.push({type:'text',x:u.x,y:u.y-30,life:1.2,maxLife:1.2,text:`+${reward}🪙`,color:'#f1c40f'});
+      }
+    }
+    state.coins+=waveCoins+econCoins;
+    /* Blessing heal */
+    let heal=0;
+    for(const u of state.placedUnits){
+      if(hasSpecialSkill(u,'blessing_2')&&state.wave%5===0)heal+=1;
+      else if(hasSpecialSkill(u,'blessing')&&state.wave%10===0)heal+=1;
+    }
+    if(heal>0){
+      state.lives+=heal;
+      state.effects.push({type:'text',x:canvas.width/2,y:80,life:1.5,maxLife:1.5,text:`💖 +${heal} LIFE`,color:'#ff66cc'});
+    }
     document.getElementById('skipBtn').style.display='none';
     if(state.wave>=MAX_WAVE){handleVictory();}
-    else toast(`🌊 Wave ${state.wave} selesai! +250 🪙`);
+    else toast(econCoins>0?`🌊 Wave ${state.wave} selesai! +${waveCoins} +${econCoins} 🪙`:`🌊 Wave ${state.wave} selesai! +250 🪙`);
     updateGameUI();
   }
 
-  // enemies
+  /* Enemies */
   for(let i=state.enemies.length-1;i>=0;i--){
     const e=state.enemies[i];
     if(e.slowTimer>0){e.slowTimer-=dt;if(e.slowTimer<=0)e.slowFactor=1;}
+    if(e.deathMark>0)e.deathMark-=dt;
     const t=WAYPOINTS[e.waypointIndex];
     if(!t){
       state.lives-=(e.type==='boss'?5:1);
@@ -713,17 +969,84 @@ function update(dt){
     else{e.x+=dx/d*mv;e.y+=dy/d*mv;}
   }
 
-  // towers
-  for(const u of state.placedUnits){
-    const s=computeStats(u);u.cooldownTimer-=dt;
-    if(s.skill==='economy'){
-      u.econTimer=(u.econTimer||0)+dt;
-      if(u.econTimer>=3){u.econTimer=0;
-        const b=3+u.level*3+Math.floor(RARITIES[u.rarity].cost*2);
-        state.coins+=b;
-        state.effects.push({type:'text',x:u.x,y:u.y-25,life:.9,maxLife:.9,text:`+${b}`,color:'#f1c40f'});
+  /* Aura recompute */
+  for(const u of state.placedUnits)u.auraBonus=0;
+  for(const src of state.placedUnits){
+    let tier=0,rad=0;
+    if(hasSpecialSkill(src,'holy_aura_2')){tier=.20;rad=120;}
+    else if(hasSpecialSkill(src,'holy_aura')){tier=.10;rad=100;}
+    if(tier>0){
+      for(const tgt of state.placedUnits){
+        if(tgt===src)continue;
+        if(Math.hypot(tgt.x-src.x,tgt.y-src.y)<=rad)tgt.auraBonus+=tier;
       }
     }
+  }
+
+  /* Towers */
+  for(const u of state.placedUnits){
+    const s=computeStats(u);u.cooldownTimer-=dt;
+
+    /* Ultimate timers */
+    if(hasSpecialSkill(u,'void_annihilation')){
+      u.ultTimer=(u.ultTimer||30)-dt;
+      if(u.ultTimer<=0){
+        u.ultTimer=30;
+        for(const e of [...state.enemies])dmgEnemy(e,300,u);
+        state.effects.push({type:'text',x:u.x,y:u.y-45,life:1.5,maxLife:1.5,text:'☄️ ANNIHILATION!',color:'#00ffff'});
+        addExplosion(u.x,u.y,280);
+      }
+    }
+    if(hasSpecialSkill(u,'armageddon')){
+      u.ultTimer=(u.ultTimer||40)-dt;
+      if(u.ultTimer<=0){
+        u.ultTimer=40;
+        for(const e of [...state.enemies])dmgEnemy(e,150,u);
+        state.effects.push({type:'text',x:u.x,y:u.y-45,life:1.5,maxLife:1.5,text:'🔥 ARMAGEDDON!',color:'#ff0000'});
+        addExplosion(u.x,u.y,400);
+      }
+    }
+    if(hasSpecialSkill(u,'genesis')){
+      u.ultTimer=(u.ultTimer||45)-dt;
+      if(u.ultTimer<=0){
+        u.ultTimer=45;u.buffTimer=5;
+        state.effects.push({type:'text',x:u.x,y:u.y-45,life:1.5,maxLife:1.5,text:'🕊️ GENESIS!',color:'#00ffff'});
+      }
+    }
+    if(hasSpecialSkill(u,'chaos_nova')){
+      u.ultTimer=(u.ultTimer||35)-dt;
+      if(u.ultTimer<=0){
+        u.ultTimer=35;
+        for(const e of [...state.enemies]){dmgEnemy(e,300,u);e.slowTimer=Math.max(e.slowTimer,2);e.slowFactor=.4;}
+        state.effects.push({type:'text',x:u.x,y:u.y-45,life:1.5,maxLife:1.5,text:'🌌 CHAOS NOVA!',color:'#aa66ff'});
+        addExplosion(u.x,u.y,320);
+      }
+    }
+    if(hasSpecialSkill(u,'time_stop')){
+      u.ultTimer=(u.ultTimer||50)-dt;
+      if(u.ultTimer<=0){
+        u.ultTimer=50;
+        for(const e of state.enemies){e.slowTimer=3;e.slowFactor=.15;}
+        state.effects.push({type:'text',x:u.x,y:u.y-45,life:1.5,maxLife:1.5,text:'⏰ TIME STOP!',color:'#66ccff'});
+      }
+    }
+    if(hasSpecialSkill(u,'creation')){
+      u.ultTimer=(u.ultTimer||40)-dt;
+      if(u.ultTimer<=0){
+        u.ultTimer=40;u.buffTimer=6;
+        state.effects.push({type:'text',x:u.x,y:u.y-45,life:1.5,maxLife:1.5,text:'🌠 CREATION!',color:'#00ffff'});
+      }
+    }
+    if(hasSpecialSkill(u,'rewind')||hasSpecialSkill(u,'rewind_2')){
+      const period=hasSpecialSkill(u,'rewind_2')?8:12;
+      u.healTimer=(u.healTimer||period)-dt;
+      if(u.healTimer<=0){
+        u.healTimer=period;state.lives+=1;
+        state.effects.push({type:'text',x:u.x,y:u.y-45,life:1.2,maxLife:1.2,text:'💖 +1 LIFE',color:'#ff66cc'});
+      }
+    }
+    if(u.buffTimer>0)u.buffTimer-=dt;
+
     if(u.cooldownTimer<=0){
       let tgt=null,md=Infinity;
       for(const e of state.enemies){const d=Math.hypot(u.x-e.x,u.y-e.y);
@@ -739,29 +1062,132 @@ function update(dt){
 }
 function skillTier(u){if(u.rarity!=='mythic'&&u.rarity!=='td')return 0;return Math.floor(u.level/3);}
 function fireAttack(u,s,tgt){
-  const tier=skillTier(u),dmg=s.damage;
-  if(s.skill==='single'){dmgEnemy(tgt,dmg,u);addBeam(u,tgt,'#ffff00');}
-  else if(s.skill==='slow'){dmgEnemy(tgt,dmg,u);tgt.slowTimer=1.5+tier*.4;
-    tgt.slowFactor=Math.max(.25,.6-tier*.06);addBeam(u,tgt,'#66ccff');}
-  else if(s.skill==='aoe'){const rad=50+tier*18;addExplosion(tgt.x,tgt.y,rad);
-    for(const e of [...state.enemies])if(Math.hypot(e.x-tgt.x,e.y-tgt.y)<=rad)dmgEnemy(e,dmg,u);}
-  else if(s.skill==='crit'){const cc=.3+tier*.12,cm=2+tier*.6;
-    const crit=Math.random()<cc;const fd=crit?dmg*cm:dmg;dmgEnemy(tgt,fd,u);
+  const tier=skillTier(u);
+  let dmg=s.damage;
+  if(u.auraBonus)dmg=Math.floor(dmg*(1+u.auraBonus));
+  if(u.buffTimer>0)dmg=Math.floor(dmg*1.5);
+  if(tgt.deathMark>0)dmg=Math.floor(dmg*(1+(tgt.deathMarkBonus||0)));
+
+  const gs=hasSpecialSkill(u,'ghost_step_2')?.25:hasSpecialSkill(u,'ghost_step')?.15:
+           hasSpecialSkill(u,'primal_fury_2')?.25:hasSpecialSkill(u,'primal_fury')?.15:0;
+  if(gs&&Math.random()<gs){
+    dmg*=2;
+    state.effects.push({type:'text',x:u.x,y:u.y-30,life:.6,maxLife:.6,text:'💨 x2!',color:'#66ccff'});
+  }
+
+  u.atkCount=(u.atkCount||0)+1;
+
+  if(hasSpecialSkill(u,'time_freeze_2')&&u.atkCount%7===0){
+    tgt.slowTimer=3;tgt.slowFactor=.1;
+    state.effects.push({type:'text',x:tgt.x,y:tgt.y-25,life:.8,maxLife:.8,text:'🧊 FREEZE!',color:'#66ccff'});
+  } else if(hasSpecialSkill(u,'time_freeze')&&u.atkCount%10===0){
+    tgt.slowTimer=2;tgt.slowFactor=.15;
+    state.effects.push({type:'text',x:tgt.x,y:tgt.y-25,life:.8,maxLife:.8,text:'🧊 FREEZE!',color:'#66ccff'});
+  }
+
+  const ik=hasSpecialSkill(u,'reality_tear_2')?.20:hasSpecialSkill(u,'reality_tear')?.10:0;
+  if(ik&&tgt.type!=='boss'&&tgt.hp<tgt.maxHp*.5&&Math.random()<ik){
+    state.effects.push({type:'text',x:tgt.x,y:tgt.y-25,life:1,maxLife:1,text:'⚡ EXECUTE!',color:'#ff00ff'});
+    dmgEnemy(tgt,tgt.hp+999,u);return;
+  }
+
+  const supN=hasSpecialSkill(u,'supernova_2')?{n:5,m:2.5}:
+            hasSpecialSkill(u,'supernova')?{n:8,m:2}:null;
+
+  if(s.skill==='single'){
+    dmgEnemy(tgt,dmg,u);addBeam(u,tgt,'#ffff00');
+  }
+  else if(s.skill==='slow'){
+    let slowBonus=0;
+    if(hasSpecialSkill(u,'time_slow_2'))slowBonus=1;
+    else if(hasSpecialSkill(u,'time_slow'))slowBonus=.5;
+    dmgEnemy(tgt,dmg,u);
+    tgt.slowTimer=1.5+tier*.4+slowBonus;
+    tgt.slowFactor=Math.max(.25,.6-tier*.06);
+    addBeam(u,tgt,'#66ccff');
+  }
+  else if(s.skill==='aoe'){
+    let rad=50+tier*18;
+    if(hasSpecialSkill(u,'star_fall_2')||hasSpecialSkill(u,'chaos_aoe_2'))rad+=60;
+    else if(hasSpecialSkill(u,'star_fall'))rad+=40;
+    else if(hasSpecialSkill(u,'chaos_aoe'))rad+=30;
+    if(supN&&u.atkCount%supN.n===0){
+      rad=Math.floor(rad*1.5);dmg=Math.floor(dmg*supN.m);
+      state.effects.push({type:'text',x:u.x,y:u.y-45,life:1,maxLife:1,text:'☀️ SUPERNOVA!',color:'#ffff00'});
+    }
+    addExplosion(tgt.x,tgt.y,rad);
+    for(const e of [...state.enemies])if(Math.hypot(e.x-tgt.x,e.y-tgt.y)<=rad)dmgEnemy(e,dmg,u);
+  }
+  else if(s.skill==='crit'){
+    let cc=.3+tier*.12,cm=2+tier*.6;
+    if(hasSpecialSkill(u,'phantom_strike_2'))cc+=.20;
+    else if(hasSpecialSkill(u,'phantom_strike'))cc+=.10;
+    if(hasSpecialSkill(u,'chaos_crit_2'))cc+=.25;
+    else if(hasSpecialSkill(u,'chaos_crit'))cc+=.15;
+    if(hasSpecialSkill(u,'reaper_edge_2'))cm=Math.max(cm,3.5);
+    else if(hasSpecialSkill(u,'reaper_edge'))cm=Math.max(cm,3);
+    const crit=Math.random()<cc;
+    dmgEnemy(tgt,crit?dmg*cm:dmg,u);
     addBeam(u,tgt,crit?'#ff0000':'#ff8800',crit?4:2);
-    if(crit)state.effects.push({type:'text',x:tgt.x,y:tgt.y-25,life:.8,maxLife:.8,text:'CRIT!',color:'#ff0000'});}
-  else if(s.skill==='chain'){const n=3+tier;let cur=tgt,src=u;const hit=new Set();
-    for(let i=0;i<n&&cur;i++){hit.add(cur);dmgEnemy(cur,dmg*(1-i*.1),u);addBeam(src,cur,'#aa66ff');src=cur;
+    if(crit){
+      state.effects.push({type:'text',x:tgt.x,y:tgt.y-25,life:.8,maxLife:.8,text:'CRIT!',color:'#ff0000'});
+      if(hasSpecialSkill(u,'death_mark_2')){tgt.deathMark=4;tgt.deathMarkBonus=.40;}
+      else if(hasSpecialSkill(u,'death_mark')){tgt.deathMark=3;tgt.deathMarkBonus=.25;}
+      else if(hasSpecialSkill(u,'chaos_mark_2')){tgt.deathMark=4;tgt.deathMarkBonus=.40;}
+      else if(hasSpecialSkill(u,'chaos_mark')){tgt.deathMark=3;tgt.deathMarkBonus=.25;}
+    }
+  }
+  else if(s.skill==='chain'){
+    let n=3+tier;
+    if(hasSpecialSkill(u,'void_pull_2')||hasSpecialSkill(u,'elem_mastery_2'))n+=2;
+    else if(hasSpecialSkill(u,'void_pull')||hasSpecialSkill(u,'elem_mastery'))n+=1;
+    const noRed=hasSpecialSkill(u,'dark_rift')||hasSpecialSkill(u,'dark_rift_2')||hasSpecialSkill(u,'storm_surge')||hasSpecialSkill(u,'storm_surge_2');
+    let chainMul=1;
+    if(hasSpecialSkill(u,'elem_chaos_2'))chainMul=1.8;
+    else if(hasSpecialSkill(u,'elem_chaos'))chainMul=1.5;
+    else if(hasSpecialSkill(u,'storm_surge_2'))chainMul=1.2;
+    let cur=tgt,src=u;const hit=new Set();
+    for(let i=0;i<n&&cur;i++){
+      hit.add(cur);
+      const fd=noRed?Math.floor(dmg*chainMul):Math.floor(dmg*(1-i*.1)*chainMul);
+      dmgEnemy(cur,fd,u);
+      addBeam(src,cur,'#aa66ff');src=cur;
       let nx=null,nd=Infinity;
-      for(const e of state.enemies){if(hit.has(e))continue;
-        const d=Math.hypot(src.x-e.x,src.y-e.y);if(d<120&&d<nd){nd=d;nx=e;}}
-      cur=nx;}}
+      for(const e of state.enemies){
+        if(hit.has(e))continue;
+        const d=Math.hypot(src.x-e.x,src.y-e.y);
+        if(d<120&&d<nd){nd=d;nx=e;}
+      }
+      cur=nx;
+    }
+  }
   else if(s.skill==='economy'){dmgEnemy(tgt,dmg,u);addBeam(u,tgt,'#f1c40f');}
 }
 function dmgEnemy(e,dmg,src){
   e.hp-=dmg;
-  if(e.hp<=0){state.coins+=e.reward;
+  if(e.hp<=0){
+    state.coins+=e.reward;
     state.effects.push({type:'text',x:e.x,y:e.y-15,life:.7,maxLife:.7,text:`+${e.reward}`,color:'#f1c40f'});
-    const i=state.enemies.indexOf(e);if(i!==-1)state.enemies.splice(i,1);}
+    if(src){
+      let bonus=0;
+      if(hasSpecialSkill(src,'soul_harvest_2'))bonus=8;
+      else if(hasSpecialSkill(src,'soul_harvest'))bonus=3;
+      if(bonus>0){
+        state.coins+=bonus;
+        state.effects.push({type:'text',x:e.x+20,y:e.y-15,life:.7,maxLife:.7,text:`+${bonus}💀`,color:'#ff66cc'});
+      }
+      src.killCount=(src.killCount||0)+1;
+      const sing=hasSpecialSkill(src,'singularity_2')?3:hasSpecialSkill(src,'singularity')?5:0;
+      if(sing&&src.killCount%sing===0){
+        const rad=80;addExplosion(e.x,e.y,rad);
+        state.effects.push({type:'text',x:e.x,y:e.y-35,life:1,maxLife:1,text:'💥 SINGULARITY!',color:'#ff00ff'});
+        for(const en of [...state.enemies]){
+          if(Math.hypot(en.x-e.x,en.y-e.y)<=rad)dmgEnemy(en,Math.floor(dmg*.8),null);
+        }
+      }
+    }
+    const i=state.enemies.indexOf(e);if(i!==-1)state.enemies.splice(i,1);
+  }
 }
 function addBeam(a,b,c,w=2){state.projectiles.push({x1:a.x,y1:a.y,x2:b.x,y2:b.y,color:c,width:w,life:.1,maxLife:.1});}
 function addExplosion(x,y,r){state.effects.push({type:'explosion',x,y,radius:r,life:.3,maxLife:.3});}
@@ -784,8 +1210,7 @@ function handleVictory(){
   const box=document.getElementById('resultBox');
   box.innerHTML=`<h2 style="color:#2ecc71">🎉 VICTORY!</h2>
     <div style="color:#aaa;font-size:13px;margin-bottom:10px">${s.name}</div>
-    <div style="font-size:18px">💎 +${gemReward}</div>
-    ${matReward}
+    <div style="font-size:18px">💎 +${gemReward}</div>${matReward}
     <button id="resultMenuBtn" class="danger" style="margin-top:15px">🏠 Main Menu</button>
     <button id="resultRetryBtn" style="margin-top:5px">🔄 Main Lagi</button>`;
   document.getElementById('resultOverlay').style.display='flex';
@@ -809,14 +1234,13 @@ function handleDefeat(){
 
 /* ============ NAV ============ */
 function backToMenu(){
-  // sync unit level
   for(const p of state.placedUnits){
     const inv=state.inventory.find(v=>v.instanceId===p.instanceId);
     if(inv){inv.unitId=p.unitId;inv.rarity=p.rarity;inv.level=p.level;}
   }
   state.placedUnits=[];state.enemies=[];state.waveActive=false;state.spawnQueue=[];
   state.projectiles=[];state.effects=[];state.selectedInventoryId=null;state.selectedPlacedId=null;
-  state.paused=false;state.gameOver=false;state.victory=false;
+  state.paused=false;state.gameOver=false;state.victory=false;state.countdown=0;
   document.getElementById('skipBtn').style.display='none';
   document.getElementById('pauseOverlay').style.display='none';
   document.getElementById('resultOverlay').style.display='none';
@@ -853,6 +1277,10 @@ function draw(){
     ctx.font='bold 11px sans-serif';ctx.fillStyle='#f1c40f';
     ctx.strokeStyle='#000';ctx.lineWidth=3;
     ctx.strokeText('Lv'+u.level,u.x,u.y+28);ctx.fillText('Lv'+u.level,u.x,u.y+28);
+    if(u.buffTimer>0){
+      ctx.beginPath();ctx.arc(u.x,u.y,24,0,Math.PI*2);
+      ctx.strokeStyle='#00ffff';ctx.lineWidth=2;ctx.stroke();
+    }
     if(state.selectedPlacedId===u.instanceId){
       ctx.beginPath();ctx.arc(u.x,u.y,22,0,Math.PI*2);
       ctx.strokeStyle='#f1c40f';ctx.lineWidth=2;ctx.stroke();
@@ -865,6 +1293,8 @@ function draw(){
     ctx.strokeStyle='#000';ctx.lineWidth=2;ctx.stroke();
     if(e.slowTimer>0){ctx.beginPath();ctx.arc(e.x,e.y,e.radius+3,0,Math.PI*2);
       ctx.strokeStyle='#66ccff';ctx.lineWidth=2;ctx.stroke();}
+    if(e.deathMark>0){ctx.beginPath();ctx.arc(e.x,e.y,e.radius+5,0,Math.PI*2);
+      ctx.strokeStyle='#ff00ff';ctx.lineWidth=2;ctx.stroke();}
     const w=e.radius*3,hy=e.y-e.radius-10;
     ctx.fillStyle='rgba(0,0,0,.7)';ctx.fillRect(e.x-w/2,hy,w,5);
     const pct=Math.max(0,e.hp/e.maxHp);
@@ -890,6 +1320,17 @@ function draw(){
       ctx.fillText(e.text,e.x,e.y-(1-a)*20);ctx.globalAlpha=1;
     }
   }
+
+  if(state.countdown>0){
+    ctx.fillStyle='rgba(0,0,0,.45)';ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle='#f1c40f';ctx.font='bold 90px sans-serif';
+    ctx.fillText(Math.ceil(state.countdown),canvas.width/2,canvas.height/2-20);
+    ctx.fillStyle='#fff';ctx.font='bold 22px sans-serif';
+    ctx.fillText('Bersiap! Tempatkan unit...',canvas.width/2,canvas.height/2+55);
+    ctx.fillStyle='#aaa';ctx.font='14px sans-serif';
+    ctx.fillText('Wave 1 akan mulai otomatis',canvas.width/2,canvas.height/2+85);
+  }
 }
 
 /* ============ LOOP ============ */
@@ -902,7 +1343,7 @@ function loop(now){
   requestAnimationFrame(loop);
 }
 
-/* ============ EVENT BINDINGS ============ */
+/* ============ BINDINGS ============ */
 document.getElementById('summonBtn').onclick=()=>doSummon(1);
 document.getElementById('summon10Btn').onclick=()=>doSummon(10);
 document.getElementById('playBtn').onclick=startStage;
@@ -912,21 +1353,15 @@ document.getElementById('backFromCampaign').onclick=()=>{showScreen('menu');upda
 document.getElementById('backFromLegend').onclick=()=>{showScreen('menu');updateMenuUI();};
 document.getElementById('clearLoadoutBtn').onclick=()=>{state.loadout=[];updateMenuUI();};
 document.getElementById('resetBtn').onclick=()=>{if(confirm('Reset semua progress?')){localStorage.removeItem('td_save');location.reload();}};
-document.getElementById('startWaveBtn').onclick=startWave;
+document.getElementById('startWaveBtn').onclick=()=>{
+  if(state.countdown>0){state.countdown=0;startWave();return;}
+  startWave();
+};
 document.getElementById('skipBtn').onclick=skipWave;
-document.getElementById('pauseBtn').onclick=()=>{
-  state.paused=true;
-  document.getElementById('pauseOverlay').style.display='flex';
-};
-document.getElementById('resumeBtn').onclick=()=>{
-  state.paused=false;document.getElementById('pauseOverlay').style.display='none';
-};
-document.getElementById('mainMenuBtn').onclick=()=>{
-  document.getElementById('pauseOverlay').style.display='none';
-  backToMenu();
-};
+document.getElementById('pauseBtn').onclick=()=>{state.paused=true;document.getElementById('pauseOverlay').style.display='flex';};
+document.getElementById('resumeBtn').onclick=()=>{state.paused=false;document.getElementById('pauseOverlay').style.display='none';};
+document.getElementById('mainMenuBtn').onclick=()=>{document.getElementById('pauseOverlay').style.display='none';backToMenu();};
 
-/* ============ RATES DISPLAY ============ */
 (function(){const el=document.getElementById('ratesDisplay');
   for(const k of ['common','rare','epic','legendary','mythic','td']){
     const r=RARITIES[k];
