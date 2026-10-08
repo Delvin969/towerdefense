@@ -57,6 +57,12 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 .menu-side{display:flex;flex-direction:column;gap:8px}
 .menu-side button{flex:1;font-size:12px;padding:10px 4px;width:100%;letter-spacing:1px}
 .eq-stats{background:#0a0e27;border-radius:6px;padding:10px;margin:8px 0;font-size:12px}
+.pn h3.pn-h{cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center;gap:6px;padding:2px 0}
+.pn h3.pn-h::after{content:'▼';font-size:10px;color:#888;transition:.2s}
+.pn.collapsed h3.pn-h::after{content:'▶'}
+.pn.collapsed .pn-body{display:none}
+.pn-body{margin-top:6px}
+@media(max-width:640px){.pn{padding:8px}.pn h3{font-size:13px}}
 </style></head><body>
 <div id="toast"></div>
 
@@ -83,15 +89,18 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 <button id="play" class="g" style="display:block;width:min(460px,92%);margin:18px auto;font-size:26px;padding:22px;letter-spacing:2px">▶ PLAY</button>
 
 <div class="menu-grid">
-<div class="pn"><h3>🎒 INVENTORY <span style="font-size:11px;color:#888">(klik = equip)</span></h3><div id="inv" class="grid"></div></div>
-<div class="pn"><h3>⚔️ LOADOUT <span id="ls" style="float:right;color:#f1c40f">0/5</span></h3><div id="lo" class="grid"></div></div>
+<div class="pn" id="invPanel"><h3 class="pn-h" onclick="togglePanel('invPanel')">🎒 INVENTORY <span style="font-size:11px;color:#888">(klik = equip)</span></h3>
+<div class="pn-body"><div id="inv" class="grid"></div></div></div>
+<div class="pn" id="loPanel"><h3 class="pn-h" onclick="togglePanel('loPanel')">⚔️ LOADOUT <span id="ls" style="color:#f1c40f">0/5</span></h3>
+<div class="pn-body"><div id="lo" class="grid"></div></div></div>
 <div class="menu-side">
 <button id="trb" class="y">🎲<br>TRAIT</button>
 <button id="evb" class="y">🧬<br>EVOLVE</button>
 </div>
 </div>
 
-<div class="pn" style="max-width:1100px;margin:0 auto 10px"><h3>🔮 SUMMON</h3><div id="rates"></div><button id="s1" class="y">Summon (100 💎)</button><button id="s10" class="y">Summon 10x (1000 💎)</button></div>
+<div class="pn" id="sumPanel" style="max-width:1100px;margin:0 auto 10px"><h3 class="pn-h" onclick="togglePanel('sumPanel')">🔮 SUMMON</h3>
+<div class="pn-body"><div id="rates"></div><button id="s1" class="y">Summon (100 💎)</button><button id="s10" class="y">Summon 10x (1000 💎)</button></div></div>
 
 <div class="pn" style="max-width:1100px;margin:0 auto;text-align:center">
 <button id="set">⚙️ Settings</button>
@@ -285,13 +294,47 @@ let rng=d.rng*r.r*(1+(u.lv-1)*.06);
 let cd=d.cd*cdMul/(r.s*(1+(u.lv-1)*.04));
 if(tr){if(tr.dmg)dmg*=1+tr.dmg/100;if(tr.cd)cd*=1+tr.cd/100;if(tr.rng)rng*=1+tr.rng/100}
 return{dmg:Math.floor(dmg),rng:Math.floor(rng),cd,skill:d.skill,trait:tr}}
-/* Biaya upgrade LEBIH MURAH */
 const upCost=u=>Math.floor(COST[u.rar]*1.15*R[u.rar].k*Math.pow(1.35,u.lv-1));
 const SKM={single:1,slow:1.1,crit:1.15,aoe:1.25,chain:1.3,economy:1.4};
 const placeCost=u=>Math.round(COST[u.rar]*SKM[DEF[u.id].skill]/5)*5;
 function maxDep(u){const tr=getTrait(u);if(tr&&tr.special==='monarch')return 1;return Math.min(RLIM[role(DEF[u.id])],MAXD[u.rar])}
 const isHi=u=>u.rar==='mythic'||u.rar==='td'||u.rar==='secret'||u.rar==='transcendent'||u.rar==='primordial'||u.rar==='eternal';
 function STAT_HINT(id){const d=DEF[id],r=R[d.rar];return `DMG ${Math.floor(d.dmg*r.d)} · RNG ${Math.floor(d.rng*r.r)}`}
+function togglePanel(id){const p=$(id);if(p)p.classList.toggle('collapsed')}
+const RAR_ORDER=['common','rare','epic','legendary','mythic','td','secret','transcendent','primordial','eternal'];
+const RAR_TRIGGER=['mythic','td','secret','transcendent','primordial','eternal'];
+function playSummonCinematic(unit,cb){
+if(!unit||!RAR_TRIGGER.includes(unit.rar)){if(cb)cb();return}
+const d=DEF[unit.id],r=R[unit.rar];
+const flash=$('evoFlash'),cin=$('evoCinema'),rays=$('evoRays'),ic=$('evoIcon'),tt=$('evoTitle'),sb=$('evoSub');
+cin.style.color=r.c;rays.style.color=r.c;tt.style.color=r.c;
+ic.textContent=d.icon;ic.style.color=r.c;
+tt.textContent='✨ '+r.n.toUpperCase()+' ✨';
+const isEter=unit.rar==='eternal',isPrim=unit.rar==='primordial',isTr=unit.rar==='transcendent';
+const extra=isEter?' 🌌 LEGENDARY DROP':(isPrim?' 🔥 ULTRA RARE':(isTr?' ⭐ SUPER RARE':''));
+sb.innerHTML=`<div style="font-size:1.4em;font-weight:bold;color:#fff;margin-top:8px;text-shadow:0 0 20px ${r.c}">${d.name}</div><div style="font-size:.8em;color:${r.c};margin-top:6px;font-weight:bold">${r.n.toUpperCase()}${extra}</div><div style="font-size:.75em;color:#aaa;margin-top:6px">${ROLE[role(d)][0]} · ${d.skill}</div>`;
+flash.classList.add('on');cin.classList.add('on');
+if(S.fx){shake(isEter?35:isPrim?28:isTr?22:15,.7);flash('#fff',.3)}
+setTimeout(()=>{flash.classList.remove('on');flash.style.background=r.c;flash.classList.add('on')},100);
+setTimeout(()=>{flash.classList.remove('on')},380);
+setTimeout(()=>{
+if(S.fx){
+const nP=isEter?120:isPrim?90:isTr?70:50;
+for(let i=0;i<nP;i++){
+const a=Math.random()*6.283,s=(isEter?250:isPrim?220:180)+Math.random()*250,cx=window.innerWidth/2,cy=window.innerHeight/2;
+setTimeout(()=>{
+const el=document.createElement('div');
+el.style.cssText=`position:fixed;left:${cx}px;top:${cy}px;width:${isEter?8:6}px;height:${isEter?8:6}px;border-radius:50%;background:${r.c};box-shadow:0 0 14px ${r.c},0 0 28px ${r.c};pointer-events:none;z-index:997;transition:transform 1.1s cubic-bezier(.2,.8,.3,1),opacity 1.1s;opacity:1`;
+document.body.appendChild(el);
+requestAnimationFrame(()=>{el.style.transform=`translate(${Math.cos(a)*s}px,${Math.sin(a)*s}px) scale(0)`;el.style.opacity='0'});
+setTimeout(()=>el.remove(),1200);
+},i*(isEter?4:7));
+}
+}
+},420);
+const dur=isEter?2800:isPrim?2400:isTr?2200:1800;
+setTimeout(()=>{cin.classList.remove('on');flash.style.background='#fff';setTimeout(()=>{if(cb)cb()},300)},dur);
+}
 function checkLogin(){
 if(S.user){$('mu').textContent=S.user;show('menu');updMenu()}
 else{show('login');setTimeout(()=>$('loginEmail').focus(),150)}
@@ -485,7 +528,11 @@ let msg='';
 if(got.length){got.sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar));const best=got[0];msg=`${DEF[best.id].icon} ${DEF[best.id].name} (${R[best.rar].n})!`;if(got.length>1)msg=`✨ ${got.length} unit baru! Terbaik: `+msg}
 if(soldCount>0){const soldList=Object.keys(soldNames).map(id=>`${DEF[id].icon}${DEF[id].name}×${soldNames[id]}`).join(' ');msg+=(msg?' · ':'')+`♻️ Duplikat: ${soldList} (+${soldGems}💎)`}
 if(!msg)msg='Tidak ada unit baru.';
-toast(msg);updMenu();save()}
+toast(msg);
+let bestUnit=null;
+for(const u of got){if(RAR_TRIGGER.includes(u.rar)){if(!bestUnit||RAR_ORDER.indexOf(u.rar)>RAR_ORDER.indexOf(bestUnit.rar))bestUnit=u}}
+if(bestUnit){playSummonCinematic(bestUnit,()=>{updMenu();save()})}
+else{updMenu();save()}}
 $('s1').onclick=()=>summon(1);$('s10').onclick=()=>summon(10);
 $('rst').onclick=()=>{if(confirm('Reset semua progress?')){try{localStorage.removeItem('td2')}catch(e){}location.reload()}};
 const ring=(x,y,r,c,l=.6,w=4)=>G.fx.push({t:'ring',x,y,r,c,l,m:l,w});
