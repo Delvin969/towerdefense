@@ -331,4 +331,120 @@ function renderTraitMenu(){
     h+=`</div><button id="tmClose" class="r" style="width:100%;margin-top:10px">Tutup</button>`;
     $('ob').innerHTML=h;
     document.querySelectorAll('.tm-pick').forEach(b=>{
-      b.onclick=()=>{TM.selected=+b.dataset.i;TM
+      b.onclick=()=>{
+        TM.selected=+b.dataset.i;
+        TM.old=S.inv.find(x=>x.iid===TM.selected).trait;
+        renderTraitReroll();
+      };
+    });
+  }
+}
+
+function renderTraitReroll(){
+    const u=S.inv.find(x=>x.iid===TM.selected);
+    if(!u)return;
+    const d=DEF[u.id],r=R[u.rar];
+    let h=`<h2 style="margin-bottom:6px">🎲 Reroll Trait</h2>
+    <div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between">
+      <span style="color:#aaa">🎲 Token</span><b style="color:#f1c40f">${S.rr||0}</b>
+    </div>
+    <div style="background:#0a0e27;border:1px solid ${r.c};border-radius:6px;padding:10px;margin-bottom:10px;text-align:left">
+      <div><b style="color:#fff;font-size:14px">${d.icon} ${d.name}</b> <span style="color:${r.c};font-size:11px">${r.n}</span></div>
+      <div style="font-size:12px;color:#888;margin-top:4px">Trait saat ini:</div>
+      <div style="font-size:13px;color:${TM.old?TRAITS[TM.old.id].c:'#666'};margin-top:2px">${TM.old?`${TRAITS[TM.old.id].i} <b>${TRAITS[TM.old.id].n}</b>`:'— Tidak ada —'}</div>
+    </div>`;
+    if(TM.pending){
+        const pt=TRAITS[TM.pending.id], tl=pt.tiers.length>1?[' I',' II',' III'][TM.pending.tier]:'';
+        h+=`<div style="background:#0a0e27;border:2px dashed #f1c40f;border-radius:6px;padding:10px;margin-bottom:10px;text-align:left">
+          <div style="font-size:12px;color:#f1c40f;font-weight:bold">✨ Hasil Reroll:</div>
+          <div style="font-size:13px;color:${pt.c};margin-top:4px">${pt.i} <b>${pt.n}${tl}</b></div>
+          <div style="font-size:11px;color:#aaa;margin-top:2px">${pt.f(pt.tiers[TM.pending.tier])}</div>
+        </div>
+        <button id="tmApply" class="g" style="width:100%;margin-bottom:6px">✅ Terapkan</button>
+        <button id="tmRerollAgain" class="y" style="width:100%;margin-bottom:6px">🎲 Reroll Lagi (1 🎲)</button>
+        <button id="tmCancel" class="r" style="width:100%">❌ Batal</button>`;
+    }else{
+        h+=`<button id="tmDoReroll" class="y" style="width:100%;margin-bottom:6px" ${S.rr<1?'disabled':''}>🎲 Reroll Trait (1 🎲)</button>
+        <button id="tmBack" style="width:100%">← Kembali</button>`;
+    }
+    $('ob').innerHTML=h;
+    if($('tmDoReroll'))$('tmDoReroll').onclick=()=>{if(S.rr<1)return toast('❌ Token kurang!');S.rr--;TM.pending=rndTrait();save();renderTraitReroll()};
+    if($('tmRerollAgain'))$('tmRerollAgain').onclick=()=>{if(S.rr<1)return toast('❌ Token kurang!');S.rr--;TM.pending=rndTrait();save();renderTraitReroll()};
+    if($('tmApply'))$('tmApply').onclick=()=>{u.trait=TM.pending;TM.pending=null;save();updMenu();toast('✅ Trait diterapkan!');renderTraitMenu()};
+    if($('tmCancel'))$('tmCancel').onclick=()=>{TM.pending=null;renderTraitReroll()};
+    if($('tmBack'))$('tmBack').onclick=()=>{resetTM();renderTraitMenu()};
+}
+
+/* ============ END OF SCRIPT ============ */
+
+// Inisialisasi awal
+checkLogin();
+$('googleLoginBtn').onclick=()=>{if(!fbAuth)return toast('❌ Firebase error!');const provider=new firebase.auth.GoogleAuthProvider();fbAuth.signInWithPopup(provider).catch(e=>{toast('❌ Login gagal: '+e.message);$('loginMsg').innerHTML='<span style="color:#e74c3c">❌ '+e.message+'</span>'})};
+$('offlineBtn').onclick=()=>{S.user='Guest';save();show('menu');updMenu()};
+$('logoutBtn').onclick=()=>{if(fbAuth&&currentUser)fbAuth.signOut();else{S.user=null;save();show('login')}};
+$('play').onclick=()=>{if(!S.load.length)return toast('❌ Loadout kosong!');renderStage();show('stage')};
+$('stageBack').onclick=()=>{show('menu')};
+$('playStart').onclick=startStage;
+$('s1').onclick=()=>summon(1);
+$('s10').onclick=()=>summon(10);
+$('evb').onclick=evMenu;
+$('trb').onclick=traitMenu;
+$('rdb').onclick=redeemMenu;
+$('set').onclick=()=>pmenu(false);
+$('rst').onclick=()=>{if(confirm('⚠️ Hapus semua progress?')){localStorage.removeItem('td2');location.reload()}};
+$('expBtn').onclick=exportSave;
+$('impBtn').onclick=importSave;
+$('mb').onclick=()=>pmenu(true);
+$('fsBtn').onclick=()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});else document.exitFullscreen()};
+$('rotateSkip').onclick=()=>$('rotatePrompt').classList.remove('on');
+$('rotateForce').onclick=()=>{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(()=>{});$('rotatePrompt').classList.remove('on')};
+
+// Game Loop
+let lastT=performance.now();
+function loop(t){const dt=Math.min((t-lastT)/1000,.1);lastT=t;if(G&&!G.paused&&!G.over)update(dt);draw();requestAnimationFrame(loop)}
+function draw(){if(!G)return;ctx.clearRect(0,0,900,550);ctx.fillStyle='#111';ctx.fillRect(0,0,900,550);
+  // Draw path
+  ctx.strokeStyle='#2a3a6a';ctx.lineWidth=40;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();G.wp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
+  ctx.strokeStyle='#1a2050';ctx.lineWidth=36;ctx.beginPath();G.wp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
+  // Draw enemies
+  for(const e of G.en){if(e.dead)continue;ctx.fillStyle=e.hf>0?'#fff':e.c;ctx.shadowColor=e.c;ctx.shadowBlur=10;ctx.beginPath();ctx.arc(e.x,e.y,e.r,0,6.283);ctx.fill();ctx.shadowBlur=0;
+    // HP bar
+    const hpPct=e.hp/e.mx;ctx.fillStyle='#333';ctx.fillRect(e.x-20,e.y-e.r-10,40,4);ctx.fillStyle=hpPct>.5?'#2ecc71':hpPct>.25?'#f1c40f':'#e74c3c';ctx.fillRect(e.x-20,e.y-e.r-10,40*hpPct,4);
+    // Slow effect
+    if(e.sl>0){ctx.strokeStyle='#66ccff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,e.r+3,0,6.283);ctx.stroke()}
+  }
+  // Draw units
+  for(const u of G.pl){const d=DEF[u.i.id],r=R[u.i.rar],c=tc(u),hi=isHi(u.i);
+    if(hi)aura(u,c);
+    sigil(u,c);
+    ctx.font='24px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(d.icon,u.x,u.y);
+    // Range indicator for selected
+    if(G.selP===u.pid){const st=stats(u.i);ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=2;ctx.setLineDash([5,5]);ctx.beginPath();ctx.arc(u.x,u.y,st.rng,0,6.283);ctx.stroke();ctx.setLineDash([])}
+  }
+  // Draw FX
+  for(const f of G.fx){const a=f.l/(f.m||1);ctx.globalAlpha=a;
+    if(f.t==='ring'){ctx.strokeStyle=f.c;ctx.lineWidth=f.w||4;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a)*2,0,6.283);ctx.stroke()}
+    else if(f.t==='nova'){ctx.fillStyle=f.c;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a),0,6.283);ctx.fill()}
+    else if(f.t==='slash'){ctx.strokeStyle=f.c;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(f.x-20,f.y-20);ctx.lineTo(f.x+20,f.y+20);ctx.stroke()}
+    else if(f.t==='text'){ctx.fillStyle=f.c;ctx.font='bold 16px sans-serif';ctx.textAlign='center';ctx.fillText(f.s,f.x,f.y-(1-a)*30)}
+    else if(f.t==='exp'){ctx.strokeStyle='#fff';ctx.lineWidth=4;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a),0,6.283);ctx.stroke()}
+    else if(f.t==='scythe'){ctx.strokeStyle=f.c;ctx.lineWidth=6;ctx.beginPath();ctx.arc(f.x,f.y,f.len,f.a-f.ang,f.a+f.ang);ctx.stroke()}
+    else if(f.t==='banner'){ctx.fillStyle=f.c;ctx.font='bold 24px sans-serif';ctx.textAlign='center';ctx.fillText(f.s,450,100+(1-a)*50)}
+    ctx.globalAlpha=1;
+  }
+  // Draw Beams
+  for(const b of G.bm){const a=b.l/(b.m||1);ctx.globalAlpha=a;ctx.strokeStyle=b.c;ctx.lineWidth=b.w||2;ctx.beginPath();if(b.pts){b.pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y))}else{ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.x2,b.y2)}ctx.stroke();ctx.globalAlpha=1}
+  // Draw Particles
+  for(const p of G.par){const a=p.l/(p.m||1);ctx.globalAlpha=a;ctx.fillStyle=p.c;ctx.fillRect(p.x,p.y,p.z,p.z);ctx.globalAlpha=1}
+  // Screen shake
+  if(G.shake>0){ctx.translate((Math.random()-.5)*G.shake,(Math.random()-.5)*G.shake)}
+  // Flash
+  if(G.flash>0){ctx.fillStyle=G.fc;ctx.globalAlpha=G.flash*.5;ctx.fillRect(0,0,900,550);ctx.globalAlpha=1}
+}
+requestAnimationFrame(loop);
+
+// Handle window resize for canvas
+window.addEventListener('resize',()=>{});
+</script>
+</body>
+</html>
