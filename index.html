@@ -71,6 +71,14 @@ button.purple{background:linear-gradient(180deg,#9b59b6,#8e44ad)}
 .pause-box button{display:block;width:230px;margin:8px auto;font-size:16px;padding:12px}
 .empty-hint{color:#888;font-size:11px;text-align:center;grid-column:1/-1;padding:15px}
 .slots-info{font-size:12px;color:#aaa;margin-bottom:6px}
+.toggle-row{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#0a0e27;border-radius:8px;margin:8px 0;border:1px solid #2a3a6a}
+.toggle-row span{font-size:14px}
+.switch{position:relative;display:inline-block;width:52px;height:28px}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#444;transition:.3s;border-radius:28px}
+.slider:before{position:absolute;content:"";height:22px;width:22px;left:3px;bottom:3px;background:#fff;transition:.3s;border-radius:50%}
+input:checked + .slider{background:#2ecc71}
+input:checked + .slider:before{transform:translateX(24px)}
 </style>
 </head>
 <body>
@@ -100,8 +108,8 @@ button.purple{background:linear-gradient(180deg,#9b59b6,#8e44ad)}
       <div class="unit-grid" id="inventoryGrid"></div>
     </div>
     <div class="col">
-      <h2>⚔️ Loadout <span id="loadoutSlots" style="float:right;font-size:13px;color:#f1c40f">0/6</span></h2>
-      <div class="slots-info">Unit yang dibawa bertarung</div>
+      <h2>⚔️ Loadout <span id="loadoutSlots" style="float:right;font-size:13px;color:#f1c40f">0/5</span></h2>
+      <div class="slots-info">Unit yang dibawa bertarung (maks 5)</div>
       <div class="unit-grid" id="loadoutGrid"></div>
     </div>
   </div>
@@ -115,8 +123,35 @@ button.purple{background:linear-gradient(180deg,#9b59b6,#8e44ad)}
   </div>
 
   <div class="panel" style="text-align:center">
+    <button id="settingsBtn">⚙️ Settings</button>
     <button id="clearLoadoutBtn">Kosongkan Loadout</button>
     <button id="resetBtn" class="danger">Reset Progress</button>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settingsScreen" class="screen">
+  <h1>⚙️ Settings</h1>
+  <div class="panel"><button id="backFromSettings">← Kembali</button></div>
+  <div class="panel">
+    <h2>🎮 Gameplay</h2>
+    <div class="toggle-row">
+      <div>
+        <div style="font-weight:bold">⏩ Auto Skip</div>
+        <div style="font-size:11px;color:#888;margin-top:3px">Otomatis skip wave setelah 30 detik</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="autoSkipToggle"><span class="slider"></span></label>
+    </div>
+    <div class="toggle-row">
+      <div>
+        <div style="font-weight:bold">✨ Efek Animasi</div>
+        <div style="font-size:11px;color:#888;margin-top:3px">Particle & screen shake untuk Mythic+</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="fxToggle" checked><span class="slider"></span></label>
+    </div>
+  </div>
+  <div class="panel" style="text-align:center">
+    <button id="resetSettingsBtn" class="danger">Reset Settings</button>
   </div>
 </div>
 
@@ -395,9 +430,8 @@ function hasSpecialSkill(u,id){
   const list=SPECIAL_SKILLS[u.unitId];if(!list)return false;
   const e=list.find(s=>s.id===id);return e&&u.level>=e.lv;
 }
-function getUnlockedSkills(u){return (SPECIAL_SKILLS[u.unitId]||[]).filter(s=>u.level>=s.lv);}
 
-/* ============ RECIPES ============ */
+/* ============ RECIPES & MATERIALS ============ */
 const RECIPES={
   void_reaper:{result:'void_emperor',mats:{void_shard:5,void_core:2}},
   celestial_g:{result:'celestial_avatar',mats:{celestial_tear:5,star_fragment:2}},
@@ -412,7 +446,7 @@ const ALL_MATS=[
   {id:'death_crystal',name:'Death Crystal',icon:'💎'}
 ];
 
-/* ============ ENEMY TYPES ============ */
+/* ============ ENEMIES ============ */
 const ENEMY_TYPES={
   normal:{hp:30,speed:55,reward:25,color:'#e74c3c',radius:10},
   fast:{hp:20,speed:95,reward:20,color:'#f1c40f',radius:8},
@@ -421,7 +455,7 @@ const ENEMY_TYPES={
   boss:{hp:500,speed:30,reward:400,color:'#c0392b',radius:22}
 };
 const WAYPOINTS=[{x:0,y:275},{x:220,y:275},{x:220,y:90},{x:520,y:90},{x:520,y:460},{x:900,y:460}];
-const MAX_LOADOUT=6;
+const MAX_LOADOUT=5;
 const MAX_WAVE=20;
 const SKIP_DELAY=30;
 const START_COUNTDOWN=15;
@@ -458,12 +492,15 @@ let state={
   gems:500,coins:0,
   inventory:[],loadout:[],
   materials:{},cleared:{},currentStage:null,
-  placedUnits:[],enemies:[],projectiles:[],effects:[],
+  placedUnits:[],enemies:[],projectiles:[],effects:[],particles:[],
   wave:0,lives:20,waveActive:false,spawnQueue:[],spawnTimer:0,
   hpScale:1,gameOver:false,victory:false,
   nextInstanceId:1,selectedInventoryId:null,selectedPlacedId:null,
   paused:false,waveElapsed:0,skipUsed:false,
-  countdown:0,filterRole:'all'
+  countdown:0,filterRole:'all',
+  autoSkip:false, fxEnabled:true,
+  shakeTime:0, shakeIntensity:0, flashTime:0, flashColor:'#fff',
+  starterGiven:false
 };
 
 /* ============ HELPERS ============ */
@@ -485,6 +522,27 @@ function summonUnit(){const rar=rollRarity(),pool=UNIT_POOL[rar];
 function getMatInfo(id){return ALL_MATS.find(m=>m.id===id);}
 function stageKey(s){if(!s)return'';return s.type+'_'+(s.mapId||s.realmId)+'_'+(s.act||s.lv);}
 function countDeployed(unitId){return state.placedUnits.filter(p=>p.unitId===unitId).length;}
+function isHighRarity(r){return r==='mythic'||r==='td';}
+
+/* ============ FX ============ */
+function spawnParticles(x,y,color,count,speed,life){
+  if(!state.fxEnabled)return;
+  for(let i=0;i<count;i++){
+    const a=Math.random()*Math.PI*2;
+    const s=speed*(0.5+Math.random());
+    state.particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,
+      life:life*(0.7+Math.random()*0.6),maxLife:life,color,size:2+Math.random()*3});
+  }
+}
+function triggerShake(intensity,duration){
+  if(!state.fxEnabled)return;
+  state.shakeIntensity=Math.max(state.shakeIntensity,intensity);
+  state.shakeTime=Math.max(state.shakeTime,duration);
+}
+function triggerFlash(color,duration){
+  if(!state.fxEnabled)return;
+  state.flashColor=color;state.flashTime=duration;
+}
 
 /* ============ UI ============ */
 function toast(msg,d=2200){const t=document.getElementById('toast');t.textContent=msg;
@@ -551,7 +609,7 @@ function renderInventory(){
 }
 function renderLoadout(){
   const g=document.getElementById('loadoutGrid');g.innerHTML='';
-  if(!state.loadout.length){g.innerHTML='<div class="empty-hint">Klik unit di inventori untuk masuk loadout. Maks 6.</div>';return;}
+  if(!state.loadout.length){g.innerHTML='<div class="empty-hint">Klik unit di inventori untuk masuk loadout. Maks 5.</div>';return;}
   for(const id of state.loadout){
     const u=state.inventory.find(x=>x.instanceId===id);if(!u)continue;
     const d=getUnitDef(u.unitId),s=computeStats(u),r=RARITIES[u.rarity];
@@ -600,8 +658,12 @@ function doUpgrade(u){
   if(u.level>=maxLv){toast(`❌ ${getUnitDef(u.unitId).name} sudah MAX Lv${maxLv}!`);return;}
   const c=upgradeCost(u);if(state.coins<c)return;
   state.coins-=c;u.level++;
+  spawnParticles(u.x,u.y,'#f1c40f',12,80,.8);
   if(u.level>=maxLv)toast(`🏆 MAX LEVEL! ${getUnitDef(u.unitId).name} Lv${u.level}`);
-  else if((u.rarity==='mythic'||u.rarity==='td')&&u.level%3===0)toast(`✨ Skill diperkuat! Lv${u.level}`);
+  else if((u.rarity==='mythic'||u.rarity==='td')&&u.level%3===0){
+    toast(`✨ Skill diperkuat! Lv${u.level}`);
+    triggerFlash('#f1c40f',.2);
+  }
   else toast(`⬆️ Lv${u.level}`);
   updateGameUI();
 }
@@ -612,6 +674,9 @@ function doEvolve(u){
   }
   for(const[mat,cnt]of Object.entries(recipe.mats))state.materials[mat]-=cnt;
   u.unitId=recipe.result;u.rarity='td';u.level=1;
+  triggerShake(20,.6);triggerFlash('#00ffff',.4);
+  spawnParticles(u.x,u.y,'#00ffff',60,250,1.2);
+  spawnParticles(u.x,u.y,'#ffffff',30,180,1.5);
   toast(`🌟 EVOLVED! → ${getUnitDef(u.unitId).name}`);
   updateGameUI();
 }
@@ -795,7 +860,8 @@ function renderInfoPanel(){
     🪙 Selesai wave: +250 + bonus ekonomi<br>
     🪙 Kill: 20-400 tergantung tipe<br>
     💎 Clear: 150 pertama, 50 selanjutnya<br>
-    ⏩ Skip muncul setelah 30 detik<br>
+    ⏩ Skip setelah 30s · Spawn 0.35s<br>
+    ⚡ Taruh unit → wave langsung mulai<br>
     🧬 Mythic → TD dengan bahan Legend</p>
     <div style="border-top:1px solid #2a3a6a;margin-top:8px;padding-top:8px">${roleHTMLList}</div>`;
 }
@@ -820,8 +886,17 @@ canvas.addEventListener('click',e=>{
     const cur=countDeployed(u.unitId);
     if(cur>=maxD){toast(`❌ Batas ${d.name} sudah penuh (${maxD})!`);return;}
     state.placedUnits.push({instanceId:u.instanceId,unitId:u.unitId,rarity:u.rarity,level:u.level,
-      x,y,cooldownTimer:0,aimAngle:0,auraBonus:0,atkCount:0,killCount:0,ultTimer:0,buffTimer:0,healTimer:0});
-    state.selectedInventoryId=null;updateGameUI();return;
+      x,y,cooldownTimer:0,aimAngle:0,auraBonus:0,atkCount:0,killCount:0,ultTimer:0,buffTimer:0,healTimer:0,pulseTimer:0});
+    spawnParticles(x,y,RARITIES[u.rarity].color,15,100,.7);
+    state.selectedInventoryId=null;
+    /* Taruh unit → countdown selesai, wave 1 langsung mulai */
+    if(state.countdown>0&&state.wave===0&&!state.waveActive){
+      state.countdown=0;
+      triggerFlash('#f1c40f',.3);
+      toast('⚔️ Unit ditempatkan! Wave 1 dimulai.');
+      startWave();
+    }
+    updateGameUI();return;
   }
   state.selectedPlacedId=null;updateGameUI();
 });
@@ -837,11 +912,11 @@ function isNearPlaced(x,y){for(const u of state.placedUnits)if(Math.hypot(x-u.x,
 function startStage(){
   if(!state.currentStage){toast('Pilih stage dulu!');return;}
   if(!state.loadout.length){toast('Loadout kosong!');return;}
-  state.placedUnits=[];state.enemies=[];state.projectiles=[];state.effects=[];
+  state.placedUnits=[];state.enemies=[];state.projectiles=[];state.effects=[];state.particles=[];
   state.wave=0;state.lives=20;state.waveActive=false;state.spawnQueue=[];state.spawnTimer=0;
   state.gameOver=false;state.victory=false;state.hpScale=1;state.paused=false;
   state.selectedInventoryId=null;state.selectedPlacedId=null;
-  state.waveElapsed=0;state.skipUsed=false;
+  state.waveElapsed=0;state.skipUsed=false;state.shakeTime=0;state.flashTime=0;
   state.countdown=START_COUNTDOWN;
   document.getElementById('skipBtn').style.display='none';
   showScreen('game');updateGameUI();
@@ -862,6 +937,7 @@ function startWave(){
     state.spawnQueue.push('boss');
     if(state.currentStage?.boss){for(let i=0;i<4;i++)state.spawnQueue.push('tank');}
     toast('⚠️ BOSS WAVE!');
+    triggerFlash('#e74c3c',.5);
   }else{
     const count=5+Math.floor(w*.8);
     for(let i=0;i<count;i++){
@@ -881,7 +957,7 @@ function spawnEnemy(type){
   state.enemies.push({x:WAYPOINTS[0].x,y:WAYPOINTS[0].y,
     hp:d.hp*state.hpScale*hpMul,maxHp:d.hp*state.hpScale*hpMul,
     speed:d.speed,reward:d.reward,color:d.color,radius:d.radius,
-    type,waypointIndex:1,slowTimer:0,slowFactor:1,deathMark:0,deathMarkBonus:0});
+    type,waypointIndex:1,slowTimer:0,slowFactor:1,deathMark:0,deathMarkBonus:0,hitFlash:0});
 }
 function skipWave(){
   if(!state.waveActive)return;
@@ -893,7 +969,7 @@ function skipWave(){
       maxHp:ENEMY_TYPES[t].hp*state.hpScale*hpMul,
       speed:ENEMY_TYPES[t].speed,reward:ENEMY_TYPES[t].reward,
       color:ENEMY_TYPES[t].color,radius:ENEMY_TYPES[t].radius,
-      type:t,waypointIndex:1,slowTimer:0,slowFactor:1,deathMark:0,deathMarkBonus:0});
+      type:t,waypointIndex:1,slowTimer:0,slowFactor:1,deathMark:0,deathMarkBonus:0,hitFlash:0});
   }
   state.skipUsed=true;document.getElementById('skipBtn').style.display='none';
   toast('⏩ Wave dipercepat!');
@@ -904,6 +980,9 @@ function update(dt){
   if(state.paused)return;
   if(state.gameOver||state.victory)return;
 
+  if(state.shakeTime>0)state.shakeTime-=dt;
+  if(state.flashTime>0)state.flashTime-=dt;
+
   if(state.countdown>0){
     state.countdown-=dt;
     if(state.countdown<=0){state.countdown=0;startWave();}
@@ -912,11 +991,12 @@ function update(dt){
   if(state.waveActive){
     state.waveElapsed+=dt;
     if(!state.skipUsed&&state.waveElapsed>=SKIP_DELAY){
-      document.getElementById('skipBtn').style.display='inline-block';
+      if(state.autoSkip){skipWave();toast('⏩ Auto-skip!');}
+      else document.getElementById('skipBtn').style.display='inline-block';
     }
     if(state.spawnQueue.length){
       state.spawnTimer+=dt;
-      const iv=state.wave===MAX_WAVE?.6:.55;
+      const iv=state.wave===MAX_WAVE?.4:.35;
       if(state.spawnTimer>=iv){state.spawnTimer=0;spawnEnemy(state.spawnQueue.shift());}
     }
   }
@@ -936,7 +1016,6 @@ function update(dt){
       }
     }
     state.coins+=waveCoins+econCoins;
-    /* Blessing heal */
     let heal=0;
     for(const u of state.placedUnits){
       if(hasSpecialSkill(u,'blessing_2')&&state.wave%5===0)heal+=1;
@@ -957,6 +1036,7 @@ function update(dt){
     const e=state.enemies[i];
     if(e.slowTimer>0){e.slowTimer-=dt;if(e.slowTimer<=0)e.slowFactor=1;}
     if(e.deathMark>0)e.deathMark-=dt;
+    if(e.hitFlash>0)e.hitFlash-=dt;
     const t=WAYPOINTS[e.waypointIndex];
     if(!t){
       state.lives-=(e.type==='boss'?5:1);
@@ -986,6 +1066,7 @@ function update(dt){
   /* Towers */
   for(const u of state.placedUnits){
     const s=computeStats(u);u.cooldownTimer-=dt;
+    u.pulseTimer=(u.pulseTimer||0)+dt;
 
     /* Ultimate timers */
     if(hasSpecialSkill(u,'void_annihilation')){
@@ -995,6 +1076,8 @@ function update(dt){
         for(const e of [...state.enemies])dmgEnemy(e,300,u);
         state.effects.push({type:'text',x:u.x,y:u.y-45,life:1.5,maxLife:1.5,text:'☄️ ANNIHILATION!',color:'#00ffff'});
         addExplosion(u.x,u.y,280);
+        spawnParticles(u.x,u.y,'#00ffff',80,350,1.5);
+        triggerShake(25,.8);triggerFlash('#00ffff',.4);
       }
     }
     if(hasSpecialSkill(u,'armageddon')){
@@ -1004,6 +1087,9 @@ function update(dt){
         for(const e of [...state.enemies])dmgEnemy(e,150,u);
         state.effects.push({type:'text',x:u.x,y:u.y-45,life:1.5,maxLife:1.5,text:'🔥 ARMAGEDDON!',color:'#ff0000'});
         addExplosion(u.x,u.y,400);
+        spawnParticles(u.x,u.y,'#ff3300',80,400,1.5);
+        spawnParticles(u.x,u.y,'#ffaa00',40,250,1.8);
+        triggerShake(28,.9);triggerFlash('#ff3300',.5);
       }
     }
     if(hasSpecialSkill(u,'genesis')){
@@ -1011,6 +1097,8 @@ function update(dt){
       if(u.ultTimer<=0){
         u.ultTimer=45;u.buffTimer=5;
         state.effects.push({type:'text',x:u.x,y:u.y-45,life:1.5,maxLife:1.5,text:'🕊️ GENESIS!',color:'#00ffff'});
+        spawnParticles(u.x,u.y,'#ffffaa',60,300,1.6);
+        triggerFlash('#ffffaa',.4);
       }
     }
     if(hasSpecialSkill(u,'chaos_nova')){
@@ -1020,6 +1108,8 @@ function update(dt){
         for(const e of [...state.enemies]){dmgEnemy(e,300,u);e.slowTimer=Math.max(e.slowTimer,2);e.slowFactor=.4;}
         state.effects.push({type:'text',x:u.x,y:u.y-45,life:1.5,maxLife:1.5,text:'🌌 CHAOS NOVA!',color:'#aa66ff'});
         addExplosion(u.x,u.y,320);
+        spawnParticles(u.x,u.y,'#aa66ff',100,400,1.6);
+        triggerShake(26,.85);triggerFlash('#aa66ff',.5);
       }
     }
     if(hasSpecialSkill(u,'time_stop')){
@@ -1028,6 +1118,8 @@ function update(dt){
         u.ultTimer=50;
         for(const e of state.enemies){e.slowTimer=3;e.slowFactor=.15;}
         state.effects.push({type:'text',x:u.x,y:u.y-45,life:1.5,maxLife:1.5,text:'⏰ TIME STOP!',color:'#66ccff'});
+        spawnParticles(u.x,u.y,'#66ccff',80,250,2);
+        triggerFlash('#66ccff',.6);
       }
     }
     if(hasSpecialSkill(u,'creation')){
@@ -1035,6 +1127,8 @@ function update(dt){
       if(u.ultTimer<=0){
         u.ultTimer=40;u.buffTimer=6;
         state.effects.push({type:'text',x:u.x,y:u.y-45,life:1.5,maxLife:1.5,text:'🌠 CREATION!',color:'#00ffff'});
+        spawnParticles(u.x,u.y,'#ffffff',100,350,1.8);
+        triggerFlash('#ffffff',.5);
       }
     }
     if(hasSpecialSkill(u,'rewind')||hasSpecialSkill(u,'rewind_2')){
@@ -1043,6 +1137,7 @@ function update(dt){
       if(u.healTimer<=0){
         u.healTimer=period;state.lives+=1;
         state.effects.push({type:'text',x:u.x,y:u.y-45,life:1.2,maxLife:1.2,text:'💖 +1 LIFE',color:'#ff66cc'});
+        spawnParticles(u.x,u.y,'#ff66cc',20,120,1);
       }
     }
     if(u.buffTimer>0)u.buffTimer-=dt;
@@ -1055,12 +1150,21 @@ function update(dt){
     }
   }
 
+  /* Particles */
+  for(let i=state.particles.length-1;i>=0;i--){
+    const p=state.particles[i];
+    p.x+=p.vx*dt;p.y+=p.vy*dt;
+    p.vx*=0.94;p.vy*=0.94;
+    p.life-=dt;
+    if(p.life<=0)state.particles.splice(i,1);
+  }
   for(let i=state.projectiles.length-1;i>=0;i--){state.projectiles[i].life-=dt;
     if(state.projectiles[i].life<=0)state.projectiles.splice(i,1);}
   for(let i=state.effects.length-1;i>=0;i--){state.effects[i].life-=dt;
     if(state.effects[i].life<=0)state.effects.splice(i,1);}
 }
 function skillTier(u){if(u.rarity!=='mythic'&&u.rarity!=='td')return 0;return Math.floor(u.level/3);}
+
 function fireAttack(u,s,tgt){
   const tier=skillTier(u);
   let dmg=s.damage;
@@ -1073,6 +1177,7 @@ function fireAttack(u,s,tgt){
   if(gs&&Math.random()<gs){
     dmg*=2;
     state.effects.push({type:'text',x:u.x,y:u.y-30,life:.6,maxLife:.6,text:'💨 x2!',color:'#66ccff'});
+    spawnParticles(u.x,u.y,'#66ccff',10,80,.5);
   }
 
   u.atkCount=(u.atkCount||0)+1;
@@ -1080,6 +1185,7 @@ function fireAttack(u,s,tgt){
   if(hasSpecialSkill(u,'time_freeze_2')&&u.atkCount%7===0){
     tgt.slowTimer=3;tgt.slowFactor=.1;
     state.effects.push({type:'text',x:tgt.x,y:tgt.y-25,life:.8,maxLife:.8,text:'🧊 FREEZE!',color:'#66ccff'});
+    spawnParticles(tgt.x,tgt.y,'#66ccff',20,120,.9);
   } else if(hasSpecialSkill(u,'time_freeze')&&u.atkCount%10===0){
     tgt.slowTimer=2;tgt.slowFactor=.15;
     state.effects.push({type:'text',x:tgt.x,y:tgt.y-25,life:.8,maxLife:.8,text:'🧊 FREEZE!',color:'#66ccff'});
@@ -1088,14 +1194,17 @@ function fireAttack(u,s,tgt){
   const ik=hasSpecialSkill(u,'reality_tear_2')?.20:hasSpecialSkill(u,'reality_tear')?.10:0;
   if(ik&&tgt.type!=='boss'&&tgt.hp<tgt.maxHp*.5&&Math.random()<ik){
     state.effects.push({type:'text',x:tgt.x,y:tgt.y-25,life:1,maxLife:1,text:'⚡ EXECUTE!',color:'#ff00ff'});
+    spawnParticles(tgt.x,tgt.y,'#ff00ff',30,200,1);
     dmgEnemy(tgt,tgt.hp+999,u);return;
   }
 
   const supN=hasSpecialSkill(u,'supernova_2')?{n:5,m:2.5}:
             hasSpecialSkill(u,'supernova')?{n:8,m:2}:null;
+  const highFX=isHighRarity(u.rarity);
 
   if(s.skill==='single'){
-    dmgEnemy(tgt,dmg,u);addBeam(u,tgt,'#ffff00');
+    dmgEnemy(tgt,dmg,u);addBeam(u,tgt,highFX?'#ffddff':'#ffff00',highFX?3:2);
+    if(highFX)spawnParticles(tgt.x,tgt.y,RARITIES[u.rarity].color,6,100,.5);
   }
   else if(s.skill==='slow'){
     let slowBonus=0;
@@ -1104,7 +1213,8 @@ function fireAttack(u,s,tgt){
     dmgEnemy(tgt,dmg,u);
     tgt.slowTimer=1.5+tier*.4+slowBonus;
     tgt.slowFactor=Math.max(.25,.6-tier*.06);
-    addBeam(u,tgt,'#66ccff');
+    addBeam(u,tgt,'#66ccff',highFX?4:2);
+    spawnParticles(tgt.x,tgt.y,'#66ccff',highFX?12:5,100,.6);
   }
   else if(s.skill==='aoe'){
     let rad=50+tier*18;
@@ -1114,8 +1224,11 @@ function fireAttack(u,s,tgt){
     if(supN&&u.atkCount%supN.n===0){
       rad=Math.floor(rad*1.5);dmg=Math.floor(dmg*supN.m);
       state.effects.push({type:'text',x:u.x,y:u.y-45,life:1,maxLife:1,text:'☀️ SUPERNOVA!',color:'#ffff00'});
+      triggerShake(10,.3);triggerFlash('#ffff00',.2);
+      spawnParticles(tgt.x,tgt.y,'#ffff00',40,300,1.2);
     }
     addExplosion(tgt.x,tgt.y,rad);
+    if(highFX)spawnParticles(tgt.x,tgt.y,RARITIES[u.rarity].color,15,180,.9);
     for(const e of [...state.enemies])if(Math.hypot(e.x-tgt.x,e.y-tgt.y)<=rad)dmgEnemy(e,dmg,u);
   }
   else if(s.skill==='crit'){
@@ -1131,6 +1244,8 @@ function fireAttack(u,s,tgt){
     addBeam(u,tgt,crit?'#ff0000':'#ff8800',crit?4:2);
     if(crit){
       state.effects.push({type:'text',x:tgt.x,y:tgt.y-25,life:.8,maxLife:.8,text:'CRIT!',color:'#ff0000'});
+      spawnParticles(tgt.x,tgt.y,'#ff0000',highFX?25:10,200,.9);
+      if(highFX)triggerShake(6,.2);
       if(hasSpecialSkill(u,'death_mark_2')){tgt.deathMark=4;tgt.deathMarkBonus=.40;}
       else if(hasSpecialSkill(u,'death_mark')){tgt.deathMark=3;tgt.deathMarkBonus=.25;}
       else if(hasSpecialSkill(u,'chaos_mark_2')){tgt.deathMark=4;tgt.deathMarkBonus=.40;}
@@ -1147,11 +1262,15 @@ function fireAttack(u,s,tgt){
     else if(hasSpecialSkill(u,'elem_chaos'))chainMul=1.5;
     else if(hasSpecialSkill(u,'storm_surge_2'))chainMul=1.2;
     let cur=tgt,src=u;const hit=new Set();
+    let chainIdx=0;
     for(let i=0;i<n&&cur;i++){
       hit.add(cur);
       const fd=noRed?Math.floor(dmg*chainMul):Math.floor(dmg*(1-i*.1)*chainMul);
       dmgEnemy(cur,fd,u);
-      addBeam(src,cur,'#aa66ff');src=cur;
+      const ccolor=highFX?['#ff00ff','#00ffff','#ffaa00','#ff66ff'][chainIdx%4]:'#aa66ff';
+      addBeam(src,cur,ccolor,highFX?4:3);
+      if(highFX)spawnParticles(cur.x,cur.y,ccolor,8,150,.6);
+      src=cur;chainIdx++;
       let nx=null,nd=Infinity;
       for(const e of state.enemies){
         if(hit.has(e))continue;
@@ -1161,13 +1280,14 @@ function fireAttack(u,s,tgt){
       cur=nx;
     }
   }
-  else if(s.skill==='economy'){dmgEnemy(tgt,dmg,u);addBeam(u,tgt,'#f1c40f');}
+  else if(s.skill==='economy'){dmgEnemy(tgt,dmg,u);addBeam(u,tgt,'#f1c40f',highFX?4:2);}
 }
 function dmgEnemy(e,dmg,src){
-  e.hp-=dmg;
+  e.hp-=dmg;e.hitFlash=.15;
   if(e.hp<=0){
     state.coins+=e.reward;
     state.effects.push({type:'text',x:e.x,y:e.y-15,life:.7,maxLife:.7,text:`+${e.reward}`,color:'#f1c40f'});
+    spawnParticles(e.x,e.y,e.color,8,120,.6);
     if(src){
       let bonus=0;
       if(hasSpecialSkill(src,'soul_harvest_2'))bonus=8;
@@ -1181,6 +1301,8 @@ function dmgEnemy(e,dmg,src){
       if(sing&&src.killCount%sing===0){
         const rad=80;addExplosion(e.x,e.y,rad);
         state.effects.push({type:'text',x:e.x,y:e.y-35,life:1,maxLife:1,text:'💥 SINGULARITY!',color:'#ff00ff'});
+        spawnParticles(e.x,e.y,'#ff00ff',30,250,1);
+        triggerShake(8,.3);
         for(const en of [...state.enemies]){
           if(Math.hypot(en.x-e.x,en.y-e.y)<=rad)dmgEnemy(en,Math.floor(dmg*.8),null);
         }
@@ -1189,8 +1311,8 @@ function dmgEnemy(e,dmg,src){
     const i=state.enemies.indexOf(e);if(i!==-1)state.enemies.splice(i,1);
   }
 }
-function addBeam(a,b,c,w=2){state.projectiles.push({x1:a.x,y1:a.y,x2:b.x,y2:b.y,color:c,width:w,life:.1,maxLife:.1});}
-function addExplosion(x,y,r){state.effects.push({type:'explosion',x,y,radius:r,life:.3,maxLife:.3});}
+function addBeam(a,b,c,w=2){state.projectiles.push({x1:a.x,y1:a.y,x2:b.x,y2:b.y,color:c,width:w,life:.15,maxLife:.15});}
+function addExplosion(x,y,r){state.effects.push({type:'explosion',x,y,radius:r,life:.35,maxLife:.35});}
 
 /* ============ VICTORY / DEFEAT ============ */
 function handleVictory(){
@@ -1239,7 +1361,8 @@ function backToMenu(){
     if(inv){inv.unitId=p.unitId;inv.rarity=p.rarity;inv.level=p.level;}
   }
   state.placedUnits=[];state.enemies=[];state.waveActive=false;state.spawnQueue=[];
-  state.projectiles=[];state.effects=[];state.selectedInventoryId=null;state.selectedPlacedId=null;
+  state.projectiles=[];state.effects=[];state.particles=[];
+  state.selectedInventoryId=null;state.selectedPlacedId=null;
   state.paused=false;state.gameOver=false;state.victory=false;state.countdown=0;
   document.getElementById('skipBtn').style.display='none';
   document.getElementById('pauseOverlay').style.display='none';
@@ -1249,7 +1372,12 @@ function backToMenu(){
 
 /* ============ DRAW ============ */
 function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.save();
+  if(state.shakeTime>0){
+    const s=state.shakeIntensity*(state.shakeTime/1);
+    ctx.translate((Math.random()-.5)*s,(Math.random()-.5)*s);
+  }
+  ctx.clearRect(-20,-20,canvas.width+40,canvas.height+40);
   ctx.strokeStyle='rgba(50,60,100,.25)';ctx.lineWidth=1;
   for(let x=0;x<canvas.width;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke();}
   for(let y=0;y<canvas.height;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke();}
@@ -1267,11 +1395,51 @@ function draw(){
       ctx.strokeStyle='rgba(241,196,15,.5)';ctx.lineWidth=2;ctx.stroke();}
   }
 
+  /* Placed units */
   for(const u of state.placedUnits){
     const r=RARITIES[u.rarity],d=getUnitDef(u.unitId);
+    const high=isHighRarity(u.rarity);
+
+    if(high){
+      const t=performance.now()/1000;
+      ctx.save();
+      ctx.translate(u.x,u.y);
+      ctx.rotate(t*1.2);
+      ctx.beginPath();
+      ctx.arc(0,0,26,0,Math.PI*0.6);
+      ctx.strokeStyle=r.color;ctx.lineWidth=2.5;
+      ctx.shadowColor=r.color;ctx.shadowBlur=8;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0,0,26,Math.PI,Math.PI*1.6);
+      ctx.stroke();
+      ctx.rotate(-t*2.4);
+      ctx.beginPath();
+      ctx.arc(0,0,22,0,Math.PI*0.3);
+      ctx.strokeStyle='#fff';ctx.lineWidth=1.5;
+      ctx.stroke();
+      ctx.shadowBlur=0;
+      ctx.restore();
+    }
+
     ctx.beginPath();ctx.arc(u.x,u.y,18,0,Math.PI*2);
     ctx.fillStyle='#0a0e27';ctx.fill();
-    ctx.strokeStyle=r.color;ctx.lineWidth=3;ctx.stroke();
+    ctx.strokeStyle=r.color;ctx.lineWidth=high?3.5:3;
+    if(high){ctx.shadowColor=r.color;ctx.shadowBlur=10;}
+    ctx.stroke();
+    ctx.shadowBlur=0;
+
+    if(high){
+      const pulse=(u.pulseTimer||0)%2;
+      if(pulse<0.6){
+        const a=1-pulse/0.6;
+        ctx.beginPath();
+        ctx.arc(u.x,u.y,18+(1-a)*22,0,Math.PI*2);
+        ctx.strokeStyle=r.color;ctx.globalAlpha=a*.6;ctx.lineWidth=2;ctx.stroke();
+        ctx.globalAlpha=1;
+      }
+    }
+
     ctx.font='20px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(d.icon,u.x,u.y+1);
     ctx.font='bold 11px sans-serif';ctx.fillStyle='#f1c40f';
@@ -1279,7 +1447,8 @@ function draw(){
     ctx.strokeText('Lv'+u.level,u.x,u.y+28);ctx.fillText('Lv'+u.level,u.x,u.y+28);
     if(u.buffTimer>0){
       ctx.beginPath();ctx.arc(u.x,u.y,24,0,Math.PI*2);
-      ctx.strokeStyle='#00ffff';ctx.lineWidth=2;ctx.stroke();
+      ctx.strokeStyle='#00ffff';ctx.lineWidth=2;ctx.shadowColor='#00ffff';ctx.shadowBlur=12;ctx.stroke();
+      ctx.shadowBlur=0;
     }
     if(state.selectedPlacedId===u.instanceId){
       ctx.beginPath();ctx.arc(u.x,u.y,22,0,Math.PI*2);
@@ -1287,9 +1456,10 @@ function draw(){
     }
   }
 
+  /* Enemies */
   for(const e of state.enemies){
     ctx.beginPath();ctx.arc(e.x,e.y,e.radius,0,Math.PI*2);
-    ctx.fillStyle=e.color;ctx.fill();
+    ctx.fillStyle=e.hitFlash>0?'#fff':e.color;ctx.fill();
     ctx.strokeStyle='#000';ctx.lineWidth=2;ctx.stroke();
     if(e.slowTimer>0){ctx.beginPath();ctx.arc(e.x,e.y,e.radius+3,0,Math.PI*2);
       ctx.strokeStyle='#66ccff';ctx.lineWidth=2;ctx.stroke();}
@@ -1303,11 +1473,21 @@ function draw(){
     if(e.type==='boss'){ctx.font='16px sans-serif';ctx.textAlign='center';
       ctx.fillText('👑',e.x,e.y-e.radius-18);}
   }
+
+  /* Beams with glow */
   for(const p of state.projectiles){
     const a=p.life/p.maxLife;
+    ctx.globalAlpha=a;
+    ctx.shadowColor=p.color;ctx.shadowBlur=10;
     ctx.beginPath();ctx.moveTo(p.x1,p.y1);ctx.lineTo(p.x2,p.y2);
-    ctx.strokeStyle=p.color;ctx.globalAlpha=a;ctx.lineWidth=p.width;ctx.stroke();ctx.globalAlpha=1;
+    ctx.strokeStyle=p.color;ctx.lineWidth=p.width;ctx.stroke();
+    ctx.shadowBlur=0;
+    ctx.beginPath();ctx.moveTo(p.x1,p.y1);ctx.lineTo(p.x2,p.y2);
+    ctx.strokeStyle='#fff';ctx.lineWidth=p.width*.4;ctx.globalAlpha=a*.8;ctx.stroke();
+    ctx.globalAlpha=1;ctx.shadowBlur=0;
   }
+
+  /* Effects */
   for(const e of state.effects){
     const a=e.life/(e.maxLife||1);
     if(e.type==='explosion'){
@@ -1321,6 +1501,19 @@ function draw(){
     }
   }
 
+  /* Particles */
+  for(const p of state.particles){
+    const a=p.life/p.maxLife;
+    ctx.globalAlpha=a;
+    ctx.fillStyle=p.color;
+    ctx.shadowColor=p.color;ctx.shadowBlur=6;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.size*a,0,Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha=1;ctx.shadowBlur=0;
+
+  /* Countdown */
   if(state.countdown>0){
     ctx.fillStyle='rgba(0,0,0,.45)';ctx.fillRect(0,0,canvas.width,canvas.height);
     ctx.textAlign='center';ctx.textBaseline='middle';
@@ -1329,7 +1522,16 @@ function draw(){
     ctx.fillStyle='#fff';ctx.font='bold 22px sans-serif';
     ctx.fillText('Bersiap! Tempatkan unit...',canvas.width/2,canvas.height/2+55);
     ctx.fillStyle='#aaa';ctx.font='14px sans-serif';
-    ctx.fillText('Wave 1 akan mulai otomatis',canvas.width/2,canvas.height/2+85);
+    ctx.fillText('Taruh unit → wave 1 langsung mulai',canvas.width/2,canvas.height/2+85);
+  }
+
+  ctx.restore();
+
+  if(state.flashTime>0){
+    ctx.fillStyle=state.flashColor;
+    ctx.globalAlpha=(state.flashTime)*1.2;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.globalAlpha=1;
   }
 }
 
@@ -1353,6 +1555,22 @@ document.getElementById('backFromCampaign').onclick=()=>{showScreen('menu');upda
 document.getElementById('backFromLegend').onclick=()=>{showScreen('menu');updateMenuUI();};
 document.getElementById('clearLoadoutBtn').onclick=()=>{state.loadout=[];updateMenuUI();};
 document.getElementById('resetBtn').onclick=()=>{if(confirm('Reset semua progress?')){localStorage.removeItem('td_save');location.reload();}};
+document.getElementById('settingsBtn').onclick=()=>{
+  document.getElementById('autoSkipToggle').checked=state.autoSkip;
+  document.getElementById('fxToggle').checked=state.fxEnabled;
+  showScreen('settings');
+};
+document.getElementById('backFromSettings').onclick=()=>{
+  state.autoSkip=document.getElementById('autoSkipToggle').checked;
+  state.fxEnabled=document.getElementById('fxToggle').checked;
+  save();showScreen('menu');updateMenuUI();toast('✅ Settings tersimpan');
+};
+document.getElementById('resetSettingsBtn').onclick=()=>{
+  state.autoSkip=false;state.fxEnabled=true;
+  document.getElementById('autoSkipToggle').checked=false;
+  document.getElementById('fxToggle').checked=true;
+  save();toast('Settings di-reset');
+};
 document.getElementById('startWaveBtn').onclick=()=>{
   if(state.countdown>0){state.countdown=0;startWave();return;}
   startWave();
@@ -1372,18 +1590,35 @@ document.getElementById('mainMenuBtn').onclick=()=>{document.getElementById('pau
 function save(){
   localStorage.setItem('td_save',JSON.stringify({
     gems:state.gems,coins:state.coins,inventory:state.inventory,loadout:state.loadout,
-    materials:state.materials,cleared:state.cleared,nextInstanceId:state.nextInstanceId
+    materials:state.materials,cleared:state.cleared,nextInstanceId:state.nextInstanceId,
+    autoSkip:state.autoSkip,fxEnabled:state.fxEnabled,starterGiven:state.starterGiven
   }));
 }
 function load(){
   const s=localStorage.getItem('td_save');if(!s)return;
   try{const d=JSON.parse(s);Object.assign(state,d);
     state.loadout=state.loadout||[];state.materials=state.materials||{};state.cleared=state.cleared||{};
+    if(state.autoSkip===undefined)state.autoSkip=false;
+    if(state.fxEnabled===undefined)state.fxEnabled=true;
     const ids=new Set(state.inventory.map(u=>u.instanceId));
     state.loadout=state.loadout.filter(id=>ids.has(id));
   }catch(e){}
 }
-load();updateMenuUI();
+load();
+
+/* ============ STARTER UNITS ============ */
+if(!state.starterGiven && state.inventory.length===0){
+  state.inventory.push(
+    {instanceId:state.nextInstanceId++,unitId:'archer',rarity:'common',level:1},
+    {instanceId:state.nextInstanceId++,unitId:'swordsman',rarity:'common',level:1},
+    {instanceId:state.nextInstanceId++,unitId:'apprentice',rarity:'common',level:1}
+  );
+  state.starterGiven=true;
+  save();
+  setTimeout(()=>toast('🎁 Selamat datang! Kamu dapat 3 unit starter Common.',4000),600);
+}
+
+updateMenuUI();
 requestAnimationFrame(loop);
 setInterval(save,10000);
 window.addEventListener('beforeunload',save);
