@@ -39,6 +39,18 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 .tg small{color:#888}.tg input{width:22px;height:22px}
 @keyframes glow{from{box-shadow:0 0 10px #ff00ff}to{box-shadow:0 0 30px #ff00ff,0 0 50px #ff00ff}}
 @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes evoZoom{0%{transform:scale(.3);opacity:0}30%{transform:scale(1.15);opacity:1}60%{transform:scale(.95)}100%{transform:scale(1);opacity:1}}
+@keyframes evoSlide{0%{transform:translateY(40px);opacity:0}100%{transform:translateY(0);opacity:1}}
+@keyframes evoGlow{0%,100%{text-shadow:0 0 20px currentColor,0 0 40px currentColor}50%{text-shadow:0 0 40px currentColor,0 0 80px currentColor,0 0 120px currentColor}}
+@keyframes evoRays{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.evo-flash{position:fixed;inset:0;background:#fff;z-index:998;pointer-events:none;opacity:0;transition:opacity .15s}
+.evo-flash.on{opacity:1}
+.evo-cinema{position:fixed;inset:0;z-index:999;pointer-events:none;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;opacity:0;transition:opacity .3s}
+.evo-cinema.on{opacity:1}
+.evo-rays{position:absolute;inset:0;background:conic-gradient(from 0deg,transparent 0deg,currentColor 15deg,transparent 30deg,transparent 60deg,currentColor 75deg,transparent 90deg,transparent 120deg,currentColor 135deg,transparent 150deg,transparent 180deg,currentColor 195deg,transparent 210deg,transparent 240deg,currentColor 255deg,transparent 270deg,transparent 300deg,currentColor 315deg,transparent 330deg);opacity:.35;animation:evoRays 6s linear infinite;filter:blur(2px)}
+.evo-title{font-size:clamp(32px,7vw,60px);font-weight:900;letter-spacing:4px;animation:evoZoom .8s cubic-bezier(.2,1.4,.5,1) forwards,evoGlow 1.2s ease-in-out infinite;position:relative;z-index:2}
+.evo-sub{font-size:clamp(14px,3vw,20px);color:#fff;margin-top:8px;animation:evoSlide .8s .3s ease-out backwards;position:relative;z-index:2}
+.evo-icon{font-size:clamp(60px,15vw,120px);margin-bottom:16px;animation:evoZoom 1s cubic-bezier(.2,1.4,.5,1) forwards;filter:drop-shadow(0 0 30px currentColor);position:relative;z-index:2}
 </style></head><body>
 <div id="toast"></div>
 <div id="menu" class="sc on">
@@ -59,9 +71,16 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 <div class="gw"><div id="cw"><canvas id="cv" width="900" height="550"></canvas><button id="mb">⚙️</button><div id="pop"></div></div><div id="hand"></div></div>
 </div>
 <div id="ov"><div class="box" id="ob"></div></div>
+<div class="evo-flash" id="evoFlash"></div>
+<div class="evo-cinema" id="evoCinema">
+<div class="evo-rays" id="evoRays"></div>
+<div class="evo-icon" id="evoIcon">👁️</div>
+<div class="evo-title" id="evoTitle">EVOLVED</div>
+<div class="evo-sub" id="evoSub"></div>
+</div>
 <script>
 const BASE=100,DMG=10,MAXW=20,$=i=>document.getElementById(i);
-const R={common:{n:'Common',c:'#b0b0b0',p:.5,d:1,r:1,s:1,k:1},rare:{n:'Rare',c:'#4a90e2',p:.25,d:1.35,r:1.1,s:1.1,k:1.3},epic:{n:'Epic',c:'#9b59b6',p:.15,d:1.8,r:1.2,s:1.2,k:1.7},legendary:{n:'Legendary',c:'#f39c12',p:.075,d:2.5,r:1.35,s:1.3,k:2.3},mythic:{n:'Mythic',c:'#e74c3c',p:.024,d:3.5,r:1.5,s:1.45,k:3.2},td:{n:'TD',c:'#00ffff',p:.001,d:5.5,r:1.75,s:1.65,k:4.5},secret:{n:'Secret',c:'#ff00ff',p:0,d:7,r:2,s:1.8,k:5.5}};
+const R={common:{n:'Common',c:'#b0b0b0',p:.5,d:1,r:1,s:1,k:1},rare:{n:'Rare',c:'#4a90e2',p:.25,d:1.35,r:1.1,s:1.1,k:1.3},epic:{n:'Epic',c:'#9b59b6',p:.15,d:1.8,r:1.2,s:1.2,k:1.7},legendary:{n:'Legendary',c:'#f39c12',p:.075,d:2.5,r:1.35,s:1.3,k:2.3},mythic:{n:'Mythic',c:'#e74c3c',p:.024,d:3.5,r:1.5,s:1.45,k:3.2},td:{n:'TD',c:'#00ffff',p:.001,d:5.5,r:1.75,s:1.65,k:4.5},secret:{n:'Transcendent',c:'#ff00ff',p:0,d:7,r:2,s:1.8,k:5.5}};
 const ORD=['secret','td','mythic','legendary','epic','rare','common'];
 const COST={common:40,rare:70,epic:110,legendary:170,mythic:300,td:600,secret:1200};
 const MAXD={common:8,rare:6,epic:5,legendary:4,mythic:3,td:2,secret:1},MAXL={common:10,rare:12,epic:15,legendary:18,mythic:20,td:25,secret:30};
@@ -110,7 +129,8 @@ const REALMS=[{n:'🕳️ Void Realm',m:'void_shard',d:[[3,1],[4.5,2],[6.5,3]]},
 const RLIM={dps:5,sniper:3,aoe:3,chain:3,crit:3,cc:3,economy:2};
 const ROLE={dps:['⚔️ DPS','#e74c3c'],sniper:['🎯 Sniper','#2ecc71'],aoe:['💣 AOE','#f39c12'],chain:['⛓️ Chain','#9b59b6'],crit:['⚡ Crit','#f1c40f'],cc:['❄️ CC','#66ccff'],economy:['💰 Eco','#f1c40f']};
 const role=d=>d.skill==='single'?(d.rng>=110?'sniper':'dps'):d.skill==='slow'?'cc':d.skill;
-const CD_ROLE_MULT={dps:1.0,sniper:1.15,aoe:1.4,chain:1.25,crit:1.05,cc:0.85,economy:1.6};
+const CD_ROLE_MULT={dps:1.0,sniper:1.15,aoe:1.4,chain:1.25,crit:1.05,cc:0.85,economy:1.25};
+const ECO_K={common:1.0,rare:1.2,epic:1.6,legendary:2.2,mythic:3.0,td:4.0,secret:5.0};
 const TRAITS={
 vigor:{n:'Vigor',i:'💪',c:'#e74c3c',rar:'common',chance:26,tiers:[{dmg:5},{dmg:10},{dmg:15}],f:t=>`+${t.dmg}% DMG`},
 swift:{n:'Swift',i:'💨',c:'#66ccff',rar:'common',chance:26,tiers:[{cd:-5},{cd:-7.5},{cd:-12.5}],f:t=>`${t.cd}% Cooldown`},
@@ -162,7 +182,8 @@ function show(n){document.querySelectorAll('.sc').forEach(s=>s.classList.remove(
 function stats(u){
 const d=DEF[u.id],r=R[u.rar],tr=getTrait(u);
 const cdMul=CD_ROLE_MULT[role(d)]||1;
-let dmg=d.dmg*r.d*(1+(u.lv-1)*.18);
+const dmgPerLv=(u.rar==='mythic'||u.rar==='td'||u.rar==='secret')?.25:.18;
+let dmg=d.dmg*r.d*(1+(u.lv-1)*dmgPerLv);
 let rng=d.rng*r.r*(1+(u.lv-1)*.06);
 let cd=d.cd*cdMul/(r.s*(1+(u.lv-1)*.04));
 if(tr){if(tr.dmg)dmg*=1+tr.dmg/100;if(tr.cd)cd*=1+tr.cd/100;if(tr.rng)rng*=1+tr.rng/100}
@@ -173,6 +194,32 @@ const placeCost=u=>Math.round(COST[u.rar]*SKM[DEF[u.id].skill]/5)*5;
 function maxDep(u){const tr=getTrait(u);if(tr&&tr.special==='monarch')return 1;return Math.min(RLIM[role(DEF[u.id])],MAXD[u.rar])}
 const isHi=u=>u.rar==='mythic'||u.rar==='td'||u.rar==='secret';
 function STAT_HINT(id){const d=DEF[id],r=R.secret;return `DMG ${Math.floor(d.dmg*r.d)} · RNG ${Math.floor(d.rng*r.r)}`}
+/* ===== EVOLVE CINEMATIC ===== */
+function playEvoCinematic(oldName,newName,icon,color,skillName,skillDesc,ult,cb){
+const flash=$('evoFlash'),cin=$('evoCinema'),rays=$('evoRays'),ic=$('evoIcon'),tt=$('evoTitle'),sb=$('evoSub');
+cin.style.color=color;rays.style.color=color;tt.style.color=color;
+ic.textContent=icon;ic.style.color=color;
+tt.textContent='✨ EVOLVED ✨';
+sb.innerHTML=`<div style="font-size:.85em;color:#aaa">${oldName}</div><div style="font-size:1.2em;font-weight:bold;color:#fff;margin:2px 0">↓</div><div style="font-size:1.1em;font-weight:bold;color:${color}">${newName}</div><div style="margin-top:12px;font-size:.9em;font-weight:bold;color:${color}">${skillName}</div><div style="font-size:.75em;color:#bbb;margin-top:4px">${skillDesc}</div><div style="margin-top:10px;font-size:.85em;color:#f1c40f">Ultimate: ${ult}</div>`;
+flash.classList.add('on');cin.classList.add('on');
+if(S.fx){shake(30,.8);flash('#fff',.4)}
+setTimeout(()=>{flash.classList.remove('on');flash.style.background=color;flash.classList.add('on')},120);
+setTimeout(()=>{flash.classList.remove('on')},400);
+setTimeout(()=>{
+if(S.fx){
+for(let i=0;i<80;i++){
+const a=Math.random()*6.283,s=200+Math.random()*350,cx=window.innerWidth/2,cy=window.innerHeight/2;
+setTimeout(()=>{
+const el=document.createElement('div');
+el.style.cssText=`position:fixed;left:${cx}px;top:${cy}px;width:6px;height:6px;border-radius:50%;background:${color};box-shadow:0 0 12px ${color};pointer-events:none;z-index:997;transition:transform 1s cubic-bezier(.2,.8,.3,1),opacity 1s;opacity:1`;
+document.body.appendChild(el);
+requestAnimationFrame(()=>{el.style.transform=`translate(${Math.cos(a)*s}px,${Math.sin(a)*s}px) scale(0)`;el.style.opacity='0'});
+setTimeout(()=>el.remove(),1100)},i*8)}
+shake(25,.5)}},500);
+setTimeout(()=>{
+cin.classList.remove('on');
+flash.style.background='#fff';
+setTimeout(()=>{if(cb)cb()},400)},2400)}
 /* ===== REDEEM ===== */
 function redeemMenu(){
 $('ov').style.display='flex';
@@ -237,10 +284,10 @@ if(L){const rm=REALMS[S.ri].m;
 const hasToken=TOKEN_DROP_MATS.includes(rm);
 if(SECRET_DROPS[rm]){const sID=SECRET_DROPS[rm];
 a.insertAdjacentHTML('beforeend',`<div style="grid-column:1/-1;background:linear-gradient(135deg,#1a0033,#0a0e27);border:2px solid #ff00ff;border-radius:8px;padding:12px;margin-top:6px;text-align:center;box-shadow:0 0 15px rgba(255,0,255,.4)">
-<div style="font-size:13px;color:#ff00ff;font-weight:bold">🌟 SECRET DROP (0.85%)</div>
+<div style="font-size:13px;color:#ff00ff;font-weight:bold">🌟 TRANSCENDENT DROP (0.85%)</div>
 <div style="font-size:26px;margin:6px 0">${DEF[sID].icon}</div>
 <div style="color:#fff;font-weight:bold">${DEF[sID].name}</div>
-<div style="font-size:10px;color:#aaa;margin-top:4px">Rarity: <b style="color:#ff00ff">SECRET</b> · ${STAT_HINT(sID)}</div>
+<div style="font-size:10px;color:#aaa;margin-top:4px">Rarity: <b style="color:#ff00ff">TRANSCENDENT</b> · ${STAT_HINT(sID)}</div>
 <div style="font-size:10px;color:#f1c40f;margin-top:4px">🧬 Bisa di-Evolve jadi God!</div></div>`)}
 if(hasToken){
 a.insertAdjacentHTML('beforeend',`<div style="grid-column:1/-1;background:linear-gradient(135deg,#003344,#0a0e27);border:2px solid #66ccff;border-radius:8px;padding:10px;margin-top:6px;text-align:center;box-shadow:0 0 15px rgba(102,204,255,.4)">
@@ -265,7 +312,7 @@ if(got.length){got.sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar));const best
 if(soldCount>0){const soldList=Object.keys(soldNames).map(id=>`${DEF[id].icon}${DEF[id].name}×${soldNames[id]}`).join(' ');msg+=(msg?' · ':'')+`♻️ Duplikat: ${soldList} (+${soldGems}💎)`}
 if(!msg)msg='Tidak ada unit baru.';
 toast(msg);updMenu();save()}
-$('rates').innerHTML=Object.values(R).filter(r=>r.p>0).map(r=>`<span style="color:${r.c}">${r.n} ${(r.p*100).toFixed(1)}%</span>`).join('')+`<span style="color:#ff00ff">Secret (Legend only)</span>`;
+$('rates').innerHTML=Object.values(R).filter(r=>r.p>0).map(r=>`<span style="color:${r.c}">${r.n} ${(r.p*100).toFixed(1)}%</span>`).join('')+`<span style="color:#ff00ff">Transcendent (Legend only)</span>`;
 $('s1').onclick=()=>summon(1);$('s10').onclick=()=>summon(10);
 $('rst').onclick=()=>{if(confirm('Reset semua progress?')){try{localStorage.removeItem('td2')}catch(e){}location.reload()}};
 /* ===== FX ===== */
@@ -426,7 +473,7 @@ if(u.cdT<=0){let t=null,md=1e9;for(const e of G.en){if(e.dead)continue;const d=M
 if(t){fire(u,st,t);u.cdT=st.cd}}}
 G.en=G.en.filter(e=>!e.dead);
 if(G.act&&!G.q.length&&!G.en.length){G.act=false;let ec=0;
-for(const u of G.pl)if(DEF[u.i.id].skill==='economy'){const r=40+u.i.lv*20;ec+=r;ftext(u.x,u.y-30,'+'+r+'🪙','#f1c40f',1.2)}
+for(const u of G.pl)if(DEF[u.i.id].skill==='economy'){const rarK=ECO_K[u.i.rar]||1.0;const r=Math.floor((80+u.i.lv*35)*rarK);ec+=r;ftext(u.x,u.y-30,'+'+r+'🪙','#f1c40f',1.2)}
 const bonus=G.inf?Math.floor(250*(1+G.wave*.05)):250;
 S.coins+=bonus+ec;$('sk').style.display='none';
 if(!G.inf&&G.wave>=MAXW)victory();else{toast(`🌊 Wave ${G.wave} selesai! +${bonus+ec} 🪙 · berikutnya 2 detik`);G.nx=2}
@@ -449,12 +496,12 @@ let secretHTML='';
 if(s.mat&&SECRET_DROPS[s.mat]){const roll=Math.random();
 if(roll<SECRET_CHANCE){const id=SECRET_DROPS[s.mat];const dup=S.inv.some(u=>u.id===id);
 if(dup){S.gems+=500;secretHTML=`<div style="border:2px solid #ff00ff;border-radius:10px;padding:12px;margin:10px 0;background:linear-gradient(135deg,#1a0033,#0a0e27);animation:glow 1.5s infinite alternate">
-<div style="font-size:28px">${DEF[id].icon}</div><b style="color:#ff00ff;font-size:16px">🌟 SECRET DUPLICATE!</b>
+<div style="font-size:28px">${DEF[id].icon}</div><b style="color:#ff00ff;font-size:16px">🌟 TRANSCENDENT DUPLICATE!</b>
 <div style="color:#aaa;font-size:12px;margin-top:4px">${DEF[id].name} (duplikat)</div>
 <div style="color:#f1c40f;font-weight:bold;margin-top:4px">+500 💎 (kompensasi)</div></div>`;save()}
 else{S.inv.push({iid:S.nid++,id,rar:'secret',lv:1,trait:null});
 secretHTML=`<div style="border:3px solid #ff00ff;border-radius:10px;padding:14px;margin:10px 0;background:linear-gradient(135deg,#2a0033,#0a0e27);box-shadow:0 0 25px #ff00ff;animation:glow 1.5s infinite alternate">
-<div style="font-size:36px">${DEF[id].icon}</div><b style="color:#ff00ff;font-size:20px;text-shadow:0 0 15px #ff00ff">✨ SECRET UNIT! ✨</b>
+<div style="font-size:36px">${DEF[id].icon}</div><b style="color:#ff00ff;font-size:20px;text-shadow:0 0 15px #ff00ff">✨ TRANSCENDENT UNIT! ✨</b>
 <div style="color:#fff;font-size:15px;margin-top:6px;font-weight:bold">${DEF[id].name}</div>
 <div style="color:#ff00ff;font-size:11px;margin-top:4px">Drop rate: 0.85% dari ${MATS[s.mat][1]} ${MATS[s.mat][0]}</div>
 <div style="color:#f1c40f;font-size:11px;margin-top:4px">🧬 Bisa di-Evolve jadi God tier!</div></div>`;save()}}}
@@ -495,6 +542,7 @@ const es=EVO_SKILL[i.id];
 const skillName=es?`${es.icon} ${es.name}`:st.skill;
 const skillDesc=es?`<div style="font-size:10px;color:#888;margin:2px 0 4px">${es.desc}</div>`:'';
 const ultName=es?es.ult:(ULT[st.skill]?ULT[st.skill].n:'ULTIMATE');
+const econPerWave=(st.skill==='economy')?Math.floor((80+i.lv*35)*(ECO_K[i.rar]||1.0)):0;
 if(rc){let can=true;ev=`<div style="margin-top:4px;color:#aaa">🧬 → ${DEF[rc.r].name}</div>`;
 for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;ev+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}
 ev+=`<button id="ev" class="y" ${can?'':'disabled'}>Evolve</button>`}
@@ -504,6 +552,7 @@ pop.innerHTML=`<b>${d.icon} ${d.name}</b> <span style="color:${ro[1]}">${ro[0]}<
 <div class="row"><span>CD</span><b>${st.cd.toFixed(2)}s</b></div>
 ${traitHTML}
 <div class="row"><span>Skill</span><b>${skillName}</b></div>${skillDesc}
+${econPerWave?`<div class="row"><span>🪙/Wave</span><b style="color:#f1c40f">+${econPerWave}</b></div>`:''}
 <div class="row"><span>Terpasang</span><b>${cnt(i)}/${maxDep(i)}</b></div>
 ${isHi(i)?`<div class="row"><span>Ultimate</span><b>${i.lv>=5?ultName:'Lv5'}</b></div>`:''}
 <button id="up" ${i.lv>=mx||S.coins<c?'disabled':''}>${i.lv>=mx?'🏆 MAX':'⬆ Upgrade '+c+' 🪙'}</button>
@@ -519,11 +568,22 @@ toast('⬆️ Lv'+i.lv);save();ui()};
 const pkEl=$('pk');if(pkEl)pkEl.onclick=()=>{S.coins+=Math.floor(placeCost(u.i)/2);G.pl=G.pl.filter(x=>x!==u);G.selP=null;pop.style.display='none';ui()};
 const eb=$('ev');if(eb)eb.onclick=()=>{if(!rc)return;for(const k in rc.m)if((S.mats[k]||0)<rc.m[k])return toast('❌ Bahan kurang!');
 for(const k in rc.m)S.mats[k]-=rc.m[k];
-const oldN=DEF[i.id].name;i.id=rc.r;u.i.id=rc.r;
+const oldN=DEF[i.id].name;
+/* Field effect dulu */
+ring(u.x,u.y,120,EVO_SKILL[rc.r].color,.9,7);nova(u.x,u.y,150,EVO_SKILL[rc.r].color,.8);parts(u.x,u.y,EVO_SKILL[rc.r].color,60,320,1.3);parts(u.x,u.y,'#fff',30,220,1.1);
+G.fx.push({t:'banner',s:'🌟 EVOLVED!',c:EVO_SKILL[rc.r].color,l:2,m:2});
+/* Update data */
+i.id=rc.r;u.i.id=rc.r;
 if(i.rar==='mythic'){i.rar='td';u.i.rar='td'}else if(i.rar==='secret'&&(rc.r==='void_god'||rc.r==='star_god'||rc.r==='death_god')){i.rar='secret';u.i.rar='secret'}
 i.lv=1;u.i.lv=1;
-const es=EVO_SKILL[i.id];ring(u.x,u.y,120,es.color,.9,7);nova(u.x,u.y,150,es.color,.8);parts(u.x,u.y,es.color,60,320,1.3);parts(u.x,u.y,'#fff',30,220,1.1);G.fx.push({t:'banner',s:'🌟 EVOLVED!',c:es.color,l:2,m:2});shake(20,.7);flash(es.color,.5);
-toast('🌟 '+oldN+' → '+DEF[i.id].name+' · '+es.name);save();ui();setTimeout(()=>{if(G&&G.pl.includes(u))G.selP=u.pid;info()},600)};
+const es2=EVO_SKILL[i.id];save();
+pop.style.display='none';
+/* Pause game, main cinema */
+G.paused=true;
+playEvoCinematic(oldN,DEF[i.id].name,DEF[i.id].icon,es2.color,es2.icon+' '+es2.name,es2.desc,es2.ult,()=>{
+if(G){G.paused=false;ui();if(G.pl.includes(u))G.selP=u.pid;info()}
+toast('🌟 '+oldN+' → '+DEF[i.id].name+' · '+es2.name);
+})};
 }catch(e){console.error('info error:',e);pop.style.display='none'}
 }
 cv.addEventListener('click',e=>{if(!G||G.over||G.paused)return;const r=cv.getBoundingClientRect(),x=(e.clientX-r.left)*cv.width/r.width,y=(e.clientY-r.top)*cv.height/r.height;
@@ -552,12 +612,12 @@ $('p1').onclick=()=>{$('ov').style.display='none';if(G)G.paused=false};$('p2').o
 $('p3').onclick=()=>{sync();G=null;$('ov').style.display='none';pop.style.display='none';show('menu');updMenu();save()}}
 function evMenu(){$('ov').style.display='flex';const list=S.inv.filter(u=>RECIPES[u.id]);
 let h='<h2 style="margin-bottom:8px">🧬 Evolve</h2><div style="max-height:60vh;overflow-y:auto;width:min(440px,86vw)">';
-if(!list.length)h+='<p style="color:#888;font-size:13px">Belum ada unit yang bisa di-evolve.<br>Summon Mythic atau dapatkan Secret unit dari Legend Stage.</p>';
+if(!list.length)h+='<p style="color:#888;font-size:13px">Belum ada unit yang bisa di-evolve.<br>Summon Mythic atau dapatkan Transcendent unit dari Legend Stage.</p>';
 for(const u of list){const rc=RECIPES[u.id];let can=true,rows='';
 for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;rows+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}
 const isGod=rc.r==='void_god'||rc.r==='star_god'||rc.r==='death_god';
 const borderC=isGod?'#ff00ff':R.mythic.c;
-const label=isGod?'🌟 SECRET → GOD':'MYTHIC → TD';
+const label=isGod?'🌟 TRANSCENDENT → GOD':'MYTHIC → TD';
 h+=`<div class="card" style="cursor:default;text-align:left;margin:6px 0;border-color:${borderC};${isGod?'box-shadow:0 0 15px rgba(255,0,255,.4);background:linear-gradient(135deg,#1a0033,#0a0e27)':''}">
 <div style="font-size:9px;color:${isGod?'#ff00ff':'#f39c12'};font-weight:bold;margin-bottom:3px">${label}</div>
 ${DEF[u.id].icon} <b style="color:#fff">${DEF[u.id].name}</b> → ${DEF[rc.r].icon} <b style="color:${isGod?'#ff00ff':'#0ff'}">${DEF[rc.r].name}</b>${rows}
@@ -572,18 +632,13 @@ if(rc.r==='void_god'||rc.r==='star_god'||rc.r==='death_god')u.rar='secret';
 else u.rar='td';
 u.lv=1;
 const es=EVO_SKILL[u.id];save();updMenu();
-$('ov').style.display='flex';
-$('ob').innerHTML=`<h2 style="color:#ff00ff;text-shadow:0 0 20px #ff00ff">🌟 EVOLVED!</h2>
-<p style="color:#aaa;margin:6px 0">${oldName} → <b style="color:#ff00ff">${DEF[u.id].name}</b></p>
-<div style="background:#0a0e27;border:2px solid ${es.color};border-radius:8px;padding:12px;margin:10px 0">
-<div style="font-size:28px">${es.icon}</div>
-<b style="color:${es.color};font-size:16px">${es.name}</b>
-<div style="font-size:11px;color:#aaa;margin-top:4px">${es.desc}</div>
-<div style="font-size:12px;color:#f1c40f;margin-top:8px">Ultimate: ${es.ult}</div></div>
-<button id="evx" class="g">OK</button>`;
-$('evx').onclick=()=>{$('ov').style.display='none';evMenu()};
-toast('🌟 '+DEF[u.id].name+' — Skill: '+es.name)})}
-/* ===== TRAIT MANAGER (REWORK) ===== */
+const newName=DEF[u.id].name;
+$('ov').style.display='none';
+playEvoCinematic(oldName,newName,DEF[u.id].icon,es.color,es.icon+' '+es.name,es.desc,es.ult,()=>{
+evMenu();
+toast('🌟 '+newName+' — '+es.name);
+})})}
+/* ===== TRAIT MANAGER ===== */
 let TM={selected:null,pending:null,old:null,lockUntil:0,lockTimer:null,auto:false};
 function clearTMLock(){if(TM.lockTimer){clearInterval(TM.lockTimer);TM.lockTimer=null}}
 function resetTM(){clearTMLock();TM.selected=null;TM.pending=null;TM.old=null;TM.auto=false}
@@ -690,7 +745,6 @@ if(sk)sk.textContent='✗ SKIP ('+rem.toFixed(1)+'s)';
 }
 },100);
 }else if(TM.auto){
-/* Auto decide after lock expired */
 const pt=TM.pending;
 const tr=TRAITS[pt.id];
 const isGood=tr&&(tr.rar==='legendary'||tr.rar==='mythic');
