@@ -5,21 +5,22 @@
 html,body{background:#0a0e27}
 body{color:#fff;font-family:'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden}
 .sc{display:none;padding:14px}.sc.on{display:block}
-h1{font-size:30px;text-align:center;background:linear-gradient(90deg,#0ff,#f0f);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:10px 0}
+h1{font-size:clamp(24px,5vw,42px);text-align:center;background:linear-gradient(90deg,#00ffff,#ff00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:10px 0;font-weight:900;letter-spacing:3px;text-shadow:0 0 30px rgba(255,0,255,.3)}
 h3{font-size:14px;margin-bottom:6px}
 .bar,.top{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-size:15px}
 b{color:#f1c40f}
-.pn{background:#151a3a;border:2px solid #2a3a6a;border-radius:10px;padding:12px;margin:0 auto 10px;max-width:920px}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:920px;margin:0 auto 10px}
+.pn{background:#151a3a;border:2px solid #2a3a6a;border-radius:10px;padding:12px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:700px){.two{grid-template-columns:1fr}}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:6px;max-height:300px;overflow-y:auto}
 .card{background:#0a0e27;border:2px solid #2a3a6a;border-radius:8px;padding:6px;cursor:pointer;font-size:11px}
 .card.dim{opacity:.5;border-style:dashed}
-button{background:linear-gradient(#3498db,#2980b9);color:#fff;border:0;padding:8px 16px;font-weight:bold;border-radius:8px;cursor:pointer;margin:3px}
+button{background:linear-gradient(#3498db,#2980b9);color:#fff;border:0;padding:8px 16px;font-weight:bold;border-radius:8px;cursor:pointer;margin:3px;transition:.15s}
+button:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.15)}
 button:disabled{opacity:.4;cursor:not-allowed}
 button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-gradient(#e74c3c,#c0392b)}button.y{background:linear-gradient(#f39c12,#d68910)}
 #rates{display:flex;gap:5px;flex-wrap:wrap;font-size:11px;margin-bottom:6px}
-#rates span{padding:2px 7px;border:1px solid;border-radius:4px}
+#rates span{padding:2px 7px;border:1px solid;border-radius:4px;transition:.15s;user-select:none}
 #cv{display:block;width:100%;max-width:900px;margin:0 auto;background:#111;border:2px solid #2a3a6a;border-radius:8px;cursor:pointer}
 #ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9;align-items:center;justify-content:center}
 .box{background:#151a3a;border:2px solid #2a3a6a;border-radius:12px;padding:26px;text-align:center;max-width:min(460px,90vw);max-height:90vh;overflow-y:auto}
@@ -53,19 +54,60 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 .evo-icon{font-size:clamp(60px,15vw,120px);margin-bottom:16px;animation:evoZoom 1s cubic-bezier(.2,1.4,.5,1) forwards;filter:drop-shadow(0 0 30px currentColor);position:relative;z-index:2}
 </style></head><body>
 <div id="toast"></div>
-<div id="menu" class="sc on">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-<button id="rdb" class="y" style="margin:0;padding:6px 14px;font-size:13px">🎁 Redeem</button>
-<button id="trb" class="y" style="margin:0;padding:6px 14px;font-size:13px">🎲 Traits</button>
+
+<!-- LOGIN -->
+<div id="login" class="sc">
+<h1 style="margin-top:40px">⚔️ HERO TOWER DEFENSE ⚔️</h1>
+<div class="pn" style="max-width:420px;margin:30px auto;text-align:center">
+<div style="font-size:60px;margin-bottom:10px">🎮</div>
+<h3 style="font-size:18px;margin-bottom:6px">Login dengan Email</h3>
+<p style="color:#888;font-size:12px;margin-bottom:14px">Data tersimpan di browser — tidak perlu login lagi setelah ini</p>
+<input id="loginEmail" type="email" placeholder="nama@email.com" style="width:100%;padding:12px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#fff;font-size:14px;outline:none;margin-bottom:10px;text-align:center" maxlength="60" autocomplete="email">
+<button id="loginBtn" class="g" style="width:100%;padding:12px;font-size:16px">▶ Masuk</button>
+<div id="loginMsg" style="font-size:12px;margin-top:8px;min-height:16px"></div>
+</div>
+</div>
+
+<!-- MENU -->
+<div id="menu" class="sc">
+<div style="display:flex;justify-content:space-between;align-items:center;max-width:920px;margin:0 auto 4px">
+<button id="rdb" class="y" style="margin:0;padding:8px 16px;font-size:13px">🎁 REDEEM</button>
+<div style="font-size:13px">👤 <b id="mu" style="color:#66ccff">Guest</b></div>
 </div>
 <h1>⚔️ HERO TOWER DEFENSE ⚔️</h1>
 <div class="bar">💎 <b id="mg"></b> 🎲 <b id="mr"></b> 🪙 <b id="mc"></b> <span id="mt"></span></div>
-<div class="pn"><h3>🔮 Summon</h3><div id="rates"></div><button id="s1" class="y">Summon (100 💎)</button><button id="s10" class="y">Summon 10x (1000 💎)</button></div>
-<div class="two"><div class="pn"><h3>🎒 Inventori (klik = masuk loadout)</h3><div id="inv" class="grid"></div></div>
-<div class="pn"><h3>⚔️ Loadout <span id="ls" style="float:right;color:#f1c40f"></span></h3><div id="lo" class="grid"></div></div></div>
-<div class="pn"><h3>📍 Pilih Stage</h3><div id="maps"></div><div id="acts" class="grid" style="margin:8px 0"></div><div id="sel" style="color:#aaa;font-size:13px"></div>
-<button id="play" class="g" style="font-size:17px;padding:12px 30px">▶ MULAI</button><button id="evb" class="y">🧬 Evolve</button><button id="set">⚙️ Settings</button><button id="rst" class="r">Reset Progress</button></div>
+
+<button id="play" class="g" style="display:block;width:min(460px,92%);margin:18px auto;font-size:26px;padding:22px;letter-spacing:2px">▶ PLAY</button>
+
+<!-- INVENTORY + TRAIT -->
+<div style="display:grid;grid-template-columns:1fr 130px;gap:10px;max-width:920px;margin:0 auto 10px">
+<div class="pn"><h3>🎒 INVENTORY <span style="font-size:11px;color:#888">(klik = masuk loadout)</span></h3><div id="inv" class="grid"></div></div>
+<div class="pn" style="display:flex;align-items:center;justify-content:center;padding:8px">
+<button id="trb" class="y" style="font-size:14px;padding:18px 8px;width:100%;letter-spacing:1px">🎲<br>TRAIT</button>
 </div>
+</div>
+
+<!-- SUMMON + EVOLVE -->
+<div style="display:grid;grid-template-columns:1fr 130px;gap:10px;max-width:920px;margin:0 auto 10px">
+<div class="pn"><h3>🔮 SUMMON</h3><div id="rates"></div><button id="s1" class="y">Summon (100 💎)</button><button id="s10" class="y">Summon 10x (1000 💎)</button></div>
+<div class="pn" style="display:flex;align-items:center;justify-content:center;padding:8px">
+<button id="evb" class="y" style="font-size:14px;padding:18px 8px;width:100%;letter-spacing:1px">🧬<br>EVOLVE</button>
+</div>
+</div>
+
+<!-- LOADOUT -->
+<div class="pn" style="max-width:920px;margin:0 auto 10px"><h3>⚔️ LOADOUT <span id="ls" style="float:right;color:#f1c40f">0/5</span></h3><div id="lo" class="grid"></div></div>
+
+<!-- STAGE -->
+<div class="pn" style="max-width:920px;margin:0 auto 10px"><h3>📍 Pilih Stage</h3><div id="maps"></div><div id="acts" class="grid" style="margin:8px 0"></div><div id="sel" style="color:#aaa;font-size:13px"></div></div>
+
+<div class="pn" style="max-width:920px;margin:0 auto;text-align:center">
+<button id="set">⚙️ Settings</button>
+<button id="logoutBtn" class="r">🚪 Logout</button>
+<button id="rst" class="r">Reset Progress</button>
+</div>
+</div>
+
 <div id="game" class="sc">
 <div class="top"><span>🪙 <b id="gc"></b></span><span>🏰 <b id="gl"></b>/100</span><span>🌊 <b id="gw"></b><span id="gwm">/20</span></span><span id="gn" style="color:#f1c40f"></span><button id="sw">▶ Wave</button><button id="sk" class="y" style="display:none">⏩ Skip</button></div>
 <div class="gw"><div id="cw"><canvas id="cv" width="900" height="550"></canvas><button id="mb">⚙️</button><div id="pop"></div></div><div id="hand"></div></div>
@@ -80,10 +122,21 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 </div>
 <script>
 const BASE=100,DMG=10,MAXW=20,$=i=>document.getElementById(i);
-const R={common:{n:'Common',c:'#b0b0b0',p:.5,d:1,r:1,s:1,k:1},rare:{n:'Rare',c:'#4a90e2',p:.25,d:1.35,r:1.1,s:1.1,k:1.3},epic:{n:'Epic',c:'#9b59b6',p:.15,d:1.8,r:1.2,s:1.2,k:1.7},legendary:{n:'Legendary',c:'#f39c12',p:.075,d:2.5,r:1.35,s:1.3,k:2.3},mythic:{n:'Mythic',c:'#e74c3c',p:.024,d:3.5,r:1.5,s:1.45,k:3.2},td:{n:'TD',c:'#00ffff',p:.001,d:5.5,r:1.75,s:1.65,k:4.5},secret:{n:'Transcendent',c:'#ff00ff',p:0,d:7,r:2,s:1.8,k:5.5}};
-const ORD=['secret','td','mythic','legendary','epic','rare','common'];
-const COST={common:40,rare:70,epic:110,legendary:170,mythic:300,td:600,secret:1200};
-const MAXD={common:8,rare:6,epic:5,legendary:4,mythic:3,td:2,secret:1},MAXL={common:10,rare:12,epic:15,legendary:18,mythic:20,td:25,secret:30};
+/* === RARITY — secret=Secret (Legend drop), transcendent=evolve dari Secret === */
+const R={
+common:{n:'Common',c:'#b0b0b0',p:.5,d:1,r:1,s:1,k:1},
+rare:{n:'Rare',c:'#4a90e2',p:.25,d:1.35,r:1.1,s:1.1,k:1.3},
+epic:{n:'Epic',c:'#9b59b6',p:.15,d:1.8,r:1.2,s:1.2,k:1.7},
+legendary:{n:'Legendary',c:'#f39c12',p:.075,d:2.5,r:1.35,s:1.3,k:2.3},
+mythic:{n:'Mythic',c:'#e74c3c',p:.024,d:3.5,r:1.5,s:1.45,k:3.2},
+td:{n:'TD',c:'#00ffff',p:.001,d:5.5,r:1.75,s:1.65,k:4.5},
+secret:{n:'Secret',c:'#ff00ff',p:0,d:7,r:2,s:1.8,k:5.5},
+transcendent:{n:'Transcendent',c:'#ffd700',p:0,d:11,r:2.5,s:2.2,k:8.0}
+};
+const ORD=['transcendent','secret','td','mythic','legendary','epic','rare','common'];
+const COST={common:40,rare:70,epic:110,legendary:170,mythic:300,td:600,secret:1200,transcendent:2000};
+const MAXD={common:8,rare:6,epic:5,legendary:4,mythic:3,td:2,secret:1,transcendent:1};
+const MAXL={common:10,rare:12,epic:15,legendary:18,mythic:20,td:25,secret:30,transcendent:40};
 const POOL={
 common:[['archer','Archer','🏹',8,90,.7,'single'],['swordsman','Swordsman','⚔️',12,60,.9,'single'],['shieldman','Shieldman','🛡️',6,55,1.2,'slow'],['hunter','Hunter','🎯',9,110,.85,'single']],
 rare:[['ice_mage','Ice Mage','❄️',9,110,.9,'slow'],['knight','Knight','🗡️',18,70,1,'single'],['wind_mage','Wind Mage','🌪️',10,120,.7,'chain'],['cleric','Cleric','⛪',6,90,1.2,'economy'],['berserker','Berserker','🪓',22,65,1.1,'crit']],
@@ -91,10 +144,20 @@ epic:[['fire_wizard','Fire Wizard','🔥',15,100,1.2,'aoe'],['assassin','Assassi
 legendary:[['dragon_kn','Dragon Knight','🐉',25,110,.9,'aoe'],['storm_cal','Storm Caller','🌩️',20,130,1.1,'chain'],['shadow_bl','Shadow Blade','🌑',35,95,1,'crit'],['ice_queen','Ice Queen','👑',18,130,1,'slow']],
 mythic:[['void_reaper','Void Reaper','👁️',35,120,.8,'chain'],['celestial_g','Celestial Guardian','✨',30,140,1,'aoe'],['phantom_lord','Phantom Lord','👻',40,110,.9,'crit'],['chronomancer','Chronomancer','⏳',32,145,.9,'slow']],
 td:[['void_emperor','Void Emperor','🕳️',65,160,.6,'chain'],['celestial_avatar','Celestial Avatar','🌟',58,180,.8,'aoe'],['phantom_god','Phantom God','💀',75,140,.7,'crit'],['time_lord','Time Lord','⏰',60,175,.75,'slow']],
-secret:[['void_sovereign','Void Sovereign','👑',105,190,.5,'chain'],['star_emperor','Star Emperor','🌠',100,210,.55,'aoe'],['death_reaper','Death Reaper','⚰️',130,170,.45,'crit'],
-['void_god','Void God','🌌',180,240,.35,'chain'],['star_god','Star God','💫',170,260,.4,'aoe'],['death_god','Death God','☠️',220,220,.35,'crit']]};
+secret:[['void_sovereign','Void Sovereign','👑',105,190,.5,'chain'],['star_emperor','Star Emperor','🌠',100,210,.55,'aoe'],['death_reaper','Death Reaper','⚰️',130,170,.45,'crit']],
+transcendent:[['void_god','Void God','🌌',180,240,.35,'chain'],['star_god','Star God','💫',170,260,.4,'aoe'],['death_god','Death God','☠️',220,220,.35,'crit']]};
 const DEF={};for(const r in POOL)for(const a of POOL[r])DEF[a[0]]={id:a[0],name:a[1],icon:a[2],dmg:a[3],rng:a[4],cd:a[5],skill:a[6],rar:r};
 const ULT={chain:{n:'☄️ VOID STORM',c:'#cc66ff',m:4},aoe:{n:'🔥 SUPERNOVA',c:'#ff8800',m:5},crit:{n:'⚔️ ARMAGEDDON',c:'#ff2255',m:6},slow:{n:'⏰ TIME STOP',c:'#66ccff',m:2}};
+const ULT_CD=60;
+const ULT_DEF={chain:{n:'☄️ VOID STORM',c:'#cc66ff',t:'storm'},aoe:{n:'🌟 SUPERNOVA',c:'#ff8800',t:'nova'},crit:{n:'⚔️ SCYTHE SWEEP',c:'#ff2255',t:'scythe'},slow:{n:'⏰ TIME FREEZE',c:'#66ccff',t:'freeze'}};
+function inTriangle(px,py,cx,cy,ang,len,spread){
+const dx=px-cx,dy=py-cy,dist=Math.hypot(dx,dy);
+if(dist>len)return false;
+let diff=Math.atan2(dy,dx)-ang;
+while(diff>Math.PI)diff-=2*Math.PI;
+while(diff<-Math.PI)diff+=2*Math.PI;
+return Math.abs(diff)<=spread;
+}
 const EVO_SKILL={
 void_emperor:{name:'Void Collapse',icon:'🕳️',desc:'Chain meledak AOE di setiap target + 2 target ekstra',color:'#c060ff',ult:'☄️ VOID ANNIHILATION'},
 celestial_avatar:{name:'Divine Judgement',icon:'🌟',desc:'AOE besar + heal 1 base HP setiap serangan',color:'#fff08a',ult:'🕊️ GENESIS'},
@@ -120,7 +183,11 @@ inf:[{x:0,y:460},{x:150,y:460},{x:150,y:120},{x:350,y:120},{x:350,y:420},{x:550,
 };
 const MAP_WP=['forest','desert','volcano'];
 const MAPS=[{n:'🌲 Forest',d:[.7,.85,1,1.2,1.4,1.65,2]},{n:'🏜️ Desert',d:[2.2,2.5,2.8,3.1,3.5,3.9,4.5]},{n:'🌋 Volcano',d:[5,5.5,6,6.5,7.2,8,9]}];
-const RECIPES={void_reaper:{r:'void_emperor',m:{void_shard:5,void_core:2}},celestial_g:{r:'celestial_avatar',m:{celestial_tear:5,star_fragment:2}},phantom_lord:{r:'phantom_god',m:{phantom_essence:5,death_crystal:2}},chronomancer:{r:'time_lord',m:{phantom_essence:5,star_fragment:2}},
+const RECIPES={
+void_reaper:{r:'void_emperor',m:{void_shard:5,void_core:2}},
+celestial_g:{r:'celestial_avatar',m:{celestial_tear:5,star_fragment:2}},
+phantom_lord:{r:'phantom_god',m:{phantom_essence:5,death_crystal:2}},
+chronomancer:{r:'time_lord',m:{phantom_essence:5,star_fragment:2}},
 void_sovereign:{r:'void_god',m:{void_core:15,star_fragment:10,death_crystal:10}},
 star_emperor:{r:'star_god',m:{star_fragment:15,death_crystal:10,void_core:10}},
 death_reaper:{r:'death_god',m:{death_crystal:15,void_core:10,star_fragment:10}}};
@@ -130,7 +197,7 @@ const RLIM={dps:5,sniper:3,aoe:3,chain:3,crit:3,cc:3,economy:2};
 const ROLE={dps:['⚔️ DPS','#e74c3c'],sniper:['🎯 Sniper','#2ecc71'],aoe:['💣 AOE','#f39c12'],chain:['⛓️ Chain','#9b59b6'],crit:['⚡ Crit','#f1c40f'],cc:['❄️ CC','#66ccff'],economy:['💰 Eco','#f1c40f']};
 const role=d=>d.skill==='single'?(d.rng>=110?'sniper':'dps'):d.skill==='slow'?'cc':d.skill;
 const CD_ROLE_MULT={dps:1.0,sniper:1.15,aoe:1.4,chain:1.25,crit:1.05,cc:0.85,economy:1.25};
-const ECO_K={common:1.0,rare:1.2,epic:1.6,legendary:2.2,mythic:3.0,td:4.0,secret:5.0};
+const ECO_K={common:1.0,rare:1.2,epic:1.6,legendary:2.2,mythic:3.0,td:4.0,secret:5.0,transcendent:7.0};
 const TRAITS={
 vigor:{n:'Vigor',i:'💪',c:'#e74c3c',rar:'common',chance:26,tiers:[{dmg:5},{dmg:10},{dmg:15}],f:t=>`+${t.dmg}% DMG`},
 swift:{n:'Swift',i:'💨',c:'#66ccff',rar:'common',chance:26,tiers:[{cd:-5},{cd:-7.5},{cd:-12.5}],f:t=>`${t.cd}% Cooldown`},
@@ -154,23 +221,23 @@ if(r<9.5)return mkTrait('marksman');
 const c=Math.random()*3;if(c<1)return mkTrait('vigor');if(c<2)return mkTrait('swift');return mkTrait('range')}
 const rndTrait=()=>rollTrait();
 function getTrait(u){
-  if(!u||!u.trait)return null;
-  try{
-    const id=typeof u.trait==='string'?u.trait:u.trait.id;
-    const t=TRAITS[id];if(!t)return null;
-    const tier=typeof u.trait==='object'&&u.trait.tier!==undefined?u.trait.tier:0;
-    const tt=t.tiers[tier]||t.tiers[0];
-    return{id,tier,...tt,f:t.f,special:t.special,n:t.n,i:t.i,c:t.c,rar:t.rar};
-  }catch(e){return null}
+if(!u||!u.trait)return null;
+try{
+const id=typeof u.trait==='string'?u.trait:u.trait.id;
+const t=TRAITS[id];if(!t)return null;
+const tier=typeof u.trait==='object'&&u.trait.tier!==undefined?u.trait.tier:0;
+const tt=t.tiers[tier]||t.tiers[0];
+return{id,tier,...tt,f:t.f,special:t.special,n:t.n,i:t.i,c:t.c,rar:t.rar};
+}catch(e){return null}
 }
 const REDEEM_CODES={
 HTD2026:{gems:1000,rr:25,desc:'1000 💎 + 25 🎲'},
 TDREROLL:{gems:0,rr:100,desc:'100 🎲'},
 NIAMATD:{gems:1500,rr:0,desc:'1500 💎'}
 };
-let S={gems:500,coins:0,rr:0,inv:[],load:[],clr:{},nid:1,mi:0,ri:0,mode:'c',mats:{},auto:false,fx:true,stage:null,best:0,usedCodes:{}},G=null;
+let S={user:null,gems:500,coins:0,rr:0,inv:[],load:[],clr:{},nid:1,mi:0,ri:0,mode:'c',mats:{},auto:false,fx:true,stage:null,best:0,usedCodes:{}},G=null;
 const cv=$('cv'),ctx=cv.getContext('2d');
-function save(){try{localStorage.setItem('td2',JSON.stringify({gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,best:S.best,usedCodes:S.usedCodes||{}}))}catch(e){}}
+function save(){try{localStorage.setItem('td2',JSON.stringify({user:S.user||null,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,best:S.best,usedCodes:S.usedCodes||{}}))}catch(e){}}
 try{const d=JSON.parse(localStorage.getItem('td2'));if(d)Object.assign(S,d)}catch(e){}
 if(!S.usedCodes)S.usedCodes={};
 if(typeof S.rr!=='number')S.rr=0;
@@ -182,7 +249,7 @@ function show(n){document.querySelectorAll('.sc').forEach(s=>s.classList.remove(
 function stats(u){
 const d=DEF[u.id],r=R[u.rar],tr=getTrait(u);
 const cdMul=CD_ROLE_MULT[role(d)]||1;
-const dmgPerLv=(u.rar==='mythic'||u.rar==='td'||u.rar==='secret')?.25:.18;
+const dmgPerLv=(u.rar==='mythic'||u.rar==='td'||u.rar==='secret'||u.rar==='transcendent')?.25:.18;
 let dmg=d.dmg*r.d*(1+(u.lv-1)*dmgPerLv);
 let rng=d.rng*r.r*(1+(u.lv-1)*.06);
 let cd=d.cd*cdMul/(r.s*(1+(u.lv-1)*.04));
@@ -192,8 +259,43 @@ const upCost=u=>Math.floor(COST[u.rar]*1.3*R[u.rar].k*Math.pow(1.7,u.lv-1));
 const SKM={single:1,slow:1.1,crit:1.15,aoe:1.25,chain:1.3,economy:1.4};
 const placeCost=u=>Math.round(COST[u.rar]*SKM[DEF[u.id].skill]/5)*5;
 function maxDep(u){const tr=getTrait(u);if(tr&&tr.special==='monarch')return 1;return Math.min(RLIM[role(DEF[u.id])],MAXD[u.rar])}
-const isHi=u=>u.rar==='mythic'||u.rar==='td'||u.rar==='secret';
-function STAT_HINT(id){const d=DEF[id],r=R.secret;return `DMG ${Math.floor(d.dmg*r.d)} · RNG ${Math.floor(d.rng*r.r)}`}
+const isHi=u=>u.rar==='mythic'||u.rar==='td'||u.rar==='secret'||u.rar==='transcendent';
+function STAT_HINT(id){const d=DEF[id],r=R[d.rar];return `DMG ${Math.floor(d.dmg*r.d)} · RNG ${Math.floor(d.rng*r.r)}`}
+/* ===== LOGIN ===== */
+function checkLogin(){
+if(S.user){$('mu').textContent=S.user;show('menu');updMenu()}
+else{show('login');setTimeout(()=>$('loginEmail').focus(),150)}
+}
+/* ===== RARITY POOL ===== */
+function showRarityPool(rar){
+const r=R[rar],pool=POOL[rar]||[];
+$('ov').style.display='flex';
+let h=`<h2 style="color:${r.c};margin-bottom:4px">${r.n}</h2>`;
+if(r.p>0)h+=`<p style="color:#888;font-size:12px;margin-bottom:10px">Chance summon: ${(r.p*100).toFixed(1)}%</p>`;
+else h+=`<p style="color:#888;font-size:12px;margin-bottom:10px">Hanya drop dari Legend Stage (0.85%)</p>`;
+h+=`<div style="font-size:11px;color:#aaa;margin-bottom:8px">Total ${pool.length} unit</div><div style="display:grid;gap:6px;text-align:left;max-height:50vh;overflow-y:auto">`;
+if(!pool.length){h+='<p style="color:#666;text-align:center;padding:12px">Belum ada unit.</p>'}
+else{
+pool.forEach(arr=>{
+const u=DEF[arr[0]];if(!u)return;
+const es=EVO_SKILL[arr[0]];
+const skillName=es?`${es.icon} ${es.name}`:u.skill;
+const isGod=arr[0]==='void_god'||arr[0]==='star_god'||arr[0]==='death_god';
+const isEvoable=!!RECIPES[arr[0]];
+h+=`<div style="background:#0a0e27;border:1px solid ${r.c};border-radius:6px;padding:8px;display:flex;align-items:center;gap:10px">
+<span style="font-size:26px">${u.icon}</span>
+<div style="flex:1;min-width:0">
+<div><b style="color:#fff;font-size:13px">${u.name}</b>${isGod?' <span style="color:#ff00ff;font-size:10px">✦ GOD</span>':''}${isEvoable?' <span style="color:#f1c40f;font-size:10px">🧬</span>':''}</div>
+<div style="font-size:10px;color:#aaa">DMG ${u.dmg} · RNG ${u.rng} · ${ROLE[role(u)][0]}</div>
+<div style="font-size:10px;color:${r.c}">Skill: ${skillName}</div>
+</div>
+</div>`;
+});
+}
+h+='</div>';
+$('ob').innerHTML=h+'<button id="rpClose" class="r" style="width:100%;margin-top:10px">Tutup</button>';
+$('rpClose').onclick=()=>{$('ov').style.display='none'};
+}
 /* ===== EVOLVE CINEMATIC ===== */
 function playEvoCinematic(oldName,newName,icon,color,skillName,skillDesc,ult,cb){
 const flash=$('evoFlash'),cin=$('evoCinema'),rays=$('evoRays'),ic=$('evoIcon'),tt=$('evoTitle'),sb=$('evoSub');
@@ -261,7 +363,15 @@ $('mt').innerHTML=Object.keys(MATS).filter(k=>S.mats[k]).map(k=>`<span style="bo
 $('s1').disabled=S.gems<100;$('s10').disabled=S.gems<1000;$('ls').textContent=S.load.length+'/5';
 const iv=$('inv');iv.innerHTML='';[...S.inv].sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar)).forEach(u=>{const c=card(u,()=>tgl(u.iid));if(S.load.includes(u.iid))c.classList.add('dim');iv.appendChild(c)});
 const lo=$('lo');lo.innerHTML='';S.load.forEach(id=>{const u=S.inv.find(x=>x.iid===id);if(u)lo.appendChild(card(u,()=>tgl(id)))});
-$('play').disabled=!S.stage||!S.load.length;renderStage()}
+$('play').disabled=!S.stage||!S.load.length;renderStage();
+/* Rarity bars - klik untuk lihat pool */
+$('rates').innerHTML=Object.keys(R).map(k=>{const r=R[k];const isLocked=r.p===0;return `<span style="color:${r.c};cursor:pointer;transition:.15s;user-select:none" data-rar="${k}">${r.n} ${isLocked?'(Legend only)':(r.p*100).toFixed(1)+'%'}</span>`}).join('');
+document.querySelectorAll('#rates span').forEach(el=>{
+el.onmouseover=()=>{el.style.background=R[el.dataset.rar].c+'22';el.style.transform='translateY(-2px)'};
+el.onmouseout=()=>{el.style.background='transparent';el.style.transform=''};
+el.onclick=()=>showRarityPool(el.dataset.rar);
+});
+}
 function tgl(id){const i=S.load.indexOf(id);if(i>=0)S.load.splice(i,1);else{if(S.load.length>=5)return toast('Maks 5 unit!');S.load.push(id)}updMenu();save()}
 function renderStage(){const m=$('maps');m.innerHTML='';
 const mk=(t,on,f)=>{const b=document.createElement('button');b.textContent=t;if(on)b.className='g';b.onclick=f;m.appendChild(b)};
@@ -284,17 +394,16 @@ if(L){const rm=REALMS[S.ri].m;
 const hasToken=TOKEN_DROP_MATS.includes(rm);
 if(SECRET_DROPS[rm]){const sID=SECRET_DROPS[rm];
 a.insertAdjacentHTML('beforeend',`<div style="grid-column:1/-1;background:linear-gradient(135deg,#1a0033,#0a0e27);border:2px solid #ff00ff;border-radius:8px;padding:12px;margin-top:6px;text-align:center;box-shadow:0 0 15px rgba(255,0,255,.4)">
-<div style="font-size:13px;color:#ff00ff;font-weight:bold">🌟 TRANSCENDENT DROP (0.85%)</div>
+<div style="font-size:13px;color:#ff00ff;font-weight:bold">🌟 SECRET DROP (0.85%)</div>
 <div style="font-size:26px;margin:6px 0">${DEF[sID].icon}</div>
 <div style="color:#fff;font-weight:bold">${DEF[sID].name}</div>
-<div style="font-size:10px;color:#aaa;margin-top:4px">Rarity: <b style="color:#ff00ff">TRANSCENDENT</b> · ${STAT_HINT(sID)}</div>
-<div style="font-size:10px;color:#f1c40f;margin-top:4px">🧬 Bisa di-Evolve jadi God!</div></div>`)}
+<div style="font-size:10px;color:#aaa;margin-top:4px">Rarity: <b style="color:#ff00ff">SECRET</b> · ${STAT_HINT(sID)}</div>
+<div style="font-size:10px;color:#ffd700;margin-top:4px">🧬 Bisa di-Evolve jadi TRANSCENDENT!</div></div>`)}
 if(hasToken){
 a.insertAdjacentHTML('beforeend',`<div style="grid-column:1/-1;background:linear-gradient(135deg,#003344,#0a0e27);border:2px solid #66ccff;border-radius:8px;padding:10px;margin-top:6px;text-align:center;box-shadow:0 0 15px rgba(102,204,255,.4)">
 <div style="font-size:13px;color:#66ccff;font-weight:bold">🎲 TRAIT REROLL DROP</div>
 <div style="font-size:24px;margin:4px 0">🎲</div>
-<div style="color:#fff;font-weight:bold">0-3 Token per clear</div>
-<div style="font-size:10px;color:#aaa;margin-top:4px">Rata-rata: 1.5 token</div></div>`)}}
+<div style="color:#fff;font-weight:bold">0-3 Token per clear</div></div>`)}}
 $('sel').textContent=S.stage?'Dipilih: '+S.stage.n:'Belum ada stage dipilih.'}
 function summon(n){
 if(S.gems<100*n)return;
@@ -312,7 +421,6 @@ if(got.length){got.sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar));const best
 if(soldCount>0){const soldList=Object.keys(soldNames).map(id=>`${DEF[id].icon}${DEF[id].name}×${soldNames[id]}`).join(' ');msg+=(msg?' · ':'')+`♻️ Duplikat: ${soldList} (+${soldGems}💎)`}
 if(!msg)msg='Tidak ada unit baru.';
 toast(msg);updMenu();save()}
-$('rates').innerHTML=Object.values(R).filter(r=>r.p>0).map(r=>`<span style="color:${r.c}">${r.n} ${(r.p*100).toFixed(1)}%</span>`).join('')+`<span style="color:#ff00ff">Transcendent (Legend only)</span>`;
 $('s1').onclick=()=>summon(1);$('s10').onclick=()=>summon(10);
 $('rst').onclick=()=>{if(confirm('Reset semua progress?')){try{localStorage.removeItem('td2')}catch(e){}location.reload()}};
 /* ===== FX ===== */
@@ -331,33 +439,33 @@ nova(u.x,u.y,r,c,.8);parts(u.x,u.y,c,70,380,1.4);parts(u.x,u.y,'#fff',30,260,1.1
 const TH={void_reaper:'#a040ff',void_emperor:'#c060ff',celestial_g:'#ffd84a',celestial_avatar:'#fff08a',phantom_lord:'#ff3ccf',phantom_god:'#ff6fe0',chronomancer:'#3fe0ff',time_lord:'#9ff0ff',void_sovereign:'#ff00ff',star_emperor:'#ff66ff',death_reaper:'#cc00ff',void_god:'#ff00aa',star_god:'#ffe0ff',death_god:'#aa00ff'};
 const tc=u=>TH[u.i.id]||R[u.i.rar].c;
 function trail(a,b,c){if(!S.fx)return;for(let i=1;i<9;i++){const k=i/9;G.par.push({x:a.x+(b.x-a.x)*k,y:a.y+(b.y-a.y)*k,vx:(Math.random()-.5)*50,vy:(Math.random()-.5)*50,l:.35,m:.35,c,z:3})}}
-function sigil(u,c){const t=performance.now()/1000,td=u.i.rar==='td'||u.i.rar==='secret',n=td?6:5;
+function sigil(u,c){const t=performance.now()/1000,hi=u.i.rar==='td'||u.i.rar==='secret'||u.i.rar==='transcendent',n=hi?6:5;
 ctx.save();ctx.translate(u.x,u.y+6);ctx.scale(1,.55);ctx.globalCompositeOperation='lighter';ctx.strokeStyle=c;ctx.shadowColor=c;ctx.shadowBlur=10;ctx.globalAlpha=.8;ctx.lineWidth=2;
-ctx.setLineDash([6,5]);ctx.rotate(t*.6);ctx.beginPath();ctx.arc(0,0,td?42:36,0,6.283);ctx.stroke();ctx.setLineDash([]);
+ctx.setLineDash([6,5]);ctx.rotate(t*.6);ctx.beginPath();ctx.arc(0,0,hi?42:36,0,6.283);ctx.stroke();ctx.setLineDash([]);
 ctx.rotate(-t*1.2);ctx.beginPath();for(let i=0;i<=n;i++){const a=((i*2)%n)/n*6.283,x=Math.cos(a)*30,y=Math.sin(a)*30;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.stroke();
-if(td){ctx.rotate(t*2);ctx.beginPath();ctx.arc(0,0,22,0,6.283);ctx.stroke()}ctx.restore()}
-function aura(u,c){const t=performance.now()/1000,n=3+(u.i.lv>=5?2:0)+(u.i.rar==='td'?2:0)+(u.i.rar==='secret'?3:0)+Math.floor(u.i.lv/5);
+if(hi){ctx.rotate(t*2);ctx.beginPath();ctx.arc(0,0,22,0,6.283);ctx.stroke()}ctx.restore()}
+function aura(u,c){const t=performance.now()/1000,n=3+(u.i.lv>=5?2:0)+(u.i.rar==='td'?2:0)+(u.i.rar==='secret'?3:0)+(u.i.rar==='transcendent'?4:0)+Math.floor(u.i.lv/5);
 ctx.save();ctx.globalCompositeOperation='lighter';const g=ctx.createRadialGradient(u.x,u.y,4,u.x,u.y,44);g.addColorStop(0,c+'66');g.addColorStop(1,'rgba(0,0,0,0)');
 ctx.fillStyle=g;ctx.beginPath();ctx.arc(u.x,u.y,44,0,6.283);ctx.fill();
 for(let i=0;i<n;i++){const dir=i%2?-1:1,an=t*(1.6+(i%2)*.8)*dir+i*6.283/n,Rr=30+(i%2)*6;ctx.fillStyle=i%2?'#fff':c;ctx.shadowColor=c;ctx.shadowBlur=12;ctx.beginPath();ctx.arc(u.x+Math.cos(an)*Rr,u.y+Math.sin(an)*Rr*.8,3,0,6.283);ctx.fill()}ctx.restore()}
-function fxSkill(u,k,t){const c=tc(u),td=u.i.rar==='td'||u.i.rar==='secret',es=EVO_SKILL[u.i.id];
-trail(u,t,c);beam(u,t,c,td?7:5);parts(t.x,t.y,'#fff',td?10:6,170,.4);if(td)shake(3,.1);
+function fxSkill(u,k,t){const c=tc(u),hi=u.i.rar==='td'||u.i.rar==='secret'||u.i.rar==='transcendent',es=EVO_SKILL[u.i.id];
+trail(u,t,c);beam(u,t,c,hi?7:5);parts(t.x,t.y,'#fff',hi?10:6,170,.4);if(hi)shake(3,.1);
 if(k==='single'||k==='economy'){ring(t.x,t.y,34,c,.4,3)}
 else if(k==='slow'){ring(t.x,t.y,46,'#66ccff',.6,4);ring(t.x,t.y,28,'#fff',.4,2);parts(t.x,t.y,'#aee6ff',14,120,.8);
 if(es&&u.i.id==='time_lord'){ring(t.x,t.y,80,'#9ff0ff',.8,5);ring(t.x,t.y,50,'#fff',.5,3);G.fx.push({t:'text',x:t.x,y:t.y-55,s:'⏰ FROZEN',c:'#9ff0ff',l:.8,m:.8})}}
-else if(k==='aoe'){nova(t.x,t.y,70+(td?30:0),'#ff8800',.45);ring(t.x,t.y,90,'#fc0',.55,5);parts(t.x,t.y,'#fa0',20,220,.8);
-if(es&&u.i.id==='celestial_avatar'){nova(t.x,t.y,130,'#fff08a',.6);ring(t.x,t.y,150,'#fff',.7,6);parts(t.x,t.y,'#fff08a',30,280,1.1);G.fx.push({t:'text',x:t.x,y:t.y-65,s:'✨ DIVINE',c:'#fff08a',l:1,m:1})}
-if(es&&u.i.id==='star_emperor'){nova(t.x,t.y,180,'#ff00ff',.7);ring(t.x,t.y,200,'#fff',.9,7);parts(t.x,t.y,'#ff00ff',50,350,1.3);G.fx.push({t:'text',x:t.x,y:t.y-70,s:'🌠 COSMIC',c:'#ff00ff',l:1.2,m:1.2})}
-if(es&&u.i.id==='star_god'){nova(t.x,t.y,280,'#ffe0ff',.9);ring(t.x,t.y,320,'#fff',1.1,8);parts(t.x,t.y,'#ffe0ff',80,400,1.5);G.fx.push({t:'text',x:t.x,y:t.y-75,s:'💫 APOCALYPSE',c:'#ffe0ff',l:1.5,m:1.5});shake(15,.5)}}
-else if(k==='crit'){slash(t.x,t.y,td?'#f0a':'#f22');
+else if(k==='aoe'){nova(t.x,t.y,70+(hi?30:0),'#ff8800',.45);ring(t.x,t.y,90,'#fc0',.55,5);parts(t.x,t.y,'#fa0',20,220,.8);
+if(es&&u.i.id==='celestial_avatar'){nova(t.x,t.y,130,'#fff08a',.6);ring(t.x,t.y,150,'#fff',.7,6);parts(t.x,t.y,'#fff08a',30,280,1.1)}
+if(es&&u.i.id==='star_emperor'){nova(t.x,t.y,180,'#ff00ff',.7);ring(t.x,t.y,200,'#fff',.9,7);parts(t.x,t.y,'#ff00ff',50,350,1.3)}
+if(es&&u.i.id==='star_god'){nova(t.x,t.y,280,'#ffe0ff',.9);ring(t.x,t.y,320,'#fff',1.1,8);parts(t.x,t.y,'#ffe0ff',80,400,1.5);shake(15,.5)}}
+else if(k==='crit'){slash(t.x,t.y,hi?'#f0a':'#f22');
 if(es&&u.i.id==='phantom_god'){slash(t.x,t.y,'#ff6fe0');slash(t.x,t.y,'#fff');ring(t.x,t.y,40,'#ff6fe0',.4,3)}
 if(es&&u.i.id==='death_reaper'){slash(t.x,t.y,'#ff00ff');slash(t.x,t.y,'#f0f');ring(t.x,t.y,50,'#ff00ff',.5,4)}
 if(es&&u.i.id==='death_god'){slash(t.x,t.y,'#aa00ff');slash(t.x,t.y,'#ff00ff');slash(t.x,t.y,'#fff');ring(t.x,t.y,70,'#aa00ff',.6,5);parts(t.x,t.y,'#aa00ff',30,280,1.1);shake(10,.3)}}
 else if(k==='chain'){nova(t.x,t.y,30,'#c6f',.3);
-if(es&&u.i.id==='void_emperor'){ring(t.x,t.y,50,'#c060ff',.5,3);parts(t.x,t.y,'#c060ff',15,180,.6);G.fx.push({t:'text',x:t.x,y:t.y-40,s:'🕳️ COLLAPSE',c:'#c060ff',l:.8,m:.8})}
-if(es&&u.i.id==='void_sovereign'){ring(t.x,t.y,80,'#ff00ff',.7,5);parts(t.x,t.y,'#ff00ff',25,250,.8);G.fx.push({t:'text',x:t.x,y:t.y-45,s:'👑 SUPREMACY',c:'#ff00ff',l:1,m:1})}
-if(es&&u.i.id==='void_god'){nova(t.x,t.y,150,'#ff00aa',.9);ring(t.x,t.y,180,'#fff',1.1,8);parts(t.x,t.y,'#ff00aa',60,350,1.3);G.fx.push({t:'text',x:t.x,y:t.y-50,s:'🌌 GENESIS',c:'#ff00aa',l:1.5,m:1.5});shake(12,.4)}}
-ring(u.x,u.y,td?34:28,c,.3,3)}
+if(es&&u.i.id==='void_emperor'){ring(t.x,t.y,50,'#c060ff',.5,3);parts(t.x,t.y,'#c060ff',15,180,.6)}
+if(es&&u.i.id==='void_sovereign'){ring(t.x,t.y,80,'#ff00ff',.7,5);parts(t.x,t.y,'#ff00ff',25,250,.8)}
+if(es&&u.i.id==='void_god'){nova(t.x,t.y,150,'#ff00aa',.9);ring(t.x,t.y,180,'#fff',1.1,8);parts(t.x,t.y,'#ff00aa',60,350,1.3);shake(12,.4)}}
+ring(u.x,u.y,hi?34:28,c,.3,3)}
 /* ===== GAME CORE ===== */
 function startStage(){if(!S.stage||!S.load.length)return;
 S.coins=200;
@@ -371,7 +479,7 @@ const w=G.wave;
 const isBoss=G.inf?(w%10===0):(w===MAXW);
 if(isBoss){
 if(G.inf){const cnt=Math.min(12,5+Math.floor(w/5));for(let i=0;i<cnt;i++)G.q.push('normal');G.q.push('boss');const extra=Math.floor(w/10);for(let i=0;i<Math.min(6,extra);i++)G.q.push('tank');for(let i=0;i<Math.min(8,extra);i++)G.q.push('flying');toast('⚠️ BOSS WAVE '+w+'!')}
-else{for(let i=0;i<6;i++)G.q.push('normal');G.q.push('boss');if(S.stage.boss)for(let i=0;i<4;i++)G.q.push('tank');toast('⚠️ BOSS WAVE! Boss masuk = langsung kalah!')}
+else{for(let i=0;i<6;i++)G.q.push('normal');G.q.push('boss');if(S.stage.boss)for(let i=0;i<4;i++)G.q.push('tank');toast('⚠️ BOSS WAVE!')}
 flash('#e74c3c',.5);
 }else{
 let n;
@@ -400,9 +508,9 @@ if(es&&i.id==='star_emperor')rad+=70;
 if(es&&i.id==='star_god')rad+=120;
 G.fx.push({t:'exp',x:t.x,y:t.y,r:rad,l:.35,m:.35});
 for(const e of G.en)if(Math.hypot(e.x-t.x,e.y-t.y)<=rad)hit(e,dmg);
-if(es&&i.id==='celestial_avatar'){G.lives=Math.min(BASE,G.lives+1);ring(t.x,t.y,rad*1.4,'#fff08a',.8,5);ring(t.x,t.y,rad,'#fff',.5,3);parts(t.x,t.y,'#fff08a',30,220,1.1);G.fx.push({t:'text',x:t.x,y:t.y-50,s:'💖 DIVINE +1',c:'#fff08a',l:1.2,m:1.2})}
-if(es&&i.id==='star_emperor'){G.lives=Math.min(BASE,G.lives+2);nova(t.x,t.y,rad*1.5,'#ff00ff',.7);ring(t.x,t.y,rad*1.8,'#fff',.9,6);parts(t.x,t.y,'#ff00ff',40,300,1.3);G.fx.push({t:'text',x:t.x,y:t.y-55,s:'🌌 COSMIC +2HP',c:'#ff00ff',l:1.4,m:1.4})}
-if(es&&i.id==='star_god'){G.lives=Math.min(BASE,G.lives+3);for(const e of G.en){e.sl=Math.max(e.sl,1.5);e.sf=Math.min(e.sf,.2)}G.fx.push({t:'text',x:t.x,y:t.y-60,s:'💫 +3HP & STUN',c:'#ffe0ff',l:1.5,m:1.5})}}
+if(es&&i.id==='celestial_avatar'){G.lives=Math.min(BASE,G.lives+1);ring(t.x,t.y,rad*1.4,'#fff08a',.8,5)}
+if(es&&i.id==='star_emperor'){G.lives=Math.min(BASE,G.lives+2);nova(t.x,t.y,rad*1.5,'#ff00ff',.7);ring(t.x,t.y,rad*1.8,'#fff',.9,6);parts(t.x,t.y,'#ff00ff',40,300,1.3)}
+if(es&&i.id==='star_god'){G.lives=Math.min(BASE,G.lives+3);for(const e of G.en){e.sl=Math.max(e.sl,1.5);e.sf=Math.min(e.sf,.2)}}}
 else if(k==='crit'){
 let execThresh=.3;
 if(es&&i.id==='death_god')execThresh=.5;
@@ -429,27 +537,61 @@ const n=3+tier+extra,seen=new Set();let cur=t,src=u;
 for(let j=0;j<n&&cur;j++){
 seen.add(cur);hit(cur,Math.floor(dmg*(1-j*.1)));
 if(hi)bolt(src,cur,['#f0f','#0ff','#fa0','#f6f'][j%4]);else beam(src,cur,'#a6f',3);
-if(es&&i.id==='void_emperor'){nova(cur.x,cur.y,45,'#c060ff',.3);parts(cur.x,cur.y,'#c060ff',10,180,.5);for(const e of G.en)if(e!==cur&&!e.dead&&Math.hypot(e.x-cur.x,e.y-cur.y)<45)hit(e,Math.floor(dmg*.3))}
-if(es&&i.id==='void_sovereign'){nova(cur.x,cur.y,70,'#ff00ff',.4);ring(cur.x,cur.y,80,'#ff00ff',.5,4);parts(cur.x,cur.y,'#ff00ff',15,220,.6);cur.sl=Math.max(cur.sl,1.2);cur.sf=Math.min(cur.sf,.5);for(const e of G.en)if(e!==cur&&!e.dead&&Math.hypot(e.x-cur.x,e.y-cur.y)<70)hit(e,Math.floor(dmg*.5))}
-if(es&&i.id==='void_god'){nova(cur.x,cur.y,90,'#ff00aa',.5);ring(cur.x,cur.y,110,'#ff00aa',.6,5);parts(cur.x,cur.y,'#ff00aa',25,280,.8);cur.sl=Math.max(cur.sl,1.5);cur.sf=Math.min(cur.sf,.3);for(const e of G.en)if(e!==cur&&!e.dead&&Math.hypot(e.x-cur.x,e.y-cur.y)<90)hit(e,Math.floor(dmg*.7))}
+if(es&&i.id==='void_emperor'){nova(cur.x,cur.y,45,'#c060ff',.3);for(const e of G.en)if(e!==cur&&!e.dead&&Math.hypot(e.x-cur.x,e.y-cur.y)<45)hit(e,Math.floor(dmg*.3))}
+if(es&&i.id==='void_sovereign'){nova(cur.x,cur.y,70,'#ff00ff',.4);cur.sl=Math.max(cur.sl,1.2);cur.sf=Math.min(cur.sf,.5);for(const e of G.en)if(e!==cur&&!e.dead&&Math.hypot(e.x-cur.x,e.y-cur.y)<70)hit(e,Math.floor(dmg*.5))}
+if(es&&i.id==='void_god'){nova(cur.x,cur.y,90,'#ff00aa',.5);cur.sl=Math.max(cur.sl,1.5);cur.sf=Math.min(cur.sf,.3);for(const e of G.en)if(e!==cur&&!e.dead&&Math.hypot(e.x-cur.x,e.y-cur.y)<90)hit(e,Math.floor(dmg*.7))}
 src=cur;
 let nx=null,nd=1e9;
 for(const e of G.en){if(seen.has(e)||e.dead)continue;const d=Math.hypot(src.x-e.x,src.y-e.y);if(d<120&&d<nd){nd=d;nx=e}}
 cur=nx}}
 if(hi)fxSkill(u,k,t)}
-function ultimate(u,st){const U=ULT[st.skill],es=EVO_SKILL[u.i.id];const uc=es?es.color:U.c,un=es?es.ult:U.n,m=U.m*(u.i.rar==='td'||u.i.rar==='secret'?1.5:1);
-let healed=false;let bonusCoins=0;
-for(const e of G.en){if(e.dead)continue;const killed=hit(e,st.dmg*m);
-if(st.skill==='slow'){e.sl=es&&u.i.id==='time_lord'?4:3;e.sf=es&&u.i.id==='time_lord'?.05:.12}
-if(es&&u.i.id==='phantom_god'&&killed){bonusCoins+=25;ftext(e.x,e.y-30,'+25🪙','#f1c40f',1)}
-if(es&&u.i.id==='death_reaper'&&killed){bonusCoins+=40;ftext(e.x,e.y-30,'+40🪙','#f1c40f',1)}
-if(es&&u.i.id==='death_god'&&killed){bonusCoins+=80;ftext(e.x,e.y-30,'+80🪙','#f1c40f',1)}
-if(es&&u.i.id==='celestial_avatar'&&!healed){G.lives=Math.min(BASE,G.lives+2);healed=true;ftext(u.x,u.y-50,'💖 +2 HP','#fff08a',1.2)}
-if(es&&u.i.id==='star_emperor'&&!healed){G.lives=Math.min(BASE,G.lives+3);healed=true;ftext(u.x,u.y-50,'💖 +3 HP','#ff00ff',1.2)}
-if(es&&u.i.id==='star_god'&&!healed){G.lives=Math.min(BASE,G.lives+5);healed=true;ftext(u.x,u.y-50,'💖 +5 HP','#ffe0ff',1.3)}}
-if(bonusCoins>0)S.coins+=bonusCoins;
-if(st.skill==='chain'){let n=0;for(const e of G.en){if(n++>12||e.dead)break;bolt(u,e,uc,4)}}
-ultFX(u,uc,360,un)}
+function fireUltimate(u,st){
+const i=u.i,es=EVO_SKILL[i.id],def=ULT_DEF[st.skill]||ULT_DEF.chain;
+const col=es?es.color:def.c,name=es?es.ult:def.n,type=def.t;
+const tier=i.lv>=5?Math.floor(i.lv/3):0;
+const bonusMul=1+tier*0.15;
+if(type==='scythe'){
+const len=240,spread=0.55,ang=u.aimAngle||0;
+const dmg=Math.floor(st.dmg*6*bonusMul);
+for(const e of G.en){if(e.dead)continue;
+if(inTriangle(e.x,e.y,u.x,u.y,ang,len,spread)){
+hit(e,dmg);e.sl=Math.max(e.sl,1.8);e.sf=Math.min(e.sf,.35);
+if(e.dead){S.coins+=25;ftext(e.x,e.y-30,'+25🪙','#f1c40f',1)}}}
+G.fx.push({t:'scythe',x:u.x,y:u.y,a:ang,len,ang:spread,c:col,l:.9,m:.9});
+parts(u.x,u.y,col,40,280,1.2);parts(u.x,u.y,'#fff',20,200,.9);
+ring(u.x,u.y,len*.6,col,.7,5);ring(u.x,u.y,len,col,.5,3);
+shake(18,.6);flash(col,.3);
+G.fx.push({t:'banner',s:'⚔️ SCYTHE SWEEP!',c:col,l:1.4,m:1.4})}
+else if(type==='nova'){
+const dmg=Math.floor(st.dmg*5*bonusMul),rad=220;
+G.fx.push({t:'exp',x:u.x,y:u.y,r:rad,l:.35,m:.35});
+for(const e of G.en){if(e.dead)continue;if(Math.hypot(e.x-u.x,e.y-u.y)<=rad)hit(e,dmg)}
+ring(u.x,u.y,rad*1.4,'#fff',.9,6);ring(u.x,u.y,rad,'#ff8800',.7,5);
+nova(u.x,u.y,rad,'#ffaa00',.8);parts(u.x,u.y,'#ff8800',60,350,1.4);
+if(G.lives<BASE){G.lives=Math.min(BASE,G.lives+3);ftext(u.x,u.y-60,'💖 +3 HP','#fff08a',1.4)}
+shake(20,.7);flash('#ffaa00',.4);
+G.fx.push({t:'banner',s:'🌟 SUPERNOVA!',c:col,l:1.4,m:1.4})}
+else if(type==='storm'){
+const dmg=Math.floor(st.dmg*4*bonusMul);
+let prev=u;
+const targets=[...G.en].filter(e=>!e.dead);
+for(const e of targets){hit(e,dmg);bolt(prev,e,col,4);nova(e.x,e.y,50,col,.4);prev=e}
+for(let i=0;i<5;i++){bolt({x:u.x,y:u.y},{x:Math.random()*900,y:Math.random()*550},col,3)}
+ring(u.x,u.y,300,col,.9,6);nova(u.x,u.y,250,col,.7);
+parts(u.x,u.y,col,80,400,1.5);
+shake(22,.7);flash(col,.4);
+G.fx.push({t:'banner',s:'☄️ VOID STORM!',c:col,l:1.4,m:1.4})}
+else if(type==='freeze'){
+for(const e of G.en){if(e.dead)continue;e.sl=Math.max(e.sl,4);e.sf=Math.min(e.sf,.05);G.fx.push({t:'text',x:e.x,y:e.y-30,s:'❄️',c:'#aee6ff',l:1.4,m:1.4})}
+const r=400;
+ring(u.x,u.y,r,'#66ccff',1.2,8);ring(u.x,u.y,r*.7,'#fff',.9,6);
+for(let i=0;i<6;i++)setTimeout(()=>{if(G)ring(u.x,u.y,r*(.3+i*.12),'#66ccff',.6+.1*i,4-i)},i*90);
+parts(u.x,u.y,'#66ccff',60,300,1.5);parts(u.x,u.y,'#fff',30,200,1.2);
+shake(15,.5);flash('#66ccff',.5);
+G.fx.push({t:'banner',s:'⏰ TIME FREEZE!',c:col,l:1.4,m:1.4})}
+u.ultCd=ULT_CD;
+toast('⚡ '+name+' aktif! CD 60s');
+}
 function update(dt){
 if(!G||G.paused||G.over)return;
 if(G.shake>0)G.shake-=dt;if(G.flash>0)G.flash-=dt;if(G.dim>0)G.dim-=dt;
@@ -467,16 +609,18 @@ else{G.lives=Math.max(0,G.lives-DMG);shake(8,.3);flash('#f00',.2);ftext(850,420,
 if(G.lives<=0){G.over=true;defeat(boss);return}continue}
 const dx=t.x-e.x,dy=t.y-e.y,d=Math.hypot(dx,dy),mv=e.sp*e.sf*dt;
 if(d<=mv){e.x=t.x;e.y=t.y;e.wi++}else{e.x+=dx/d*mv;e.y+=dy/d*mv}}
-for(const u of G.pl){const st=stats(u.i);u.cdT-=dt;if(S.fx&&isHi(u.i)&&Math.random()<dt*8)G.par.push({x:u.x+(Math.random()-.5)*30,y:u.y+12,vx:(Math.random()-.5)*10,vy:-40-Math.random()*30,l:1,m:1,c:tc(u),z:2.5});u.pulse+=dt;if(u.buff>0)u.buff-=dt;
-if(isHi(u.i)&&u.i.lv>=5){u.ult-=dt;if(u.ult<=0){u.ult=u.i.rar==='secret'?18:u.i.rar==='td'?22:30;if(G.en.some(e=>!e.dead))ultimate(u,st)}}
+for(const u of G.pl){const st=stats(u.i);u.cdT-=dt;
+if(S.fx&&isHi(u.i)&&Math.random()<dt*8)G.par.push({x:u.x+(Math.random()-.5)*30,y:u.y+12,vx:(Math.random()-.5)*10,vy:-40-Math.random()*30,l:1,m:1,c:tc(u),z:2.5});
+u.pulse+=dt;if(u.buff>0)u.buff-=dt;
+if(u.ultCd>0)u.ultCd=Math.max(0,u.ultCd-dt);
 if(u.cdT<=0){let t=null,md=1e9;for(const e of G.en){if(e.dead)continue;const d=Math.hypot(u.x-e.x,u.y-e.y);if(d<=st.rng&&d<md){md=d;t=e}}
-if(t){fire(u,st,t);u.cdT=st.cd}}}
+if(t){u.aimAngle=Math.atan2(t.y-u.y,t.x-u.x);fire(u,st,t);u.cdT=st.cd}}}
 G.en=G.en.filter(e=>!e.dead);
 if(G.act&&!G.q.length&&!G.en.length){G.act=false;let ec=0;
 for(const u of G.pl)if(DEF[u.i.id].skill==='economy'){const rarK=ECO_K[u.i.rar]||1.0;const r=Math.floor((80+u.i.lv*35)*rarK);ec+=r;ftext(u.x,u.y-30,'+'+r+'🪙','#f1c40f',1.2)}
 const bonus=G.inf?Math.floor(250*(1+G.wave*.05)):250;
 S.coins+=bonus+ec;$('sk').style.display='none';
-if(!G.inf&&G.wave>=MAXW)victory();else{toast(`🌊 Wave ${G.wave} selesai! +${bonus+ec} 🪙 · berikutnya 2 detik`);G.nx=2}
+if(!G.inf&&G.wave>=MAXW)victory();else{toast(`🌊 Wave ${G.wave} selesai! +${bonus+ec} 🪙`);G.nx=2}
 ui()}
 for(const a of[G.par,G.bm,G.fx])for(let i=a.length-1;i>=0;i--){a[i].l-=dt;if(a[i].l<=0)a.splice(i,1)}
 for(const p of G.par){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.94;p.vy*=.94}
@@ -496,23 +640,30 @@ let secretHTML='';
 if(s.mat&&SECRET_DROPS[s.mat]){const roll=Math.random();
 if(roll<SECRET_CHANCE){const id=SECRET_DROPS[s.mat];const dup=S.inv.some(u=>u.id===id);
 if(dup){S.gems+=500;secretHTML=`<div style="border:2px solid #ff00ff;border-radius:10px;padding:12px;margin:10px 0;background:linear-gradient(135deg,#1a0033,#0a0e27);animation:glow 1.5s infinite alternate">
-<div style="font-size:28px">${DEF[id].icon}</div><b style="color:#ff00ff;font-size:16px">🌟 TRANSCENDENT DUPLICATE!</b>
+<div style="font-size:28px">${DEF[id].icon}</div><b style="color:#ff00ff;font-size:16px">🌟 SECRET DUPLICATE!</b>
 <div style="color:#aaa;font-size:12px;margin-top:4px">${DEF[id].name} (duplikat)</div>
-<div style="color:#f1c40f;font-weight:bold;margin-top:4px">+500 💎 (kompensasi)</div></div>`;save()}
+<div style="color:#f1c40f;font-weight:bold;margin-top:4px">+500 💎</div></div>`;save()}
 else{S.inv.push({iid:S.nid++,id,rar:'secret',lv:1,trait:null});
 secretHTML=`<div style="border:3px solid #ff00ff;border-radius:10px;padding:14px;margin:10px 0;background:linear-gradient(135deg,#2a0033,#0a0e27);box-shadow:0 0 25px #ff00ff;animation:glow 1.5s infinite alternate">
-<div style="font-size:36px">${DEF[id].icon}</div><b style="color:#ff00ff;font-size:20px;text-shadow:0 0 15px #ff00ff">✨ TRANSCENDENT UNIT! ✨</b>
+<div style="font-size:36px">${DEF[id].icon}</div><b style="color:#ff00ff;font-size:20px;text-shadow:0 0 15px #ff00ff">✨ SECRET UNIT! ✨</b>
 <div style="color:#fff;font-size:15px;margin-top:6px;font-weight:bold">${DEF[id].name}</div>
-<div style="color:#ff00ff;font-size:11px;margin-top:4px">Drop rate: 0.85% dari ${MATS[s.mat][1]} ${MATS[s.mat][0]}</div>
-<div style="color:#f1c40f;font-size:11px;margin-top:4px">🧬 Bisa di-Evolve jadi God tier!</div></div>`;save()}}}
+<div style="color:#ffd700;font-size:11px;margin-top:4px">🧬 Bisa di-Evolve jadi TRANSCENDENT!</div></div>`;save()}}}
 save();box(`<h2 style="color:#2ecc71">🎉 VICTORY!</h2><p style="color:#aaa">${s.n}</p><p style="font-size:18px">💎 +${g}</p>${mt}${tokenHTML}${secretHTML}<button id="r1" class="r">🏠 Menu</button><button id="r2">🔄 Main Lagi</button>`)}
 function defeat(boss){let extra='';
 if(G.inf){const prev=S.best||0;const newBest=G.wave>prev;if(newBest){S.best=G.wave;save();extra=`<p style="color:#f1c40f;font-size:15px">🏆 REKOR BARU! Wave ${G.wave}</p>`}else extra=`<p style="color:#aaa">Rekor: Wave ${prev}</p>`}
-box(`<h2 style="color:#e74c3c">💀 DEFEAT</h2><p style="color:#aaa">${S.stage.n}</p><p>${boss?'Boss berhasil masuk base!':'Base hancur.'} Wave ${G.wave}</p>${extra}<button id="r1" class="r">🏠 Menu</button><button id="r2">🔄 Coba Lagi</button>`)}
+box(`<h2 style="color:#e74c3c">💀 DEFEAT</h2><p style="color:#aaa">${S.stage.n}</p><p>${boss?'Boss masuk base!':'Base hancur.'} Wave ${G.wave}</p>${extra}<button id="r1" class="r">🏠 Menu</button><button id="r2">🔄 Coba Lagi</button>`)}
 /* ===== GAME UI ===== */
 let lastUi=0,PID=1;const pop=$('pop');
 const cnt=i=>G.pl.filter(p=>p.i.iid===i.iid).length;
 function ui(soft){const now=performance.now();if(soft&&now-lastUi<200)return;lastUi=now;
+const ultBtn=document.getElementById('ult');
+if(ultBtn&&G.selP){
+const pu=G.pl.find(x=>x.pid===G.selP);
+if(pu&&isHi(pu.i)&&pu.i.lv>=5){
+const st2=stats(pu.i),es2=EVO_SKILL[pu.i.id];
+const un2=es2?es2.ult:(ULT_DEF[st2.skill]?ULT_DEF[st2.skill].n:'ULTIMATE');
+if(pu.ultCd>0){ultBtn.disabled=true;ultBtn.textContent='⏳ '+Math.ceil(pu.ultCd)+'s'}
+else{ultBtn.disabled=false;ultBtn.textContent='⚡ '+un2}}}
 $('gc').textContent=Math.floor(S.coins);$('gl').textContent=G.lives;$('gw').textContent=G.wave;
 $('gwm').textContent=G.inf?' ♾️':'/'+MAXW;
 $('gn').textContent=S.stage.n+(G.inf?' · Rekor: Wave '+(S.best||0):'');
@@ -535,13 +686,11 @@ if(!u){pop.style.display='none';return}
 const i=u.i,st=stats(i),mx=MAXL[i.rar]||10,c=upCost(i),d=DEF[i.id],rc=RECIPES[i.id],ro=ROLE[role(d)]||['-','#fff'];let ev='';
 const tr=st.trait;
 const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';
-const traitHTML=tr
-  ?`<div class="row"><span>🎲 Trait</span><b style="color:${tr.c}">${tr.i} ${tr.n}${tl}</b></div><div style="font-size:10px;color:#888;margin:0 0 4px">${tr.f?tr.f(tr):''}</div>`
-  :`<div class="row"><span>🎲 Trait</span><b style="color:#666">— Belum ada —</b></div><div style="font-size:10px;color:#888;margin:0 0 4px">Reroll di menu 🎲 Traits</div>`;
+const traitHTML=tr?`<div class="row"><span>🎲 Trait</span><b style="color:${tr.c}">${tr.i} ${tr.n}${tl}</b></div><div style="font-size:10px;color:#888;margin:0 0 4px">${tr.f?tr.f(tr):''}</div>`:`<div class="row"><span>🎲 Trait</span><b style="color:#666">— Belum ada —</b></div><div style="font-size:10px;color:#888;margin:0 0 4px">Reroll di menu 🎲 Traits</div>`;
 const es=EVO_SKILL[i.id];
 const skillName=es?`${es.icon} ${es.name}`:st.skill;
 const skillDesc=es?`<div style="font-size:10px;color:#888;margin:2px 0 4px">${es.desc}</div>`:'';
-const ultName=es?es.ult:(ULT[st.skill]?ULT[st.skill].n:'ULTIMATE');
+const ultName=es?es.ult:(ULT_DEF[st.skill]?ULT_DEF[st.skill].n:(ULT[st.skill]?ULT[st.skill].n:'ULTIMATE'));
 const econPerWave=(st.skill==='economy')?Math.floor((80+i.lv*35)*(ECO_K[i.rar]||1.0)):0;
 if(rc){let can=true;ev=`<div style="margin-top:4px;color:#aaa">🧬 → ${DEF[rc.r].name}</div>`;
 for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;ev+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}
@@ -555,6 +704,7 @@ ${traitHTML}
 ${econPerWave?`<div class="row"><span>🪙/Wave</span><b style="color:#f1c40f">+${econPerWave}</b></div>`:''}
 <div class="row"><span>Terpasang</span><b>${cnt(i)}/${maxDep(i)}</b></div>
 ${isHi(i)?`<div class="row"><span>Ultimate</span><b>${i.lv>=5?ultName:'Lv5'}</b></div>`:''}
+${isHi(i)&&i.lv>=5?`<button id="ult" style="width:100%;margin-top:4px;background:linear-gradient(180deg,#ff2266,#aa0033);font-weight:bold" ${u.ultCd>0?'disabled':''}>${u.ultCd>0?'⏳ '+Math.ceil(u.ultCd)+'s':'⚡ '+ultName}</button>`:''}
 <button id="up" ${i.lv>=mx||S.coins<c?'disabled':''}>${i.lv>=mx?'🏆 MAX':'⬆ Upgrade '+c+' 🪙'}</button>
 <button id="pk" class="r">Angkat</button>${ev}`;
 const rc2=cv.getBoundingClientRect(),wr=$('cw').getBoundingClientRect(),k=rc2.width/900,px=rc2.left-wr.left+u.x*k,py=rc2.top-wr.top+u.y*k;
@@ -562,23 +712,22 @@ pop.style.display='block';
 const pw=pop.offsetWidth||180,ph=pop.offsetHeight||200;
 let lx=px+26;if(lx+pw>wr.width-4)lx=px-pw-26;
 pop.style.left=Math.max(4,lx)+'px';pop.style.top=Math.max(4,Math.min(wr.height-ph-4,py-ph/2))+'px';
+const ultEl=$('ult');if(ultEl)ultEl.onclick=()=>{if(u.ultCd>0||i.lv<5)return;fireUltimate(u,st);save();setTimeout(()=>info(),100)};
 const upEl=$('up');if(upEl)upEl.onclick=()=>{if(i.lv>=mx||S.coins<c)return;S.coins-=c;i.lv++;parts(u.x,u.y,'#f1c40f',14,90,.8);
-if(isHi(i)&&i.lv===5){const col=R[i.rar].c;ring(u.x,u.y,90,col,.9,6);nova(u.x,u.y,70,col,.6);parts(u.x,u.y,col,40,220,1.2);G.fx.push({t:'banner',s:'✨ ULTIMATE TERBUKA!',c:col,l:1.6,m:1.6});flash(col,.3)}
+if(isHi(i)&&i.lv===5){const col=R[i.rar].c;ring(u.x,u.y,90,col,.9,6);nova(u.x,u.y,70,col,.6);parts(u.x,u.y,col,40,220,1.2);flash(col,.3)}
 toast('⬆️ Lv'+i.lv);save();ui()};
 const pkEl=$('pk');if(pkEl)pkEl.onclick=()=>{S.coins+=Math.floor(placeCost(u.i)/2);G.pl=G.pl.filter(x=>x!==u);G.selP=null;pop.style.display='none';ui()};
 const eb=$('ev');if(eb)eb.onclick=()=>{if(!rc)return;for(const k in rc.m)if((S.mats[k]||0)<rc.m[k])return toast('❌ Bahan kurang!');
 for(const k in rc.m)S.mats[k]-=rc.m[k];
 const oldN=DEF[i.id].name;
-/* Field effect dulu */
 ring(u.x,u.y,120,EVO_SKILL[rc.r].color,.9,7);nova(u.x,u.y,150,EVO_SKILL[rc.r].color,.8);parts(u.x,u.y,EVO_SKILL[rc.r].color,60,320,1.3);parts(u.x,u.y,'#fff',30,220,1.1);
 G.fx.push({t:'banner',s:'🌟 EVOLVED!',c:EVO_SKILL[rc.r].color,l:2,m:2});
-/* Update data */
 i.id=rc.r;u.i.id=rc.r;
-if(i.rar==='mythic'){i.rar='td';u.i.rar='td'}else if(i.rar==='secret'&&(rc.r==='void_god'||rc.r==='star_god'||rc.r==='death_god')){i.rar='secret';u.i.rar='secret'}
+if(rc.r==='void_god'||rc.r==='star_god'||rc.r==='death_god'){i.rar='transcendent';u.i.rar='transcendent'}
+else{i.rar='td';u.i.rar='td'}
 i.lv=1;u.i.lv=1;
 const es2=EVO_SKILL[i.id];save();
 pop.style.display='none';
-/* Pause game, main cinema */
 G.paused=true;
 playEvoCinematic(oldN,DEF[i.id].name,DEF[i.id].icon,es2.color,es2.icon+' '+es2.name,es2.desc,es2.ult,()=>{
 if(G){G.paused=false;ui();if(G.pl.includes(u))G.selP=u.pid;info()}
@@ -593,7 +742,7 @@ if(G.wp.slice(0,-1).some((a,k)=>seg(x,y,a,G.wp[k+1])<32))return toast('❌ Tidak
 if(G.pl.some(u=>Math.hypot(x-u.x,y-u.y)<42))return toast('❌ Terlalu dekat!');
 if(cnt(i)>=maxDep(i))return toast('Batas penempatan penuh!');
 const pc=placeCost(i);if(S.coins<pc)return toast('❌ Koin kurang! Butuh '+pc+' 🪙');S.coins-=pc;
-G.pl.push({pid:PID++,i:{...i,trait:i.trait?{...i.trait}:null},x,y,cdT:0,pulse:0,buff:0,ult:i.rar==='secret'?18:i.rar==='td'?22:30});parts(x,y,R[i.rar].c,15,100,.7);
+G.pl.push({pid:PID++,i:{...i,trait:i.trait?{...i.trait}:null},x,y,cdT:0,pulse:0,buff:0,ultCd:0,aimAngle:0});parts(x,y,R[i.rar].c,15,100,.7);
 if(isHi(i)){const c=tc({i});ring(x,y,80,c,.7,5);ring(x,y,45,'#fff',.5,3);nova(x,y,60,c,.5);parts(x,y,'#fff',25,200,1);shake(4,.15)}
 if(cnt(i)>=maxDep(i))G.sel=null;
 if(G.cd>0&&G.wave===0&&!G.act){toast('⚔️ Wave 1 dimulai!');startWave()}return ui()}
@@ -612,15 +761,15 @@ $('p1').onclick=()=>{$('ov').style.display='none';if(G)G.paused=false};$('p2').o
 $('p3').onclick=()=>{sync();G=null;$('ov').style.display='none';pop.style.display='none';show('menu');updMenu();save()}}
 function evMenu(){$('ov').style.display='flex';const list=S.inv.filter(u=>RECIPES[u.id]);
 let h='<h2 style="margin-bottom:8px">🧬 Evolve</h2><div style="max-height:60vh;overflow-y:auto;width:min(440px,86vw)">';
-if(!list.length)h+='<p style="color:#888;font-size:13px">Belum ada unit yang bisa di-evolve.<br>Summon Mythic atau dapatkan Transcendent unit dari Legend Stage.</p>';
+if(!list.length)h+='<p style="color:#888;font-size:13px">Belum ada unit yang bisa di-evolve.<br>Summon Mythic atau dapatkan Secret unit dari Legend Stage.</p>';
 for(const u of list){const rc=RECIPES[u.id];let can=true,rows='';
 for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;rows+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}
 const isGod=rc.r==='void_god'||rc.r==='star_god'||rc.r==='death_god';
-const borderC=isGod?'#ff00ff':R.mythic.c;
-const label=isGod?'🌟 TRANSCENDENT → GOD':'MYTHIC → TD';
-h+=`<div class="card" style="cursor:default;text-align:left;margin:6px 0;border-color:${borderC};${isGod?'box-shadow:0 0 15px rgba(255,0,255,.4);background:linear-gradient(135deg,#1a0033,#0a0e27)':''}">
-<div style="font-size:9px;color:${isGod?'#ff00ff':'#f39c12'};font-weight:bold;margin-bottom:3px">${label}</div>
-${DEF[u.id].icon} <b style="color:#fff">${DEF[u.id].name}</b> → ${DEF[rc.r].icon} <b style="color:${isGod?'#ff00ff':'#0ff'}">${DEF[rc.r].name}</b>${rows}
+const borderC=isGod?'#ffd700':R.mythic.c;
+const label=isGod?'🌟 SECRET → TRANSCENDENT':'MYTHIC → TD';
+h+=`<div class="card" style="cursor:default;text-align:left;margin:6px 0;border-color:${borderC};${isGod?'box-shadow:0 0 15px rgba(255,215,0,.5);background:linear-gradient(135deg,#1a1000,#0a0e27)':''}">
+<div style="font-size:9px;color:${isGod?'#ffd700':'#f39c12'};font-weight:bold;margin-bottom:3px">${label}</div>
+${DEF[u.id].icon} <b style="color:#fff">${DEF[u.id].name}</b> → ${DEF[rc.r].icon} <b style="color:${isGod?'#ffd700':'#0ff'}">${DEF[rc.r].name}</b>${rows}
 <button class="y evgo" data-i="${u.iid}" style="width:100%;margin:4px 0 0" ${can?'':'disabled'}>Evolve</button></div>`}
 $('ob').innerHTML=h+'</div><button id="evx" class="r" style="margin-top:8px">Tutup</button>';
 $('evx').onclick=()=>{$('ov').style.display='none'};
@@ -628,15 +777,14 @@ document.querySelectorAll('.evgo').forEach(b=>b.onclick=()=>{const u=S.inv.find(
 for(const k in rc.m)if((S.mats[k]||0)<rc.m[k])return toast('❌ Bahan kurang!');
 for(const k in rc.m)S.mats[k]-=rc.m[k];
 const oldName=DEF[u.id].name;u.id=rc.r;
-if(rc.r==='void_god'||rc.r==='star_god'||rc.r==='death_god')u.rar='secret';
+if(rc.r==='void_god'||rc.r==='star_god'||rc.r==='death_god')u.rar='transcendent';
 else u.rar='td';
 u.lv=1;
 const es=EVO_SKILL[u.id];save();updMenu();
 const newName=DEF[u.id].name;
 $('ov').style.display='none';
 playEvoCinematic(oldName,newName,DEF[u.id].icon,es.color,es.icon+' '+es.name,es.desc,es.ult,()=>{
-evMenu();
-toast('🌟 '+newName+' — '+es.name);
+evMenu();toast('🌟 '+newName+' — '+es.name);
 })})}
 /* ===== TRAIT MANAGER ===== */
 let TM={selected:null,pending:null,old:null,lockUntil:0,lockTimer:null,auto:false};
@@ -671,16 +819,14 @@ clearTMLock();
 let h=`<h2 style="margin-bottom:6px">🎲 Trait Manager</h2>
 <div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between;align-items:center">
 <span style="color:#aaa">🎲 Token</span><span><b style="color:#f1c40f">${S.rr||0}</b>${TM.auto?' <span style="color:#2ecc71;font-size:10px;font-weight:bold">▶ AUTO</span>':''}</span></div>`;
-
 if(TM.selected===null){
 h+=`<button id="tmAdd" class="y" style="width:100%;font-size:26px;padding:16px;margin:10px 0;animation:pulse 1.5s infinite">➕</button>
-<p style="color:#888;font-size:11px;text-align:center;margin-top:8px">Klik tombol + untuk pilih unit yang mau di-reroll trait-nya</p>`;
+<p style="color:#888;font-size:11px;text-align:center;margin-top:8px">Klik tombol + untuk pilih unit</p>`;
 $('ob').innerHTML=h+`<button id="tmClose" class="r" style="width:100%;margin-top:10px">Tutup</button>`;
 $('tmAdd').onclick=()=>pickerMenu();
 $('tmClose').onclick=()=>{resetTM();$('ov').style.display='none';updMenu()};
 return;
 }
-
 const u=S.inv.find(x=>x.iid===TM.selected);
 if(!u){TM.selected=null;return renderTraitMenu()}
 const d=DEF[u.id],r=R[u.rar];
@@ -688,13 +834,10 @@ const showTrait=TM.pending||getTrait(u);
 const isPending=!!TM.pending;
 const locked=isPending&&Date.now()<TM.lockUntil;
 const remain=locked?Math.max(0,(TM.lockUntil-Date.now())/1000):0;
-
 h+=`<div class="card" style="cursor:default;text-align:center;border-color:${r.c};margin-bottom:8px">
 <div style="font-size:30px">${d.icon}</div>
 <b style="color:#fff;font-size:15px">${d.name}</b>
-<div style="color:${r.c};font-size:11px">${r.n}</div>
-</div>`;
-
+<div style="color:${r.c};font-size:11px">${r.n}</div></div>`;
 if(showTrait){
 const tl=showTrait.tier!==undefined&&TRAITS[showTrait.id]&&TRAITS[showTrait.id].tiers.length>1?[' I',' II',' III'][showTrait.tier]:'';
 const rc=RAR_COLOR_TRAIT[showTrait.rar]||'#888';
@@ -703,13 +846,11 @@ h+=`<div style="background:${isPending?'linear-gradient(135deg,#2a0033,#0a0e27)'
 <div style="font-size:26px">${showTrait.i}</div>
 <b style="color:${showTrait.c};font-size:16px">${showTrait.n}${tl}</b>
 <div style="color:${rc};font-size:10px">[${showTrait.rar}]</div>
-<div style="color:#aaa;font-size:10px;margin-top:3px">${showTrait.f?showTrait.f(showTrait):''}</div>
-</div>`;
+<div style="color:#aaa;font-size:10px;margin-top:3px">${showTrait.f?showTrait.f(showTrait):''}</div></div>`;
 }else{
 h+=`<div style="background:#0a0e27;border:2px dashed #2a3a6a;border-radius:8px;padding:16px;margin-bottom:8px;text-align:center">
 <div style="font-size:11px;color:#666">— Belum ada trait —</div></div>`;
 }
-
 if(isPending){
 h+=`<div style="background:rgba(241,196,15,.15);border:1px solid #f1c40f;border-radius:6px;padding:6px;margin-bottom:6px;text-align:center;font-size:11px;color:#f1c40f;font-weight:bold">⚠️ Pilih KEEP atau SKIP</div>
 <div style="display:flex;gap:6px;margin-bottom:6px">
@@ -723,15 +864,11 @@ h+=`<div style="display:flex;gap:6px;margin-bottom:6px;align-items:stretch">
 <button id="tmAuto" class="y" style="width:58px;padding:4px;font-size:10px;flex-shrink:0;line-height:1.15;${TM.auto?'background:linear-gradient(#e74c3c,#c0392b)':''}" ${noToken&&!TM.auto?'disabled':''}>${TM.auto?'⏸<br>STOP':'▶<br>AUTO'}</button>
 </div>`;
 }
-
 h+=`<button id="tmBack" style="width:100%;margin-top:4px;padding:6px;font-size:12px">← Ganti Unit</button>
 <button id="tmClose" class="r" style="width:100%;margin-top:4px;padding:6px;font-size:12px">Tutup</button>`;
-
 $('ob').innerHTML=h;
-
 $('tmClose').onclick=()=>{resetTM();$('ov').style.display='none';updMenu()};
 $('tmBack').onclick=()=>{clearTMLock();TM.selected=null;TM.pending=null;TM.old=null;renderTraitMenu()};
-
 if(isPending){
 if(locked){
 TM.lockTimer=setInterval(()=>{
@@ -765,39 +902,28 @@ if(G)G.pl.forEach(p=>{if(p.i.iid===u.iid){p.i.trait=TM.old?{...TM.old}:null}});
 TM.pending=null;TM.old=null;
 if((S.rr||0)<=0){TM.auto=false;toast('❌ Token habis');renderTraitMenu();return}
 setTimeout(()=>{if(TM.auto&&TM.selected!==null){const uu=S.inv.find(x=>x.iid===TM.selected);if(uu)doRoll(uu)}},120);
-}
-},200);
+}},200);
 }
 if(!TM.auto){
-$('tmKeep').onclick=()=>{
-clearTMLock();
+$('tmKeep').onclick=()=>{clearTMLock();
 u.trait=TM.pending;
 if(G)G.pl.forEach(p=>{if(p.i.iid===u.iid){p.i.trait={...u.trait}}});
 const nt=getTrait(u);
 const tl=nt.tier!==undefined&&TRAITS[nt.id]&&TRAITS[nt.id].tiers.length>1?[' I',' II',' III'][nt.tier]:'';
 save();toast(`✓ KEEP: ${nt.i} ${nt.n}${tl}!`);
-TM.pending=null;TM.old=null;
-renderTraitMenu();
-};
-$('tmSkip').onclick=()=>{
-clearTMLock();
+TM.pending=null;TM.old=null;renderTraitMenu()};
+$('tmSkip').onclick=()=>{clearTMLock();
 u.trait=TM.old;
 if(G)G.pl.forEach(p=>{if(p.i.iid===u.iid){p.i.trait=TM.old?{...TM.old}:null}});
 save();toast('✗ SKIP');
-TM.pending=null;TM.old=null;
-renderTraitMenu();
-};
+TM.pending=null;TM.old=null;renderTraitMenu()};
 }
 }else{
 $('tmRoll').onclick=()=>doRoll(u);
-$('tmAuto').onclick=()=>{
-TM.auto=!TM.auto;
-if(TM.auto){toast('▶ Auto Roll ON — cari Legendary/Mythic');doRoll(u)}
-else{toast('⏸ Auto Roll OFF');renderTraitMenu()}
-};
+$('tmAuto').onclick=()=>{TM.auto=!TM.auto;
+if(TM.auto){toast('▶ Auto Roll ON');doRoll(u)}else{toast('⏸ OFF');renderTraitMenu()}};
 }
 }
-
 function doRoll(u){
 if((S.rr||0)<=0){toast('❌ Token habis!');return}
 TM.old=u.trait?JSON.parse(JSON.stringify(u.trait)):null;
@@ -807,12 +933,27 @@ TM.lockUntil=Date.now()+1500;
 save();
 renderTraitMenu();
 }
-
+/* ===== BINDINGS ===== */
 $('evb').onclick=evMenu;
 $('trb').onclick=traitMenu;
 $('rdb').onclick=redeemMenu;
 $('mb').onclick=()=>pmenu(true);$('set').onclick=()=>pmenu(false);
 $('play').onclick=startStage;
+/* Login */
+$('loginBtn').onclick=()=>{
+const em=$('loginEmail').value.trim().toLowerCase(),msg=$('loginMsg');
+if(!em){msg.innerHTML='<span style="color:#e74c3c">❌ Masukkan email!</span>';return}
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){msg.innerHTML='<span style="color:#e74c3c">❌ Format email tidak valid!</span>';return}
+S.user=em;save();
+msg.innerHTML='<span style="color:#2ecc71">✅ Selamat datang!</span>';
+setTimeout(()=>{$('mu').textContent=em;show('menu');updMenu();toast('👋 Halo, '+em.split('@')[0]+'!')},600);
+};
+$('loginEmail').addEventListener('keydown',e=>{if(e.key==='Enter')$('loginBtn').click()});
+$('logoutBtn').onclick=()=>{
+if(!confirm('Logout dari '+S.user+'?\n\nProgress tetap tersimpan.'))return;
+S.user=null;save();$('loginEmail').value='';$('loginMsg').innerHTML='';
+show('login');setTimeout(()=>$('loginEmail').focus(),150);
+};
 /* ===== DRAW ===== */
 function draw(){ctx.save();
 if(G.shake>0){const s=G.sk*Math.min(1,G.shake);ctx.translate((Math.random()-.5)*s,(Math.random()-.5)*s)}else G.sk=0;
@@ -851,12 +992,29 @@ else if(e.t==='ring'){ctx.save();ctx.globalCompositeOperation='lighter';ctx.glob
 else if(e.t==='nova'){const r=e.r*(.3+(1-a)*.7),g=ctx.createRadialGradient(e.x,e.y,0,e.x,e.y,r);g.addColorStop(0,'#fff');g.addColorStop(.35,e.c);g.addColorStop(1,'rgba(0,0,0,0)');ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=a*.8;ctx.fillStyle=g;ctx.beginPath();ctx.arc(e.x,e.y,r,0,6.283);ctx.fill();ctx.restore()}
 else if(e.t==='slash'){const L=30*(.5+(1-a));ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=a;ctx.lineCap='round';ctx.strokeStyle=e.c;ctx.lineWidth=4*a+1;ctx.shadowColor=e.c;ctx.shadowBlur=14;
 for(const o of[0,1.3]){const an=e.a+o;ctx.beginPath();ctx.moveTo(e.x-Math.cos(an)*L,e.y-Math.sin(an)*L);ctx.lineTo(e.x+Math.cos(an)*L,e.y+Math.sin(an)*L);ctx.stroke()}ctx.restore()}
-else if(e.t==='banner'){ctx.save();ctx.globalAlpha=Math.min(1,a*2);ctx.font='bold 34px sans-serif';ctx.textAlign='center';ctx.shadowColor=e.c;ctx.shadowBlur=25;ctx.strokeStyle=e.c;ctx.lineWidth=4;ctx.fillStyle='#fff';const y=110-(1-a)*12;ctx.strokeText(e.s,450,y);ctx.fillText(e.s,450,y);ctx.restore()}}
+else if(e.t==='banner'){ctx.save();ctx.globalAlpha=Math.min(1,a*2);ctx.font='bold 34px sans-serif';ctx.textAlign='center';ctx.shadowColor=e.c;ctx.shadowBlur=25;ctx.strokeStyle=e.c;ctx.lineWidth=4;ctx.fillStyle='#fff';const y=110-(1-a)*12;ctx.strokeText(e.s,450,y);ctx.fillText(e.s,450,y);ctx.restore()}
+else if(e.t==='scythe'){
+ctx.save();
+ctx.globalAlpha=a*.4;ctx.fillStyle=e.c;
+ctx.beginPath();ctx.moveTo(e.x,e.y);
+ctx.lineTo(e.x+Math.cos(e.a-e.ang)*e.len,e.y+Math.sin(e.a-e.ang)*e.len);
+ctx.lineTo(e.x+Math.cos(e.a+e.ang)*e.len,e.y+Math.sin(e.a+e.ang)*e.len);
+ctx.closePath();ctx.fill();
+ctx.globalAlpha=a*.7;ctx.strokeStyle=e.c;ctx.lineWidth=2;ctx.stroke();
+ctx.globalAlpha=a;ctx.globalCompositeOperation='lighter';
+const sweepA=e.a-e.ang+(1-a)*e.ang*2;
+ctx.strokeStyle=e.c;ctx.lineWidth=8*a+2;ctx.shadowColor=e.c;ctx.shadowBlur=25;
+ctx.beginPath();ctx.arc(e.x,e.y,e.len*.85,sweepA-.35,sweepA+.35);ctx.stroke();
+ctx.shadowBlur=0;ctx.strokeStyle='#fff';ctx.lineWidth=3*a+1;
+ctx.beginPath();ctx.arc(e.x,e.y,e.len*.85,sweepA-.25,sweepA+.25);ctx.stroke();
+ctx.globalAlpha=a*.8;ctx.strokeStyle='#663300';ctx.lineWidth=6*a+2;
+ctx.beginPath();ctx.moveTo(e.x,e.y);ctx.lineTo(e.x+Math.cos(sweepA)*e.len*.85,e.y+Math.sin(sweepA)*e.len*.85);ctx.stroke();
+ctx.restore()}}
 for(const p of G.par){const a=p.l/p.m;ctx.globalAlpha=a;ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.z*a,0,6.283);ctx.fill()}ctx.globalAlpha=1;
-if(G.cd>0){ctx.fillStyle='rgba(0,0,0,.45)';ctx.fillRect(0,0,900,550);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#f1c40f';ctx.font='bold 90px sans-serif';ctx.fillText(Math.ceil(G.cd),450,255);ctx.fillStyle='#fff';ctx.font='bold 22px sans-serif';ctx.fillText('Bersiap! Tempatkan unit...',450,330);ctx.fillStyle='#aaa';ctx.font='14px sans-serif';ctx.fillText('Taruh unit → wave 1 langsung mulai',450,360)}
+if(G.cd>0){ctx.fillStyle='rgba(0,0,0,.45)';ctx.fillRect(0,0,900,550);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#f1c40f';ctx.font='bold 90px sans-serif';ctx.fillText(Math.ceil(G.cd),450,255);ctx.fillStyle='#fff';ctx.font='bold 22px sans-serif';ctx.fillText('Bersiap!',450,330)}
 ctx.restore();
 if(G.flash>0){ctx.fillStyle=G.fc;ctx.globalAlpha=Math.min(.6,G.flash*1.2);ctx.fillRect(0,0,900,550);ctx.globalAlpha=1}}
 let lt=performance.now();
 function loop(n){const dt=Math.min((n-lt)/1000,.1);lt=n;if(G&&$('game').classList.contains('on')){update(dt);if(G)draw()}requestAnimationFrame(loop)}
-updMenu();requestAnimationFrame(loop);
+checkLogin();requestAnimationFrame(loop);
 </script></body></html>
