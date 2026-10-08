@@ -1,4 +1,7 @@
 <!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Hero Tower Defense</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -57,7 +60,6 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 .pn.collapsed h3.pn-h::after{content:'▶'}
 .pn.collapsed .pn-body{display:none}
 .pn-body{margin-top:4px}
-/* === LAYOUT BARU — PANEL CENTER === */
 .main-panel{max-width:580px;margin:0 auto;background:#151a3a;border:2px solid #2a3a6a;border-radius:14px;padding:12px}
 .main-panel .pn{background:#0a0e27;border:2px solid #2a3a6a}
 .row-2col{display:grid;grid-template-columns:1fr 78px;gap:8px;margin-top:8px}
@@ -68,26 +70,40 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 .top-bar{display:flex;justify-content:space-between;align-items:center;max-width:580px;margin:0 auto 6px}
 .main-panel .footer{text-align:center;margin-top:8px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
 .main-panel .footer button{margin:0;font-size:12px;padding:8px 12px}
+.cloud-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold}
+.cloud-on{background:rgba(46,204,113,.2);color:#2ecc71;border:1px solid #2ecc71}
+.cloud-off{background:rgba(231,76,60,.2);color:#e74c3c;border:1px solid #e74c3c}
 @media(max-width:640px){.main-panel{padding:10px}.row-2col{grid-template-columns:1fr 68px}.side-btn{font-size:10px;padding:8px 2px}.main-panel .grid{max-height:150px}}
 </style></head><body>
 <div id="toast"></div>
 
+<!-- LOGIN -->
 <div id="login" class="sc">
 <h1 style="margin-top:40px">⚔️ HERO TOWER DEFENSE ⚔️</h1>
 <div class="pn" style="max-width:420px;margin:30px auto;text-align:center;background:#151a3a">
 <div style="font-size:60px;margin-bottom:10px">🎮</div>
-<h3 style="font-size:18px;margin-bottom:6px">Login dengan Email</h3>
-<p style="color:#888;font-size:12px;margin-bottom:14px">Data tersimpan di browser</p>
-<input id="loginEmail" type="email" placeholder="nama@email.com" style="width:100%;padding:12px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#fff;font-size:14px;outline:none;margin-bottom:10px;text-align:center" maxlength="60" autocomplete="email">
-<button id="loginBtn" class="g" style="width:100%;padding:12px;font-size:16px">▶ Masuk</button>
+<h3 style="font-size:18px;margin-bottom:6px">Login dengan Google</h3>
+<p style="color:#888;font-size:12px;margin-bottom:14px">Progress otomatis tersimpan di cloud — main di device mana saja</p>
+<button id="googleLoginBtn" class="g" style="width:100%;padding:14px;font-size:16px;display:flex;align-items:center;justify-content:center;gap:10px">
+<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.5 29.6 4.5 24 4.5 12.7 4.5 3.5 13.7 3.5 25S12.7 45.5 24 45.5 44.5 36.3 44.5 25c0-1.5-.2-3-.9-4.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.5 29.6 4.5 24 4.5c-7.7 0-14.4 4.4-17.7 10.2z"/><path fill="#4CAF50" d="M24 45.5c5.5 0 10.4-2.1 14.1-5.5l-6.5-5.5c-2 1.5-4.7 2.5-7.6 2.5-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 41 16.2 45.5 24 45.5z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.5l6.5 5.5c-.5.4 7.3-5.3 7.3-14 0-1.5-.2-3-.9-4.5z"/></svg>
+Login dengan Google
+</button>
 <div id="loginMsg" style="font-size:12px;margin-top:8px;min-height:16px"></div>
+<div style="margin-top:14px;padding-top:14px;border-top:1px solid #2a3a6a">
+<div style="font-size:11px;color:#888;margin-bottom:6px">Atau main offline (progress hanya di browser ini):</div>
+<button id="offlineBtn" style="width:100%;padding:10px;font-size:13px;background:linear-gradient(#555,#333)">▶ Main Offline</button>
+</div>
 </div>
 </div>
 
+<!-- MENU -->
 <div id="menu" class="sc">
 <div class="top-bar">
 <button id="rdb" class="y" style="margin:0;padding:6px 14px;font-size:12px">🎁 REDEEM</button>
-<div style="font-size:12px">👤 <b id="mu" style="color:#66ccff">Guest</b></div>
+<div style="font-size:12px;text-align:right">
+<div>👤 <b id="mu" style="color:#66ccff">Guest</b></div>
+<div><span id="cloudBadge" class="cloud-badge cloud-off">⚪ Offline</span></div>
+</div>
 </div>
 <h1>⚔️ HERO TOWER DEFENSE ⚔️</h1>
 <div class="bar">💎 <b id="mg"></b> 🎲 <b id="mr"></b> 🪙 <b id="mc"></b> <span id="mt"></span></div>
@@ -121,12 +137,15 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 
   <div class="footer">
     <button id="set">⚙️ Settings</button>
+    <button id="expBtn" class="g">📤 Export</button>
+    <button id="impBtn" class="y">📥 Import</button>
     <button id="logoutBtn" class="r">🚪 Logout</button>
     <button id="rst" class="r">Reset</button>
   </div>
 </div>
 </div>
 
+<!-- STAGE -->
 <div id="stage" class="sc">
 <div style="display:flex;justify-content:space-between;align-items:center;max-width:920px;margin:0 auto 10px">
 <button id="stageBack" class="r" style="margin:0">← Kembali</button>
@@ -138,6 +157,7 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 <button id="playStart" class="g" style="display:block;width:min(460px,92%);margin:18px auto;font-size:22px;padding:18px;letter-spacing:2px">▶ MULAI</button>
 </div>
 
+<!-- GAME -->
 <div id="game" class="sc">
 <div class="top"><span>🪙 <b id="gc"></b></span><span>🏰 <b id="gl"></b>/100</span><span>🌊 <b id="gw"></b><span id="gwm">/20</span></span><span id="gn" style="color:#f1c40f"></span><button id="sw">▶ Wave</button><button id="sk" class="y" style="display:none">⏩ Skip</button></div>
 <div class="gw"><div id="cw"><canvas id="cv" width="900" height="550"></canvas><button id="mb">⚙️</button><div id="pop"></div></div><div id="hand"></div></div>
@@ -152,6 +172,20 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 </div>
 <script>
 const BASE=100,DMG=10,MAXW=20,$=i=>document.getElementById(i);
+
+/* ==== FIREBASE ==== */
+const firebaseConfig={
+apiKey:"AIzaSyBFxKd9Gz17Hcwe6lSG3Vmkxt_HaPb-12g",
+authDomain:"herotowerdefense.firebaseapp.com",
+projectId:"herotowerdefense",
+storageBucket:"herotowerdefense.firebasestorage.app",
+messagingSenderId:"579288425283",
+appId:"1:579288425283:web:aac6d8d34dd20ea68d05f6",
+measurementId:"G-Z5EG2LLS1Y"
+};
+let fbAuth=null,fbDb=null,currentUser=null,cloudSaveTimer=null,isOnline=false;
+
+/* ==== RARITY ==== */
 const R={
 common:{n:'Common',c:'#b0b0b0',p:.5,d:1.8,r:1,s:1,k:1},
 rare:{n:'Rare',c:'#4a90e2',p:.25,d:2.5,r:1.1,s:1.1,k:1.3},
@@ -292,15 +326,61 @@ HTD2026:{gems:1000,rr:25,desc:'1000 💎 + 25 🎲'},
 TDREROLL:{gems:0,rr:100,desc:'100 🎲'},
 NIAMATD:{gems:1500,rr:0,desc:'1500 💎'}
 };
+
 let S={user:null,gems:500,coins:0,rr:0,inv:[],load:[],clr:{},nid:1,mi:0,ri:0,mode:'c',mats:{},auto:false,fx:true,stage:null,best:0,usedCodes:{}},G=null;
 const cv=$('cv'),ctx=cv.getContext('2d');
-function save(){try{localStorage.setItem('td2',JSON.stringify({user:S.user||null,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,best:S.best,usedCodes:S.usedCodes||{}}))}catch(e){}}
+
+/* ==== SAVE/LOAD ==== */
+function save(){
+try{localStorage.setItem('td2',JSON.stringify({user:S.user||null,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,best:S.best,usedCodes:S.usedCodes||{}}))}catch(e){}
+if(isOnline){clearTimeout(window._csTimer);window._csTimer=setTimeout(cloudSave,2000)}
+}
 try{const d=JSON.parse(localStorage.getItem('td2'));if(d)Object.assign(S,d)}catch(e){}
 if(!S.usedCodes)S.usedCodes={};
 if(typeof S.rr!=='number')S.rr=0;
 if(!S.inv.length)for(const id of['archer','swordsman','hunter'])S.inv.push({iid:S.nid++,id,rar:'common',lv:1,trait:null});
 S.inv.forEach(u=>{if(typeof u.trait==='string')u.trait=null;if(u.lv===undefined||u.lv===null||u.lv<1)u.lv=1});
 S.load=S.load.filter(i=>S.inv.some(u=>u.iid===i));
+
+/* ==== CLOUD ==== */
+async function cloudSave(){
+if(!isOnline||!currentUser)return;
+try{
+const data={user:S.user,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,best:S.best,usedCodes:S.usedCodes||{},updatedAt:Date.now()};
+await fbDb.collection('users').doc(currentUser.uid).set(data);
+}catch(e){console.warn('Cloud save gagal:',e)}
+}
+async function cloudLoad(){
+if(!currentUser)return false;
+try{
+const doc=await fbDb.collection('users').doc(currentUser.uid).get();
+if(!doc.exists)return false;
+const d=doc.data();
+const choice=confirm(`📦 Save cloud ditemukan!\n\n💎 Gems: ${d.gems||0}\n🪙 Coins: ${Math.floor(d.coins||0)}\n🎒 Inventory: ${(d.inv||[]).length} unit\n🏆 Best Wave: ${d.best||0}\n\nLanjut LOAD dari CLOUD?\n(Cancel = pakai save lokal device ini)`);
+if(choice){
+Object.assign(S,d);
+if(!S.usedCodes)S.usedCodes={};
+if(typeof S.rr!=='number')S.rr=0;
+S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));
+save();
+toast('☁️ Save cloud loaded!');
+}
+return true;
+}catch(e){console.warn('Cloud load gagal:',e);return false}
+}
+function startCloudAutoSave(){
+if(cloudSaveTimer)clearInterval(cloudSaveTimer);
+cloudSaveTimer=setInterval(()=>{if(isOnline)cloudSave()},10000);
+}
+
+/* ==== FIREBASE INIT ==== */
+try{
+firebase.initializeApp(firebaseConfig);
+fbAuth=firebase.auth();
+fbDb=firebase.firestore();
+}catch(e){console.warn('Firebase gagal init:',e)}
+
+/* ==== UTIL ==== */
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400)}
 function show(n){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));$(n).classList.add('on')}
 function stats(u){
@@ -321,6 +401,8 @@ function STAT_HINT(id){const d=DEF[id],r=R[d.rar];return `DMG ${Math.floor(d.dmg
 function togglePanel(id){const p=$(id);if(p)p.classList.toggle('collapsed')}
 const RAR_ORDER=['common','rare','epic','legendary','mythic','td','secret','transcendent','primordial','eternal'];
 const RAR_TRIGGER=['mythic','td','secret','transcendent','primordial','eternal'];
+
+/* ==== GACHA CINEMATIC ==== */
 function playSummonCinematic(unit,cb){
 if(!unit||!RAR_TRIGGER.includes(unit.rar)){if(cb)cb();return}
 const d=DEF[unit.id],r=R[unit.rar];
@@ -353,10 +435,37 @@ setTimeout(()=>el.remove(),1200);
 const dur=isEter?2800:isPrim?2400:isTr?2200:1800;
 setTimeout(()=>{cin.classList.remove('on');flash.style.background='#fff';setTimeout(()=>{if(cb)cb()},300)},dur);
 }
+
+/* ==== LOGIN ==== */
 function checkLogin(){
+if(!fbAuth){
 if(S.user){$('mu').textContent=S.user;show('menu');updMenu()}
-else{show('login');setTimeout(()=>$('loginEmail').focus(),150)}
+else{show('login')}
+return;
 }
+fbAuth.onAuthStateChanged(async(user)=>{
+if(user){
+currentUser=user;isOnline=true;S.user=user.email;save();
+$('mu').textContent=user.email;
+$('cloudBadge').className='cloud-badge cloud-on';
+$('cloudBadge').textContent='☁️ Cloud aktif';
+$('loginMsg').innerHTML='<span style="color:#2ecc71">✅ Login: '+user.email+'</span>';
+await cloudLoad();
+startCloudAutoSave();
+show('menu');updMenu();
+toast('☁️ Login: '+user.email);
+}else{
+currentUser=null;isOnline=false;
+if(cloudSaveTimer)clearInterval(cloudSaveTimer);
+$('cloudBadge').className='cloud-badge cloud-off';
+$('cloudBadge').textContent='⚪ Offline';
+if(S.user&&S.user!=='Guest'){show('menu');updMenu()}
+else{show('login')}
+}
+});
+}
+
+/* ==== RARITY POOL ==== */
 function showRarityPool(rar){
 const r=R[rar],pool=POOL[rar]||[];
 $('ov').style.display='flex';
@@ -364,8 +473,6 @@ let h=`<h2 style="color:${r.c};margin-bottom:4px">${r.n}</h2>`;
 if(r.p>0)h+=`<p style="color:#888;font-size:12px;margin-bottom:10px">Chance summon: ${(r.p*100).toFixed(2)}%</p>`;
 else h+=`<p style="color:#888;font-size:12px;margin-bottom:10px">Hanya dari Legend / Evolve</p>`;
 h+=`<div style="font-size:11px;color:#aaa;margin-bottom:8px">Total ${pool.length} unit</div><div style="display:grid;gap:6px;text-align:left;max-height:50vh;overflow-y:auto">`;
-if(!pool.length){h+='<p style="color:#666;text-align:center;padding:12px">Belum ada unit.</p>'}
-else{
 pool.forEach(arr=>{
 const u=DEF[arr[0]];if(!u)return;
 const es=EVO_SKILL[arr[0]];
@@ -383,11 +490,12 @@ h+=`<div style="background:#0a0e27;border:1px solid ${r.c};border-radius:6px;pad
 <div style="font-size:10px;color:${r.c}">Skill: ${skillName}</div>
 </div></div>`;
 });
-}
 h+='</div>';
 $('ob').innerHTML=h+'<button id="rpClose" class="r" style="width:100%;margin-top:10px">Tutup</button>';
 $('rpClose').onclick=()=>{$('ov').style.display='none'};
 }
+
+/* ==== EQUIP MODAL ==== */
 function showEquipModal(iid){
 const u=S.inv.find(x=>x.iid===iid);if(!u)return;
 const inLoad=S.load.includes(iid);
@@ -417,6 +525,8 @@ $('ov').style.display='none';updMenu();save();
 };
 $('eqClose').onclick=()=>{$('ov').style.display='none'};
 }
+
+/* ==== EVOLVE CINEMATIC ==== */
 function playEvoCinematic(oldName,newName,icon,color,skillName,skillDesc,ult,cb){
 const flash=$('evoFlash'),cin=$('evoCinema'),rays=$('evoRays'),ic=$('evoIcon'),tt=$('evoTitle'),sb=$('evoSub');
 cin.style.color=color;rays.style.color=color;tt.style.color=color;
@@ -439,6 +549,8 @@ requestAnimationFrame(()=>{el.style.transform=`translate(${Math.cos(a)*s}px,${Ma
 setTimeout(()=>el.remove(),1100)},i*8)}
 shake(25,.5)}},500);
 setTimeout(()=>{cin.classList.remove('on');flash.style.background='#fff';setTimeout(()=>{if(cb)cb()},400)},2400)}
+
+/* ==== REDEEM ==== */
 function redeemMenu(){
 $('ov').style.display='flex';
 let h=`<h2 style="margin-bottom:6px">🎁 Redeem Kode</h2>
@@ -468,6 +580,56 @@ setTimeout(()=>redeemMenu(),700)};
 $('rdo').onclick=doRedeem;$('rdi').addEventListener('keydown',e=>{if(e.key==='Enter')doRedeem()});
 setTimeout(()=>$('rdi').focus(),100);
 }
+
+/* ==== EXPORT/IMPORT ==== */
+function exportSave(){
+const data={user:S.user,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,best:S.best,usedCodes:S.usedCodes||{}};
+const json=JSON.stringify(data);
+const code=btoa(unescape(encodeURIComponent(json)));
+const chunks=code.match(/.{1,80}/g).join('\n');
+$('ov').style.display='flex';
+$('ob').innerHTML=`
+<h2 style="margin-bottom:6px">📤 Export Save</h2>
+<p style="color:#888;font-size:11px;margin-bottom:10px">Copy kode di bawah, simpan di tempat aman.</p>
+<div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:8px;padding:10px;text-align:left;max-height:40vh;overflow-y:auto;margin-bottom:8px">
+<textarea id="expText" readonly style="width:100%;background:transparent;border:none;color:#0ff;font-family:monospace;font-size:10px;resize:none;outline:none;line-height:1.4" rows="8">${chunks}</textarea>
+</div>
+<div style="font-size:10px;color:#666;margin-bottom:8px">Size: ${(json.length/1024).toFixed(2)} KB</div>
+<button id="expCopy" class="g" style="width:100%;margin-bottom:6px">📋 Copy ke Clipboard</button>
+<button id="expDl" class="y" style="width:100%;margin-bottom:6px">💾 Download .txt</button>
+<button id="expClose" style="width:100%">Tutup</button>`;
+$('expCopy').onclick=()=>{const txt=$('expText');txt.select();txt.setSelectionRange(0,999999);
+try{if(navigator.clipboard){navigator.clipboard.writeText(txt.value).then(()=>toast('✅ Copy!')).catch(()=>{document.execCommand('copy');toast('✅ Copy!')})}else{document.execCommand('copy');toast('✅ Copy!')}}catch(e){toast('❌ Gagal')}};
+$('expDl').onclick=()=>{const blob=new Blob([code],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='htd_save_'+(S.user?S.user.split('@')[0]:'guest')+'_'+Date.now()+'.txt';a.click();URL.revokeObjectURL(url);toast('💾 Tersimpan!')};
+$('expClose').onclick=()=>{$('ov').style.display='none'};
+}
+function importSave(){
+$('ov').style.display='flex';
+$('ob').innerHTML=`
+<h2 style="margin-bottom:6px">📥 Import Save</h2>
+<p style="color:#888;font-size:11px;margin-bottom:10px">Paste kode save dari device lain, atau pilih file .txt</p>
+<textarea id="impText" placeholder="Paste kode..." style="width:100%;height:120px;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#0ff;font-family:monospace;font-size:10px;resize:vertical;outline:none;margin-bottom:8px"></textarea>
+<input type="file" id="impFile" accept=".txt" style="display:none">
+<button id="impPick" class="y" style="width:100%;margin-bottom:6px">📁 Pilih File .txt</button>
+<button id="impGo" class="g" style="width:100%;margin-bottom:6px">▶ Import Sekarang</button>
+<button id="impClose" style="width:100%">Tutup</button>
+<div id="impMsg" style="font-size:11px;margin-top:8px;min-height:16px"></div>`;
+$('impPick').onclick=()=>$('impFile').click();
+$('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('impText').value=ev.target.result.trim();$('impMsg').innerHTML='<span style="color:#2ecc71">✅ Loaded!</span>'};r.readAsText(f)};
+$('impGo').onclick=()=>{const code=$('impText').value.trim().replace(/\s+/g,'');const msg=$('impMsg');
+if(!code){msg.innerHTML='<span style="color:#e74c3c">❌ Kode kosong!</span>';return}
+try{const json=decodeURIComponent(escape(atob(code)));const data=JSON.parse(json);
+if(!data.inv||!Array.isArray(data.inv))throw new Error('Format tidak valid');
+if(!confirm('⚠️ Data sekarang akan DIGANTI dengan save ini.\n\nLanjutkan?'))return;
+Object.assign(S,data);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;
+S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();
+msg.innerHTML='<span style="color:#2ecc71;font-weight:bold">✅ Berhasil! Reload...</span>';
+setTimeout(()=>location.reload(),900);
+}catch(err){console.error(err);msg.innerHTML='<span style="color:#e74c3c">❌ Kode tidak valid!</span>'}};
+$('impClose').onclick=()=>{$('ov').style.display='none'};
+}
+
+/* ==== MENU ==== */
 function card(u,fn){const d=DEF[u.id],r=R[u.rar],s=stats(u),tr=s.trait,e=document.createElement('div');e.className='card';e.style.borderColor=r.c;
 const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';
 const trHTML=tr?`<div style="font-size:9px;color:${tr.c}">${tr.i} ${tr.n}${tl}</div>`:`<div style="font-size:9px;color:#666">— no trait —</div>`;
@@ -498,7 +660,6 @@ el.onmouseout=()=>{el.style.background='transparent';el.style.transform=''};
 el.onclick=()=>showRarityPool(el.dataset.rar);
 });
 }
-function tgl(id){const i=S.load.indexOf(id);if(i>=0)S.load.splice(i,1);else{if(S.load.length>=5)return toast('Maks 5 unit!');S.load.push(id)}updMenu();save()}
 function renderStage(){const m=$('maps');m.innerHTML='';
 const mk=(t,on,f)=>{const b=document.createElement('button');b.textContent=t;if(on)b.className='g';b.onclick=f;m.appendChild(b)};
 mk('🗺️ Campaign',S.mode==='c',()=>{S.mode='c';S.stage=null;renderStage()});
@@ -507,8 +668,12 @@ mk('♾️ Infinite',S.mode==='i',()=>{S.mode='i';S.stage={k:'inf',n:'♾️ Inf
 m.appendChild(document.createElement('br'));
 const a=$('acts');a.innerHTML='';
 if(S.mode==='i'){
-a.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:14px;color:#f1c40f;font-size:13px;line-height:1.6;background:#0a0e27;border-radius:8px;border:2px solid #f1c40f">
-♾️ <b>Infinite Mode</b><br>Wave tanpa batas<br>👑 Boss setiap 10 wave<br>🏆 Rekor: <b>Wave ${S.best||0}</b></div>`;
+a.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:14px;color:#f1c40f;font-size:13px;line-height:1.7;background:#0a0e27;border-radius:8px;border:2px solid #f1c40f">
+♾️ <b>Infinite Mode</b><br>
+Wave tanpa batas — makin sulit & banyak<br>
+👑 Boss setiap <b>10 wave</b><br>
+💎 Bonus <b>+100 Gems</b> setiap <b>15 wave</b><br>
+🏆 Rekor terbaik: <b>Wave ${S.best||0}</b></div>`;
 $('sel').innerHTML=S.stage?`Dipilih: <b style="color:#f1c40f">♾️ Infinite</b> · Rekor: Wave ${S.best||0}`:'Belum ada stage dipilih.';return}
 const L=S.mode==='l',list=L?REALMS:MAPS;
 list.forEach((mp,i)=>mk(mp.n,i===(L?S.ri:S.mi),()=>{if(L)S.ri=i;else S.mi=i;renderStage()}));
@@ -550,8 +715,8 @@ let bestUnit=null;
 for(const u of got){if(RAR_TRIGGER.includes(u.rar)){if(!bestUnit||RAR_ORDER.indexOf(u.rar)>RAR_ORDER.indexOf(bestUnit.rar))bestUnit=u}}
 if(bestUnit){playSummonCinematic(bestUnit,()=>{updMenu();save()})}
 else{updMenu();save()}}
-$('s1').onclick=()=>summon(1);$('s10').onclick=()=>summon(10);
-$('rst').onclick=()=>{if(confirm('Reset semua progress?')){try{localStorage.removeItem('td2')}catch(e){}location.reload()}};
+
+/* ==== FX ==== */
 const ring=(x,y,r,c,l=.6,w=4)=>G.fx.push({t:'ring',x,y,r,c,l,m:l,w});
 const nova=(x,y,r,c,l=.5)=>G.fx.push({t:'nova',x,y,r,c,l,m:l});
 const slash=(x,y,c)=>G.fx.push({t:'slash',x,y,c,l:.3,m:.3,a:Math.random()*Math.PI});
@@ -562,8 +727,6 @@ function flash(c,d){if(!S.fx)return;G.fc=c;G.flash=d}
 function beam(a,b,c,w=2){G.bm.push({x1:a.x,y1:a.y,x2:b.x,y2:b.y,c,w,l:.15,m:.15})}
 function bolt(a,b,c,w=3){const dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy)||1,n=Math.max(3,Math.floor(L/18)),nx=-dy/L,ny=dx/L,pts=[{x:a.x,y:a.y}];
 for(let i=1;i<n;i++){const t=i/n,o=(Math.random()-.5)*22;pts.push({x:a.x+dx*t+nx*o,y:a.y+dy*t+ny*o})}pts.push({x:b.x,y:b.y});G.bm.push({pts,c,w:w+1,l:.22,m:.22})}
-function ultFX(u,c,r,title){G.dim=.9;ring(u.x,u.y,r*1.3,'#fff',.9,3);for(const e of G.en.slice(0,12)){if(e.dead)continue;bolt({x:e.x+(Math.random()-.5)*40,y:-10},e,c,5);nova(e.x,e.y,45,c,.4)}for(let i=0;i<4;i++)setTimeout(()=>{if(G)ring(u.x,u.y,r*(.5+i*.17),c,.7+i*.12,6-i)},i*110);
-nova(u.x,u.y,r,c,.8);parts(u.x,u.y,c,70,380,1.4);parts(u.x,u.y,'#fff',30,260,1.1);G.fx.push({t:'banner',s:title,c,l:1.6,m:1.6});shake(22,.7);flash(c,.45)}
 const TH={void_reaper:'#a040ff',void_emperor:'#c060ff',celestial_g:'#ffd84a',celestial_avatar:'#fff08a',phantom_lord:'#ff3ccf',phantom_god:'#ff6fe0',chronomancer:'#3fe0ff',time_lord:'#9ff0ff',void_sovereign:'#ff00ff',star_emperor:'#ff66ff',death_reaper:'#cc00ff',void_god:'#ff00aa',star_god:'#ffe0ff',death_god:'#aa00ff',void_primordial:'#ff0066',star_primordial:'#ffaa00',death_primordial:'#6600ff',eternal_dragon:'#00ffaa',eternal_angel:'#ffffff',eternal_demon:'#00ffaa',light_emperor:'#ffffaa',soul_weaver:'#a060ff',abyss_walker:'#0099aa',gold_empress:'#ffd700',eternal_flame:'#ff5500',frost_empress:'#aaeeff'};
 const tc=u=>TH[u.i.id]||R[u.i.rar].c;
 function trail(a,b,c){if(!S.fx)return;for(let i=1;i<9;i++){const k=i/9;G.par.push({x:a.x+(b.x-a.x)*k,y:a.y+(b.y-a.y)*k,vx:(Math.random()-.5)*50,vy:(Math.random()-.5)*50,l:.35,m:.35,c,z:3})}}
@@ -600,6 +763,8 @@ if(es&&u.i.id==='void_god'){nova(t.x,t.y,150,'#ff00aa',.9);ring(t.x,t.y,180,'#ff
 if(es&&u.i.id==='void_primordial'){nova(t.x,t.y,220,'#ff0066',1);ring(t.x,t.y,260,'#fff',1.3,10);parts(t.x,t.y,'#ff0066',90,450,1.6);shake(20,.6)}
 if(es&&u.i.id==='eternal_dragon'){nova(t.x,t.y,300,'#00ffaa',1.2);ring(t.x,t.y,340,'#fff',1.5,12);parts(t.x,t.y,'#00ffaa',110,500,1.8);shake(28,.9)}}
 ring(u.x,u.y,hi?34:28,c,.3,3)}
+
+/* ==== GAME CORE ==== */
 function startStage(){if(!S.stage){toast('❌ Pilih stage dulu!');return}if(!S.load.length){toast('❌ Loadout kosong!');return}
 S.coins=200;
 G={pl:[],en:[],fx:[],par:[],bm:[],wave:0,lives:BASE,act:false,q:[],qt:0,hp:1,over:false,paused:false,cd:15,sel:null,selP:null,shake:0,sk:0,flash:0,fc:'#fff',we:0,skipped:false,inf:S.mode==='i',wp:WPS[S.stage.wp]||WPS.forest};
@@ -766,8 +931,22 @@ G.en=G.en.filter(e=>!e.dead);
 if(G.act&&!G.q.length&&!G.en.length){G.act=false;let ec=0;
 for(const u of G.pl)if(DEF[u.i.id].skill==='economy'){const rarK=ECO_K[u.i.rar]||1.0;const r=Math.floor((80+u.i.lv*35)*rarK);ec+=r;ftext(u.x,u.y-30,'+'+r+'🪙','#f1c40f',1.2)}
 const bonus=G.inf?Math.floor(250*(1+G.wave*.05)):250;
-S.coins+=bonus+ec;$('sk').style.display='none';
-if(!G.inf&&G.wave>=MAXW)victory();else{toast(`🌊 Wave ${G.wave} selesai! +${bonus+ec} 🪙`);G.nx=2}
+S.coins+=bonus+ec;
+/* ⭐ BONUS GEMS INFINITE — tiap 15 wave */
+let gemBonus=0;
+if(G.inf&&G.wave%15===0){
+gemBonus=100;S.gems+=gemBonus;
+G.fx.push({t:'banner',s:'💎 +100 GEMS!',c:'#00ffff',l:2,m:2});
+G.fx.push({t:'text',x:450,y:400,s:'🎉 WAVE '+G.wave+' MILESTONE!',c:'#00ffff',l:2.5,m:2.5});
+flash('#00ffff',.5);shake(15,.4);
+}
+$('sk').style.display='none';
+if(!G.inf&&G.wave>=MAXW)victory();
+else{
+let msg=`🌊 Wave ${G.wave} selesai! +${bonus+ec} 🪙`;
+if(gemBonus)msg+=` +${gemBonus} 💎`;
+toast(msg);G.nx=2;
+}
 ui()}
 for(const a of[G.par,G.bm,G.fx])for(let i=a.length-1;i>=0;i--){a[i].l-=dt;if(a[i].l<=0)a.splice(i,1)}
 for(const p of G.par){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.94;p.vy*=.94}
@@ -779,40 +958,33 @@ if($('r2'))$('r2').onclick=()=>{$('ov').style.display='none';startStage()}}
 function victory(){G.over=true;const s=S.stage,k=s.k,first=!S.clr[k];S.clr[k]=(S.clr[k]||0)+1;const g=first?150:100;S.gems+=g;let mt='';
 if(s.mat){const a=s.drop+(first?1:0);S.mats[s.mat]=(S.mats[s.mat]||0)+a;mt=`<p style="color:#f1c40f">🎁 ${MATS[s.mat][1]} ${MATS[s.mat][0]} x${a}${first?' (bonus first clear +1)':''}</p>`}
 let tokenHTML='';
-if(s.mat&&TOKEN_DROP_MATS.includes(s.mat)){
-const t=Math.floor(Math.random()*4);
+if(s.mat&&TOKEN_DROP_MATS.includes(s.mat)){const t=Math.floor(Math.random()*4);
 if(t>0){S.rr=(S.rr||0)+t;tokenHTML=`<p style="color:#66ccff;font-size:15px;font-weight:bold">🎲 Trait Reroll Token x${t}</p>`}
 else{tokenHTML=`<p style="color:#666;font-size:12px">🎲 Token: 0</p>`}}
 let secretHTML='';
 if(s.mat&&SECRET_DROPS[s.mat]){const roll=Math.random();
 if(roll<SECRET_CHANCE){const id=SECRET_DROPS[s.mat];const dup=S.inv.some(u=>u.id===id);
-if(dup){S.gems+=500;secretHTML=`<div style="border:2px solid #ff00ff;border-radius:10px;padding:12px;margin:10px 0;background:linear-gradient(135deg,#1a0033,#0a0e27);animation:glow 1.5s infinite alternate">
-<div style="font-size:28px">${DEF[id].icon}</div><b style="color:#ff00ff;font-size:16px">🌟 SECRET DUPLICATE!</b>
-<div style="color:#aaa;font-size:12px;margin-top:4px">${DEF[id].name} (duplikat)</div>
-<div style="color:#f1c40f;font-weight:bold;margin-top:4px">+500 💎</div></div>`;save()}
-else{S.inv.push({iid:S.nid++,id,rar:'secret',lv:1,trait:null});
-secretHTML=`<div style="border:3px solid #ff00ff;border-radius:10px;padding:14px;margin:10px 0;background:linear-gradient(135deg,#2a0033,#0a0e27);box-shadow:0 0 25px #ff00ff;animation:glow 1.5s infinite alternate">
-<div style="font-size:36px">${DEF[id].icon}</div><b style="color:#ff00ff;font-size:20px;text-shadow:0 0 15px #ff00ff">✨ SECRET UNIT! ✨</b>
-<div style="color:#fff;font-size:15px;margin-top:6px;font-weight:bold">${DEF[id].name}</div>
-<div style="color:#ffd700;font-size:11px;margin-top:4px">🧬 Bisa di-Evolve jadi TRANSCENDENT!</div></div>`;save()}}}
+if(dup){S.gems+=500;secretHTML=`<div style="border:2px solid #ff00ff;border-radius:10px;padding:12px;margin:10px 0;background:linear-gradient(135deg,#1a0033,#0a0e27);animation:glow 1.5s infinite alternate"><div style="font-size:28px">${DEF[id].icon}</div><b style="color:#ff00ff;font-size:16px">🌟 SECRET DUPLICATE!</b><div style="color:#aaa;font-size:12px;margin-top:4px">${DEF[id].name} (duplikat)</div><div style="color:#f1c40f;font-weight:bold;margin-top:4px">+500 💎</div></div>`;save()}
+else{S.inv.push({iid:S.nid++,id,rar:'secret',lv:1,trait:null});secretHTML=`<div style="border:3px solid #ff00ff;border-radius:10px;padding:14px;margin:10px 0;background:linear-gradient(135deg,#2a0033,#0a0e27);box-shadow:0 0 25px #ff00ff;animation:glow 1.5s infinite alternate"><div style="font-size:36px">${DEF[id].icon}</div><b style="color:#ff00ff;font-size:20px;text-shadow:0 0 15px #ff00ff">✨ SECRET UNIT! ✨</b><div style="color:#fff;font-size:15px;margin-top:6px;font-weight:bold">${DEF[id].name}</div><div style="color:#ffd700;font-size:11px;margin-top:4px">🧬 Bisa di-Evolve jadi TRANSCENDENT!</div></div>`;save()}}}
 save();box(`<h2 style="color:#2ecc71">🎉 VICTORY!</h2><p style="color:#aaa">${s.n}</p><p style="font-size:18px">💎 +${g}</p>${mt}${tokenHTML}${secretHTML}<button id="r1" class="r">🏠 Menu</button><button id="r2">🔄 Main Lagi</button>`)}
 function defeat(boss){let extra='';
 if(G.inf){const prev=S.best||0;const newBest=G.wave>prev;if(newBest){S.best=G.wave;save();extra=`<p style="color:#f1c40f;font-size:15px">🏆 REKOR BARU! Wave ${G.wave}</p>`}else extra=`<p style="color:#aaa">Rekor: Wave ${prev}</p>`}
 box(`<h2 style="color:#e74c3c">💀 DEFEAT</h2><p style="color:#aaa">${S.stage.n}</p><p>${boss?'Boss masuk base!':'Base hancur.'} Wave ${G.wave}</p>${extra}<button id="r1" class="r">🏠 Menu</button><button id="r2">🔄 Coba Lagi</button>`)}
+
+/* ==== GAME UI ==== */
 let lastUi=0,PID=1;const pop=$('pop');
 const cnt=i=>G.pl.filter(p=>p.i.iid===i.iid).length;
 function ui(soft){const now=performance.now();if(soft&&now-lastUi<200)return;lastUi=now;
 const ultBtn=document.getElementById('ult');
-if(ultBtn&&G.selP){
-const pu=G.pl.find(x=>x.pid===G.selP);
-if(pu&&isHi(pu.i)&&pu.i.lv>=5){
-const st2=stats(pu.i),es2=EVO_SKILL[pu.i.id];
+if(ultBtn&&G.selP){const pu=G.pl.find(x=>x.pid===G.selP);
+if(pu&&isHi(pu.i)&&pu.i.lv>=5){const st2=stats(pu.i),es2=EVO_SKILL[pu.i.id];
 const un2=es2?es2.ult:(ULT_DEF[st2.skill]?ULT_DEF[st2.skill].n:'ULTIMATE');
 if(pu.ultCd>0){ultBtn.disabled=true;ultBtn.textContent='⏳ '+Math.ceil(pu.ultCd)+'s'}
 else{ultBtn.disabled=false;ultBtn.textContent='⚡ '+un2}}}
 $('gc').textContent=Math.floor(S.coins);$('gl').textContent=G.lives;$('gw').textContent=G.wave;
 $('gwm').textContent=G.inf?' ♾️':'/'+MAXW;
-$('gn').textContent=S.stage.n+(G.inf?' · Rekor: Wave '+(S.best||0):'');
+if(G.inf){const nextBonus=15-(G.wave%15||15);$('gn').textContent='♾️ Wave '+G.wave+' · 💎 +100 dalam '+nextBonus+' wave · 🏆 '+(S.best||0)}
+else{$('gn').textContent=S.stage.n}
 $('sw').disabled=G.act||G.over||(!G.inf&&G.wave>=MAXW);if(soft)return;hand();info()}
 function hand(){const h=$('hand');h.innerHTML='';
 for(const id of S.load){const u=S.inv.find(x=>x.iid===id);if(!u)continue;
@@ -907,6 +1079,8 @@ const b='style="display:block;width:220px;margin:6px auto"';
 $('ob').innerHTML=`<h2 style="margin-bottom:10px">⏸ Menu</h2><button id="p1" class="g" ${b}>▶ Lanjutkan</button><button id="p2" ${b}>⚙️ Settings</button><button id="p3" class="r" ${b}>🏠 Main Menu</button>`;
 $('p1').onclick=()=>{$('ov').style.display='none';if(G)G.paused=false};$('p2').onclick=()=>sets(()=>pmenu(true));
 $('p3').onclick=()=>{sync();G=null;$('ov').style.display='none';pop.style.display='none';show('menu');updMenu();save()}}
+
+/* ==== EVOLVE MENU ==== */
 function evMenu(){$('ov').style.display='flex';const list=S.inv.filter(u=>RECIPES[u.id]);
 let h='<h2 style="margin-bottom:8px">🧬 Evolve</h2><div style="max-height:60vh;overflow-y:auto;width:min(440px,86vw)">';
 if(!list.length)h+='<p style="color:#888;font-size:13px">Belum ada unit yang bisa di-evolve.</p>';
@@ -936,6 +1110,8 @@ const es=EVO_SKILL[u.id];save();updMenu();
 const newName=DEF[u.id].name;
 $('ov').style.display='none';
 playEvoCinematic(oldName,newName,DEF[u.id].icon,es.color,es.icon+' '+es.name,es.desc,es.ult,()=>{evMenu();toast('🌟 '+newName+' — '+es.name)})})}
+
+/* ==== TRAIT MANAGER ==== */
 let TM={selected:null,pending:null,old:null,lockUntil:0,lockTimer:null,auto:false};
 function clearTMLock(){if(TM.lockTimer){clearInterval(TM.lockTimer);TM.lockTimer=null}}
 function resetTM(){clearTMLock();TM.selected=null;TM.pending=null;TM.old=null;TM.auto=false}
@@ -967,8 +1143,10 @@ let h=`<h2 style="margin-bottom:6px">🎲 Trait Manager</h2>
 if(TM.selected===null){
 h+=`<button id="tmAdd" class="y" style="width:100%;font-size:26px;padding:16px;margin:10px 0;animation:pulse 1.5s infinite">➕</button>
 <p style="color:#888;font-size:11px;text-align:center;margin-top:8px">Klik tombol + untuk pilih unit</p>`;
-$('ob').innerHTML=h+`<button id="tmClose" class="r" style="width:100%;margin-top:10px">Tutup</button>`;
+$('ob').innerHTML=h+`<button id="tmInfo" style="width:100%;margin-top:10px;padding:8px;font-size:13px;background:linear-gradient(#9b59b6,#8e44ad)">📊 Info Trait & Persentase</button>
+<button id="tmClose" class="r" style="width:100%;margin-top:6px">Tutup</button>`;
 $('tmAdd').onclick=()=>pickerMenu();
+$('tmInfo').onclick=()=>showTraitInfo();
 $('tmClose').onclick=()=>{resetTM();$('ov').style.display='none';updMenu()};return;}
 const u=S.inv.find(x=>x.iid===TM.selected);
 if(!u){TM.selected=null;return renderTraitMenu()}
@@ -1005,11 +1183,13 @@ h+=`<div style="display:flex;gap:6px;margin-bottom:6px;align-items:stretch">
 <button id="tmRoll" class="y" style="flex:1;font-size:15px;padding:12px" ${noToken?'disabled':''}>🎲 Reroll (${S.rr||0})</button>
 <button id="tmAuto" class="y" style="width:58px;padding:4px;font-size:10px;flex-shrink:0;line-height:1.15;${TM.auto?'background:linear-gradient(#e74c3c,#c0392b)':''}" ${noToken&&!TM.auto?'disabled':''}>${TM.auto?'⏸<br>STOP':'▶<br>AUTO'}</button></div>`;
 }
-h+=`<button id="tmBack" style="width:100%;margin-top:4px;padding:6px;font-size:12px">← Ganti Unit</button>
+h+=`<button id="tmInfo" style="width:100%;margin-top:4px;padding:6px;font-size:12px;background:linear-gradient(#9b59b6,#8e44ad)">📊 Info Trait & Persentase</button>
+<button id="tmBack" style="width:100%;margin-top:4px;padding:6px;font-size:12px">← Ganti Unit</button>
 <button id="tmClose" class="r" style="width:100%;margin-top:4px;padding:6px;font-size:12px">Tutup</button>`;
 $('ob').innerHTML=h;
 $('tmClose').onclick=()=>{resetTM();$('ov').style.display='none';updMenu()};
 $('tmBack').onclick=()=>{clearTMLock();TM.selected=null;TM.pending=null;TM.old=null;renderTraitMenu()};
+$('tmInfo').onclick=()=>showTraitInfo();
 if(isPending){
 if(locked){
 TM.lockTimer=setInterval(()=>{
@@ -1034,6 +1214,39 @@ $('tmRoll').onclick=()=>doRoll(u);
 $('tmAuto').onclick=()=>{TM.auto=!TM.auto;if(TM.auto){toast('▶ Auto Roll ON');doRoll(u)}else{toast('⏸ OFF');renderTraitMenu()}};
 }
 }
+function showTraitInfo(){
+$('ov').style.display='flex';
+let h=`<h2 style="margin-bottom:6px">📊 Info Trait</h2>
+<p style="color:#888;font-size:11px;margin-bottom:10px">Peluang drop setiap trait saat Reroll / Summon</p>
+<div style="max-height:60vh;overflow-y:auto;width:min(440px,88vw);text-align:left">`;
+const groups={common:[],legendary:[],mythic:[]};
+for(const id in TRAITS){const t=TRAITS[id];groups[t.rar].push({id,...t})}
+const rarLabel={common:{n:'🟢 COMMON',c:'#b0b0b0',desc:'Total 78%'},legendary:{n:'🟡 LEGENDARY',c:'#f39c12',desc:'Total 8.35%'},mythic:{n:'🔴 MYTHIC',c:'#e74c3c',desc:'Total 1.15%'}};
+for(const rar of ['common','legendary','mythic']){
+const info=rarLabel[rar];
+h+=`<div style="font-size:12px;color:${info.c};font-weight:bold;margin:10px 0 6px;border-bottom:1px solid ${info.c}44;padding-bottom:4px">${info.n} <span style="color:#888;font-size:10px;float:right">${info.desc}</span></div>`;
+for(const t of groups[rar]){
+const tierInfo=t.tiers.length>1?` <span style="color:#888;font-size:10px">(${t.tiers.length} tier)</span>`:'';
+h+=`<div style="background:#0a0e27;border:1px solid ${t.c};border-radius:6px;padding:8px;margin:4px 0">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div><span style="font-size:18px">${t.i}</span> <b style="color:${t.c};font-size:13px">${t.n}</b>${tierInfo}</div>
+<div style="color:#f1c40f;font-weight:bold;font-size:14px">${t.chance}%</div>
+</div>
+<div style="font-size:10px;color:#aaa;margin-top:4px">${t.f({...t.tiers[0]})}</div>
+${t.tiers.length>1?`<div style="font-size:9px;color:#666;margin-top:2px">Tier I: ${t.f(t.tiers[0])} · II: ${t.f(t.tiers[1])} · III: ${t.f(t.tiers[2])}</div>`:''}
+${t.special==='monarch'?'<div style="font-size:10px;color:#ff00ff;margin-top:2px">⚠️ Max Deploy 1</div>':''}
+</div>`}}
+h+=`<div style="font-size:11px;color:#888;margin-top:12px;padding:8px;background:#0a0e27;border-radius:6px;line-height:1.6">
+<b style="color:#f1c40f">📖 Cara Kerja:</b><br>
+• Setiap reroll roll 1x dari tabel ini<br>
+• Common trait punya 3 tier (I/II/III)<br>
+• Legendary & Mythic hanya 1 tier<br>
+• <b style="color:#ff00ff">Monarch</b> paling langka (0.1%) — DMG +300%<br>
+• Chance tidak berubah walau sudah punya trait bagus
+</div></div>`;
+$('ob').innerHTML=h+`<button id="tiClose" class="g" style="width:100%;margin-top:10px">← Kembali ke Trait Manager</button>`;
+$('tiClose').onclick=()=>renderTraitMenu();
+}
 function doRoll(u){
 if((S.rr||0)<=0){toast('❌ Token habis!');return}
 TM.old=u.trait?JSON.parse(JSON.stringify(u.trait)):null;
@@ -1043,6 +1256,8 @@ TM.lockUntil=Date.now()+1500;
 save();
 renderTraitMenu();
 }
+
+/* ==== BINDINGS ==== */
 $('evb').onclick=evMenu;
 $('trb').onclick=traitMenu;
 $('rdb').onclick=redeemMenu;
@@ -1050,20 +1265,45 @@ $('mb').onclick=()=>pmenu(true);$('set').onclick=()=>pmenu(false);
 $('play').onclick=()=>{show('stage');renderStage()};
 $('stageBack').onclick=()=>{show('menu');updMenu()};
 $('playStart').onclick=startStage;
-$('loginBtn').onclick=()=>{
-const em=$('loginEmail').value.trim().toLowerCase(),msg=$('loginMsg');
-if(!em){msg.innerHTML='<span style="color:#e74c3c">❌ Masukkan email!</span>';return}
-if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){msg.innerHTML='<span style="color:#e74c3c">❌ Format email tidak valid!</span>';return}
-S.user=em;save();
-msg.innerHTML='<span style="color:#2ecc71">✅ Selamat datang!</span>';
-setTimeout(()=>{$('mu').textContent=em;show('menu');updMenu();toast('👋 Halo, '+em.split('@')[0]+'!')},600);
+$('expBtn').onclick=exportSave;
+$('impBtn').onclick=importSave;
+
+/* Firebase login buttons */
+if($('googleLoginBtn'))$('googleLoginBtn').onclick=async()=>{
+if(!fbAuth){$('loginMsg').innerHTML='<span style="color:#e74c3c">❌ Firebase tidak tersedia</span>';return}
+$('loginMsg').innerHTML='<span style="color:#f39c12">⏳ Membuka login Google...</span>';
+try{
+const provider=new firebase.auth.GoogleAuthProvider();
+provider.setCustomParameters({prompt:'select_account'});
+await fbAuth.signInWithPopup(provider);
+}catch(e){
+$('loginMsg').innerHTML='<span style="color:#e74c3c">❌ Login gagal: '+e.message+'</span>';
+}
 };
-$('loginEmail').addEventListener('keydown',e=>{if(e.key==='Enter')$('loginBtn').click()});
-$('logoutBtn').onclick=()=>{
-if(!confirm('Logout dari '+S.user+'?\n\nProgress tetap tersimpan.'))return;
-S.user=null;save();$('loginEmail').value='';$('loginMsg').innerHTML='';
-show('login');setTimeout(()=>$('loginEmail').focus(),150);
+if($('offlineBtn'))$('offlineBtn').onclick=()=>{
+S.user='Guest';save();
+$('mu').textContent='Guest (offline)';
+$('cloudBadge').className='cloud-badge cloud-off';
+$('cloudBadge').textContent='⚪ Offline';
+show('menu');updMenu();
+toast('🎮 Mode offline — progress hanya di browser ini');
 };
+
+/* Logout */
+$('logoutBtn').onclick=async()=>{
+if(!confirm('Logout dari '+(S.user||'Guest')+'?\n\nProgress tetap tersimpan di cloud.'))return;
+if(isOnline)await cloudSave();
+if(fbAuth){try{await fbAuth.signOut()}catch(e){}}
+currentUser=null;isOnline=false;
+if(cloudSaveTimer)clearInterval(cloudSaveTimer);
+S.user=null;save();
+show('login');
+};
+
+/* Reset */
+$('rst').onclick=()=>{if(confirm('Reset semua progress?')){try{localStorage.removeItem('td2')}catch(e){}location.reload()}};
+
+/* ==== DRAW ==== */
 function draw(){ctx.save();
 if(G.shake>0){const s=G.sk*Math.min(1,G.shake);ctx.translate((Math.random()-.5)*s,(Math.random()-.5)*s)}else G.sk=0;
 ctx.fillStyle='#111';ctx.fillRect(-30,-30,960,610);ctx.strokeStyle='rgba(50,60,100,.25)';ctx.lineWidth=1;
