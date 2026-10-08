@@ -4,77 +4,147 @@
 <meta charset="UTF-8">
 <title>Hero Tower Defense</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:#0a0e27;color:#fff;font-family:'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden}
-  .screen{display:none;padding:20px}
-  .screen.active{display:block}
-  h1{font-size:44px;text-align:center;background:linear-gradient(90deg,#00ffff,#ff00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:15px 0}
-  h2{font-size:20px;margin-bottom:8px}
-  .resource-bar{display:flex;justify-content:center;gap:30px;font-size:18px;margin-bottom:20px;flex-wrap:wrap}
-  .resource-bar b{color:#f1c40f}
-  .panel{background:#151a3a;border:2px solid #2a3a6a;border-radius:12px;padding:20px;margin-bottom:20px;max-width:950px;margin-left:auto;margin-right:auto}
-  button{background:linear-gradient(180deg,#3498db,#2980b9);color:#fff;border:none;padding:10px 22px;font-size:15px;font-weight:bold;border-radius:8px;cursor:pointer;transition:.2s;margin:5px}
-  button:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.15)}
-  button:disabled{opacity:.4;cursor:not-allowed}
-  button.danger{background:linear-gradient(180deg,#e74c3c,#c0392b)}
-  button.gold{background:linear-gradient(180deg,#f39c12,#d68910)}
-  .rates{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;font-size:12px;margin:12px 0}
-  .rate{padding:4px 10px;border-radius:4px;background:#0a0e27;border:1px solid #2a3a6a}
-  .unit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;max-height:420px;overflow-y:auto;padding:8px}
-  .unit-card{background:#0a0e27;border:2px solid #2a3a6a;border-radius:8px;padding:10px;cursor:pointer;transition:.2s}
-  .unit-card:hover{border-color:#3498db}
-  .unit-card .name{font-weight:bold;font-size:14px}
-  .unit-card .rarity{font-size:11px;text-transform:uppercase;letter-spacing:1px}
-  .unit-card .lvl{font-size:12px;color:#f1c40f}
-  .unit-card .stats{font-size:11px;color:#aaa;margin-top:5px}
-  .game-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;max-width:950px;margin-left:auto;margin-right:auto}
-  .game-stats{display:flex;gap:18px;font-size:15px;flex-wrap:wrap}
-  .game-stats b{color:#f1c40f}
-  #gameCanvas{background:#111;border:2px solid #2a3a6a;border-radius:8px;display:block;margin:0 auto;cursor:pointer;max-width:100%}
-  .game-bottom{display:grid;grid-template-columns:1fr 280px;gap:10px;margin-top:10px;max-width:950px;margin-left:auto;margin-right:auto}
-  @media(max-width:750px){.game-bottom{grid-template-columns:1fr}}
-  .hand{background:#151a3a;border:2px solid #2a3a6a;border-radius:8px;padding:10px;min-height:110px}
-  .hand h3{font-size:13px;color:#aaa;margin-bottom:8px}
-  .hand-grid{display:flex;gap:8px;flex-wrap:wrap}
-  .hand-unit{background:#0a0e27;border:2px solid #2a3a6a;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px;transition:.2s;min-width:90px}
-  .hand-unit:hover{border-color:#3498db}
-  .hand-unit.selected{border-color:#f1c40f;background:#1a2050}
-  .hand-unit .name{font-weight:bold}
-  .hand-unit .rarity{font-size:10px;text-transform:uppercase}
-  .info-panel{background:#151a3a;border:2px solid #2a3a6a;border-radius:8px;padding:10px;font-size:13px}
-  .info-panel h3{font-size:13px;color:#aaa;margin-bottom:8px}
-  .stat-row{display:flex;justify-content:space-between;margin:4px 0}
-  .stat-row span:last-child{color:#f1c40f;font-weight:bold}
-  #toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#151a3a;border:2px solid #3498db;border-radius:8px;padding:12px 24px;font-size:16px;opacity:0;transition:.3s;pointer-events:none;z-index:100}
-  #toast.show{opacity:1}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0e27;color:#fff;font-family:'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden}
+.screen{display:none;padding:20px}
+.screen.active{display:block}
+h1{font-size:38px;text-align:center;background:linear-gradient(90deg,#00ffff,#ff00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:15px 0}
+h2{font-size:18px;margin-bottom:8px}
+.resource-bar{display:flex;justify-content:center;gap:20px;font-size:16px;margin-bottom:15px;flex-wrap:wrap;align-items:center}
+.resource-bar b{color:#f1c40f}
+.mat-chip{display:inline-flex;align-items:center;gap:4px;background:#0a0e27;border:1px solid #2a3a6a;padding:3px 8px;border-radius:12px;font-size:12px}
+.panel{background:#151a3a;border:2px solid #2a3a6a;border-radius:12px;padding:16px;margin-bottom:15px;max-width:950px;margin-left:auto;margin-right:auto}
+button{background:linear-gradient(180deg,#3498db,#2980b9);color:#fff;border:none;padding:9px 20px;font-size:14px;font-weight:bold;border-radius:8px;cursor:pointer;transition:.2s;margin:4px}
+button:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.15)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.danger{background:linear-gradient(180deg,#e74c3c,#c0392b)}
+button.gold{background:linear-gradient(180deg,#f39c12,#d68910)}
+button.green{background:linear-gradient(180deg,#2ecc71,#27ae60)}
+button.purple{background:linear-gradient(180deg,#9b59b6,#8e44ad)}
+.rates{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;font-size:11px;margin:8px 0}
+.rate{padding:3px 8px;border-radius:4px;background:#0a0e27;border:1px solid #2a3a6a}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:950px;margin:0 auto}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}}
+.col{background:#151a3a;border:2px solid #2a3a6a;border-radius:12px;padding:12px}
+.unit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:6px;max-height:340px;overflow-y:auto;padding:2px}
+.unit-card{background:#0a0e27;border:2px solid #2a3a6a;border-radius:8px;padding:6px;cursor:pointer;transition:.2s;position:relative;font-size:11px}
+.unit-card:hover{border-color:#3498db;transform:translateY(-2px)}
+.unit-card.in-loadout{opacity:.55;border-style:dashed}
+.unit-card .name{font-weight:bold;font-size:12px}
+.unit-card .rarity{font-size:9px;text-transform:uppercase;letter-spacing:1px}
+.unit-card .lvl{font-size:10px;color:#f1c40f}
+.unit-card .stats{font-size:9px;color:#aaa;margin-top:3px}
+.unit-card .badge{position:absolute;top:3px;right:3px;font-size:9px;background:#f1c40f;color:#000;padding:1px 4px;border-radius:4px;font-weight:bold}
+.stage-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.stage-card{background:#0a0e27;border:2px solid #2a3a6a;border-radius:8px;padding:10px;cursor:pointer;transition:.2s}
+.stage-card:hover{border-color:#f1c40f;transform:translateY(-2px)}
+.stage-card.cleared{border-color:#2ecc71}
+.stage-card.selected{border-color:#f1c40f;background:#1a2050}
+.stage-card .sname{font-weight:bold;font-size:13px}
+.stage-card .sinfo{font-size:11px;color:#aaa;margin-top:4px}
+.game-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;max-width:950px;margin-left:auto;margin-right:auto}
+.game-stats{display:flex;gap:14px;font-size:14px;flex-wrap:wrap;align-items:center}
+.game-stats b{color:#f1c40f}
+.canvas-wrap{position:relative;width:900px;max-width:100%;margin:0 auto}
+#gameCanvas{background:#111;border:2px solid #2a3a6a;border-radius:8px;display:block;cursor:pointer;width:100%}
+#pauseBtn{position:absolute;top:10px;right:10px;width:46px;height:46px;border-radius:50%;background:rgba(52,152,219,.85);padding:0;font-size:20px;border:2px solid #fff;z-index:5}
+.game-bottom{display:grid;grid-template-columns:1fr 280px;gap:10px;margin-top:10px;max-width:950px;margin-left:auto;margin-right:auto}
+@media(max-width:750px){.game-bottom{grid-template-columns:1fr}}
+.hand{background:#151a3a;border:2px solid #2a3a6a;border-radius:8px;padding:10px;min-height:100px}
+.hand h3{font-size:12px;color:#aaa;margin-bottom:6px}
+.hand-grid{display:flex;gap:6px;flex-wrap:wrap}
+.hand-unit{background:#0a0e27;border:2px solid #2a3a6a;border-radius:6px;padding:5px 9px;cursor:pointer;font-size:11px;transition:.2s;min-width:85px}
+.hand-unit:hover{border-color:#3498db}
+.hand-unit.selected{border-color:#f1c40f;background:#1a2050}
+.info-panel{background:#151a3a;border:2px solid #2a3a6a;border-radius:8px;padding:10px;font-size:12px}
+.info-panel h3{font-size:12px;color:#aaa;margin-bottom:6px}
+.stat-row{display:flex;justify-content:space-between;margin:3px 0}
+.stat-row span:last-child{color:#f1c40f;font-weight:bold}
+.mat-row{display:flex;justify-content:space-between;margin:3px 0;padding:3px 6px;background:#0a0e27;border-radius:4px;font-size:11px}
+.mat-row.ok{border-left:3px solid #2ecc71}
+.mat-row.no{border-left:3px solid #e74c3c}
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#151a3a;border:2px solid #3498db;border-radius:8px;padding:12px 24px;font-size:15px;opacity:0;transition:.3s;pointer-events:none;z-index:100;max-width:90%}
+#toast.show{opacity:1}
+#pauseOverlay,#resultOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:center;justify-content:center}
+.pause-box{background:#151a3a;border:2px solid #2a3a6a;border-radius:12px;padding:30px;text-align:center;max-width:400px}
+.pause-box h2{margin-bottom:15px;font-size:26px}
+.pause-box button{display:block;width:220px;margin:8px auto;font-size:16px;padding:12px}
+.empty-hint{color:#888;font-size:11px;text-align:center;grid-column:1/-1;padding:15px}
+.slots-info{font-size:12px;color:#aaa;margin-bottom:6px}
 </style>
 </head>
 <body>
 <div id="toast"></div>
 
-<!-- MENU -->
+<!-- MAIN MENU -->
 <div id="menuScreen" class="screen active">
   <h1>⚔️ HERO TOWER DEFENSE ⚔️</h1>
   <div class="resource-bar">
-    <span>💎 Gems: <b id="menuGems">200</b></span>
-    <span>🪙 Coins: <b id="menuCoins">0</b></span>
-    <span>🌊 Wave: <b id="menuWave">0</b></span>
+    <span>💎 <b id="menuGems">500</b></span>
+    <span>🪙 <b id="menuCoins">0</b></span>
+    <span id="matBar"></span>
   </div>
-  <div class="panel" style="text-align:center">
+
+  <div class="panel">
     <h2>🔮 Summon Unit</h2>
-    <p style="color:#aaa;font-size:13px">100 💎 per summon. Dapatkan unit dengan rarity acak!</p>
     <div class="rates" id="ratesDisplay"></div>
     <button id="summonBtn" class="gold">Summon (100 💎)</button>
     <button id="summon10Btn" class="gold">Summon 10x (1000 💎)</button>
   </div>
-  <div class="panel">
-    <h2>🎒 Inventori Unit</h2>
-    <p style="color:#aaa;font-size:13px">Unit yang kamu punya. Buka game dan tempatkan di field.</p>
-    <div class="unit-grid" id="inventoryGrid"></div>
+
+  <div class="two-col">
+    <div class="col">
+      <h2>🎒 Inventori</h2>
+      <div class="slots-info">Klik unit → masukkan ke Loadout</div>
+      <div class="unit-grid" id="inventoryGrid"></div>
+    </div>
+    <div class="col">
+      <h2>⚔️ Loadout <span id="loadoutSlots" style="float:right;font-size:13px;color:#f1c40f">0/6</span></h2>
+      <div class="slots-info">Unit yang dibawa bertarung</div>
+      <div class="unit-grid" id="loadoutGrid"></div>
+    </div>
   </div>
+
+  <div class="panel" style="margin-top:15px">
+    <h2>📍 Stage Terpilih</h2>
+    <div id="selectedStageBox" style="color:#aaa;font-size:14px;margin-bottom:10px">Belum ada stage dipilih. Pilih dari Campaign atau Legend.</div>
+    <button id="playBtn" class="green" style="font-size:18px;padding:14px 36px">▶ MULAI PERTARUNGAN</button>
+    <button id="campaignBtn" class="purple">🗺️ Campaign</button>
+    <button id="legendBtn" class="gold">⚔️ Legend Stages</button>
+  </div>
+
   <div class="panel" style="text-align:center">
-    <button id="playBtn" style="font-size:20px;padding:16px 48px">▶ MULAI GAME</button>
+    <button id="clearLoadoutBtn">Kosongkan Loadout</button>
     <button id="resetBtn" class="danger">Reset Progress</button>
+  </div>
+</div>
+
+<!-- CAMPAIGN -->
+<div id="campaignScreen" class="screen">
+  <h1>🗺️ Campaign</h1>
+  <div class="panel"><button id="backFromCampaign">← Kembali</button></div>
+  <div class="panel">
+    <h2>Pilih Map</h2>
+    <div id="mapsList" class="stage-list"></div>
+  </div>
+  <div class="panel" id="actsPanel" style="display:none">
+    <h2 id="actsTitle"></h2>
+    <div id="actsList" class="stage-list"></div>
+  </div>
+</div>
+
+<!-- LEGEND -->
+<div id="legendScreen" class="screen">
+  <h1>⚔️ Legend Stages</h1>
+  <p style="text-align:center;color:#aaa;margin-bottom:15px">Dapatkan bahan evolve di sini</p>
+  <div class="panel"><button id="backFromLegend">← Kembali</button></div>
+  <div class="panel">
+    <h2>Pilih Realm</h2>
+    <div id="realmsList" class="stage-list"></div>
+  </div>
+  <div class="panel" id="levelsPanel" style="display:none">
+    <h2 id="levelsTitle"></h2>
+    <div id="levelsList" class="stage-list"></div>
   </div>
 </div>
 
@@ -84,182 +154,380 @@
     <div class="game-stats">
       <span>🪙 <b id="gameCoins">0</b></span>
       <span>❤️ <b id="gameLives">20</b></span>
-      <span>🌊 Wave <b id="gameWave">0</b></span>
-      <span>💎 <b id="gameGems">0</b></span>
+      <span>🌊 <b id="gameWave">0</b>/20</span>
+      <span id="gameStageName" style="color:#f1c40f"></span>
     </div>
     <div>
-      <button id="startWaveBtn">▶ Mulai Wave</button>
-      <button id="backToMenuBtn" class="danger">Menu</button>
+      <button id="startWaveBtn">▶ Wave</button>
+      <button id="skipBtn" class="gold" style="display:none">⏩ SKIP</button>
     </div>
   </div>
-  <canvas id="gameCanvas" width="900" height="550"></canvas>
+  <div class="canvas-wrap">
+    <canvas id="gameCanvas" width="900" height="550"></canvas>
+    <button id="pauseBtn">⚙️</button>
+  </div>
   <div class="game-bottom">
     <div class="hand">
-      <h3>🎒 Unit Tangan (klik lalu klik canvas untuk tempatkan)</h3>
+      <h3>🎒 Loadout (klik → klik canvas)</h3>
       <div class="hand-grid" id="handGrid"></div>
     </div>
     <div class="info-panel" id="infoPanel"></div>
   </div>
 </div>
 
+<!-- OVERLAYS -->
+<div id="pauseOverlay">
+  <div class="pause-box">
+    <h2>⏸ Paused</h2>
+    <button id="resumeBtn" class="green">▶ Lanjutkan</button>
+    <button id="mainMenuBtn" class="danger">🏠 Main Menu</button>
+  </div>
+</div>
+<div id="resultOverlay">
+  <div class="pause-box" id="resultBox"></div>
+</div>
+
 <script>
-/* ================= DATA ================= */
-const RARITIES = {
-  common:    {name:'Common',   color:'#b0b0b0', chance:0.500, dmgMult:1.0, rngMult:1.0,  spdMult:1.0,  costMult:1.0},
-  rare:      {name:'Rare',     color:'#4a90e2', chance:0.250, dmgMult:1.35,rngMult:1.10, spdMult:1.10, costMult:1.3},
-  epic:      {name:'Epic',     color:'#9b59b6', chance:0.150, dmgMult:1.8, rngMult:1.2,  spdMult:1.2,  costMult:1.7},
-  legendary: {name:'Legendary',color:'#f39c12', chance:0.070, dmgMult:2.5, rngMult:1.35, spdMult:1.3,  costMult:2.3},
-  mythic:    {name:'Mythic',   color:'#e74c3c', chance:0.025, dmgMult:3.5, rngMult:1.5,  spdMult:1.45, costMult:3.2},
-  td:        {name:'TD',       color:'#00ffff', chance:0.005, dmgMult:5.5, rngMult:1.75, spdMult:1.65, costMult:4.5}
+/* ============ DATA ============ */
+const RARITIES={
+  common:{name:'Common',color:'#b0b0b0',chance:.500,dmg:1.0,rng:1.0,spd:1.0,cost:1.0},
+  rare:{name:'Rare',color:'#4a90e2',chance:.250,dmg:1.35,rng:1.10,spd:1.10,cost:1.3},
+  epic:{name:'Epic',color:'#9b59b6',chance:.150,dmg:1.8,rng:1.2,spd:1.2,cost:1.7},
+  legendary:{name:'Legendary',color:'#f39c12',chance:.070,dmg:2.5,rng:1.35,spd:1.3,cost:2.3},
+  mythic:{name:'Mythic',color:'#e74c3c',chance:.025,dmg:3.5,rng:1.5,spd:1.45,cost:3.2},
+  td:{name:'TD',color:'#00ffff',chance:.005,dmg:5.5,rng:1.75,spd:1.65,cost:4.5}
 };
-
-const UNIT_POOL = {
-  common: [
-    {id:'archer',    name:'Archer',     damage:8, range:90, cooldown:.7, skill:'single', cost:40, icon:'🏹'},
-    {id:'swordsman', name:'Swordsman',  damage:12,range:60, cooldown:.9, skill:'single', cost:40, icon:'⚔️'},
-    {id:'apprentice',name:'Apprentice', damage:10,range:100,cooldown:1,  skill:'single', cost:40, icon:'🔮'},
-    {id:'spearman',  name:'Spearman',   damage:11,range:80, cooldown:.8, skill:'single', cost:40, icon:'🔱'},
-    {id:'hunter',    name:'Hunter',     damage:9, range:110,cooldown:.85,skill:'single', cost:40, icon:'🎯'}
-  ],
-  rare: [
-    {id:'ice_mage',  name:'Ice Mage',   damage:9, range:110,cooldown:.9, skill:'slow',   cost:70, icon:'❄️'},
-    {id:'knight',    name:'Knight',     damage:18,range:70, cooldown:1,  skill:'single', cost:70, icon:'🛡️'},
-    {id:'ranger',    name:'Ranger',     damage:11,range:130,cooldown:.6, skill:'single', cost:70, icon:'🏹'},
-    {id:'monk',      name:'Monk',       damage:14,range:75, cooldown:.85,skill:'single', cost:70, icon:'🧘'},
-    {id:'wind_mage', name:'Wind Mage',  damage:10,range:120,cooldown:.7, skill:'chain',  cost:70, icon:'🌪️'}
-  ],
-  epic: [
-    {id:'fire_wizard',name:'Fire Wizard',damage:15,range:100,cooldown:1.2,skill:'aoe',    cost:110,icon:'🔥'},
-    {id:'assassin',   name:'Assassin',  damage:30,range:80, cooldown:1.5,skill:'crit',   cost:110,icon:'🗡️'},
-    {id:'gold_miner', name:'Gold Miner',damage:5, range:80, cooldown:2,  skill:'economy',cost:110,icon:'⛏️'},
-    {id:'frost_kn',   name:'Frost Knight',damage:20,range:90,cooldown:1, skill:'slow',   cost:110,icon:'🧊'},
-    {id:'alchemist',  name:'Alchemist', damage:12,range:100,cooldown:1.1,skill:'economy',cost:110,icon:'⚗️'}
-  ],
-  legendary: [
-    {id:'dragon_kn',  name:'Dragon Knight', damage:25,range:110,cooldown:.9,skill:'aoe',    cost:170,icon:'🐉'},
-    {id:'storm_cal',  name:'Storm Caller',  damage:20,range:130,cooldown:1.1,skill:'chain', cost:170,icon:'⚡'},
-    {id:'treasure_h', name:'Treasure Hunter',damage:8,range:100,cooldown:1.5,skill:'economy',cost:170,icon:'💰'},
-    {id:'shadow_bl',  name:'Shadow Blade',  damage:35,range:95, cooldown:1,  skill:'crit',  cost:170,icon:'🌑'}
-  ],
-  mythic: [
-    {id:'void_reaper', name:'Void Reaper',      damage:35,range:120,cooldown:.8,skill:'chain',cost:300,icon:'👁️',evolveTo:'void_emperor'},
-    {id:'celestial_g', name:'Celestial Guardian',damage:30,range:140,cooldown:1,skill:'aoe',  cost:300,icon:'✨',evolveTo:'celestial_avatar'},
-    {id:'phantom_lord',name:'Phantom Lord',     damage:40,range:110,cooldown:.9,skill:'crit',cost:300,icon:'👻',evolveTo:'phantom_god'}
-  ],
-  td: [
-    {id:'void_emperor',    name:'Void Emperor',    damage:65,range:160,cooldown:.6,skill:'chain',cost:600,icon:'🕳️'},
-    {id:'celestial_avatar',name:'Celestial Avatar',damage:58,range:180,cooldown:.8,skill:'aoe',  cost:600,icon:'🌟'},
-    {id:'phantom_god',     name:'Phantom God',     damage:75,range:140,cooldown:.7,skill:'crit', cost:600,icon:'💀'}
-  ]
+const UNIT_POOL={
+  common:[
+    {id:'archer',name:'Archer',damage:8,range:90,cooldown:.7,skill:'single',cost:40,icon:'🏹'},
+    {id:'swordsman',name:'Swordsman',damage:12,range:60,cooldown:.9,skill:'single',cost:40,icon:'⚔️'},
+    {id:'apprentice',name:'Apprentice',damage:10,range:100,cooldown:1,skill:'single',cost:40,icon:'🔮'},
+    {id:'spearman',name:'Spearman',damage:11,range:80,cooldown:.8,skill:'single',cost:40,icon:'🔱'},
+    {id:'hunter',name:'Hunter',damage:9,range:110,cooldown:.85,skill:'single',cost:40,icon:'🎯'}],
+  rare:[
+    {id:'ice_mage',name:'Ice Mage',damage:9,range:110,cooldown:.9,skill:'slow',cost:70,icon:'❄️'},
+    {id:'knight',name:'Knight',damage:18,range:70,cooldown:1,skill:'single',cost:70,icon:'🛡️'},
+    {id:'ranger',name:'Ranger',damage:11,range:130,cooldown:.6,skill:'single',cost:70,icon:'🏹'},
+    {id:'monk',name:'Monk',damage:14,range:75,cooldown:.85,skill:'single',cost:70,icon:'🧘'},
+    {id:'wind_mage',name:'Wind Mage',damage:10,range:120,cooldown:.7,skill:'chain',cost:70,icon:'🌪️'}],
+  epic:[
+    {id:'fire_wizard',name:'Fire Wizard',damage:15,range:100,cooldown:1.2,skill:'aoe',cost:110,icon:'🔥'},
+    {id:'assassin',name:'Assassin',damage:30,range:80,cooldown:1.5,skill:'crit',cost:110,icon:'🗡️'},
+    {id:'gold_miner',name:'Gold Miner',damage:5,range:80,cooldown:2,skill:'economy',cost:110,icon:'⛏️'},
+    {id:'frost_kn',name:'Frost Knight',damage:20,range:90,cooldown:1,skill:'slow',cost:110,icon:'🧊'},
+    {id:'alchemist',name:'Alchemist',damage:12,range:100,cooldown:1.1,skill:'economy',cost:110,icon:'⚗️'}],
+  legendary:[
+    {id:'dragon_kn',name:'Dragon Knight',damage:25,range:110,cooldown:.9,skill:'aoe',cost:170,icon:'🐉'},
+    {id:'storm_cal',name:'Storm Caller',damage:20,range:130,cooldown:1.1,skill:'chain',cost:170,icon:'⚡'},
+    {id:'treasure_h',name:'Treasure Hunter',damage:8,range:100,cooldown:1.5,skill:'economy',cost:170,icon:'💰'},
+    {id:'shadow_bl',name:'Shadow Blade',damage:35,range:95,cooldown:1,skill:'crit',cost:170,icon:'🌑'}],
+  mythic:[
+    {id:'void_reaper',name:'Void Reaper',damage:35,range:120,cooldown:.8,skill:'chain',cost:300,icon:'👁️'},
+    {id:'celestial_g',name:'Celestial Guardian',damage:30,range:140,cooldown:1,skill:'aoe',cost:300,icon:'✨'},
+    {id:'phantom_lord',name:'Phantom Lord',damage:40,range:110,cooldown:.9,skill:'crit',cost:300,icon:'👻'}],
+  td:[
+    {id:'void_emperor',name:'Void Emperor',damage:65,range:160,cooldown:.6,skill:'chain',cost:600,icon:'🕳️'},
+    {id:'celestial_avatar',name:'Celestial Avatar',damage:58,range:180,cooldown:.8,skill:'aoe',cost:600,icon:'🌟'},
+    {id:'phantom_god',name:'Phantom God',damage:75,range:140,cooldown:.7,skill:'crit',cost:600,icon:'💀'}]
 };
-
-const ENEMY_TYPES = {
-  normal:{hp:30, speed:55,reward:15, color:'#e74c3c',radius:10,name:'Grunt'},
-  fast:  {hp:20, speed:95,reward:12, color:'#f1c40f',radius:8, name:'Runner'},
-  tank:  {hp:100,speed:35,reward:30, color:'#9b59b6',radius:14,name:'Tank'},
-  flying:{hp:40, speed:80,reward:20, color:'#1abc9c',radius:9, name:'Flyer'},
-  boss:  {hp:800,speed:30,reward:250,color:'#c0392b',radius:22,name:'BOSS'}
+const ENEMY_TYPES={
+  normal:{hp:30,speed:55,reward:15,color:'#e74c3c',radius:10},
+  fast:{hp:20,speed:95,reward:12,color:'#f1c40f',radius:8},
+  tank:{hp:100,speed:35,reward:30,color:'#9b59b6',radius:14},
+  flying:{hp:40,speed:80,reward:20,color:'#1abc9c',radius:9},
+  boss:{hp:500,speed:30,reward:250,color:'#c0392b',radius:22}
 };
+const WAYPOINTS=[{x:0,y:275},{x:220,y:275},{x:220,y:90},{x:520,y:90},{x:520,y:460},{x:900,y:460}];
+const MAX_LOADOUT=6;
+const MAX_WAVE=20;
+const SKIP_DELAY=30;
 
-const WAYPOINTS = [
-  {x:0,y:275},{x:220,y:275},{x:220,y:90},
-  {x:520,y:90},{x:520,y:460},{x:900,y:460}
+/* Campaign maps */
+const MAPS=[
+  {id:'forest',name:'🌲 Forest',color:'#2ecc71',acts:[
+    {act:1,diff:1.0},{act:2,diff:1.15},{act:3,diff:1.3},{act:4,diff:1.45},
+    {act:5,diff:1.6},{act:6,diff:1.8},{act:7,diff:2.0,boss:true}]},
+  {id:'desert',name:'🏜️ Desert',color:'#f39c12',acts:[
+    {act:1,diff:2.2},{act:2,diff:2.5},{act:3,diff:2.8},{act:4,diff:3.1},
+    {act:5,diff:3.5},{act:6,diff:3.9},{act:7,diff:4.5,boss:true}]},
+  {id:'volcano',name:'🌋 Volcano',color:'#e74c3c',acts:[
+    {act:1,diff:5.0},{act:2,diff:5.5},{act:3,diff:6.0},{act:4,diff:6.5},
+    {act:5,diff:7.2},{act:6,diff:8.0},{act:7,diff:9.0,boss:true}]}
+];
+/* Legend realms */
+const REALMS=[
+  {id:'void',name:'🕳️ Void Realm',mat:'void_shard',matName:'Void Shard',matIcon:'🔷',
+   levels:[{lv:1,diff:3.0,drop:1},{lv:2,diff:4.5,drop:2},{lv:3,diff:6.5,drop:3}]},
+  {id:'celestial',name:'✨ Celestial Realm',mat:'celestial_tear',matName:'Celestial Tear',matIcon:'💧',
+   levels:[{lv:1,diff:3.2,drop:1},{lv:2,diff:4.8,drop:2},{lv:3,diff:7.0,drop:3}]},
+  {id:'phantom',name:'👻 Phantom Realm',mat:'phantom_essence',matName:'Phantom Essence',matIcon:'🌀',
+   levels:[{lv:1,diff:3.5,drop:1},{lv:2,diff:5.0,drop:2},{lv:3,diff:7.5,drop:3}]},
+  {id:'voidcore',name:'⚫ Void Core',mat:'void_core',matName:'Void Core',matIcon:'⚫',
+   levels:[{lv:1,diff:5.5,drop:1},{lv:2,diff:7.5,drop:1},{lv:3,diff:10.0,drop:2}]},
+  {id:'star',name:'⭐ Star Realm',mat:'star_fragment',matName:'Star Fragment',matIcon:'⭐',
+   levels:[{lv:1,diff:5.8,drop:1},{lv:2,diff:7.8,drop:1},{lv:3,diff:10.5,drop:2}]},
+  {id:'death',name:'💀 Death Realm',mat:'death_crystal',matName:'Death Crystal',matIcon:'💎',
+   levels:[{lv:1,diff:6.0,drop:1},{lv:2,diff:8.0,drop:1},{lv:3,diff:11.0,drop:2}]}
+];
+/* Evolve recipes */
+const RECIPES={
+  void_reaper:{result:'void_emperor',mats:{void_shard:5,void_core:2}},
+  celestial_g:{result:'celestial_avatar',mats:{celestial_tear:5,star_fragment:2}},
+  phantom_lord:{result:'phantom_god',mats:{phantom_essence:5,death_crystal:2}}
+};
+/* All materials list */
+const ALL_MATS=[
+  {id:'void_shard',name:'Void Shard',icon:'🔷'},
+  {id:'celestial_tear',name:'Celestial Tear',icon:'💧'},
+  {id:'phantom_essence',name:'Phantom Essence',icon:'🌀'},
+  {id:'void_core',name:'Void Core',icon:'⚫'},
+  {id:'star_fragment',name:'Star Fragment',icon:'⭐'},
+  {id:'death_crystal',name:'Death Crystal',icon:'💎'}
 ];
 
-/* ================= STATE ================= */
-let state = {
-  gems:200, coins:0, wave:0, lives:20,
-  inventory:[], placedUnits:[], enemies:[], projectiles:[], effects:[],
-  selectedInventoryId:null, selectedPlacedId:null,
-  waveActive:false, spawnQueue:[], spawnTimer:0,
-  hpScale:1, gameOver:false, nextInstanceId:1
+/* ============ STATE ============ */
+let state={
+  gems:500,coins:0,
+  inventory:[],loadout:[],
+  materials:{},
+  cleared:{}, /* stageKey:{times} */
+  currentStage:null,
+  /* gameplay */
+  placedUnits:[],enemies:[],projectiles:[],effects:[],
+  wave:0,lives:20,waveActive:false,spawnQueue:[],spawnTimer:0,
+  hpScale:1,gameOver:false,victory:false,
+  nextInstanceId:1,
+  selectedInventoryId:null,selectedPlacedId:null,
+  paused:false,waveElapsed:0,skipUsed:false
 };
 
-/* ================= HELPERS ================= */
-function getUnitDef(id){
-  for(const r in UNIT_POOL){const f=UNIT_POOL[r].find(u=>u.id===id);if(f)return f;}
-  return null;
-}
+/* ============ HELPERS ============ */
+function getUnitDef(id){for(const r in UNIT_POOL){const f=UNIT_POOL[r].find(u=>u.id===id);if(f)return f;}return null;}
 function computeStats(u){
-  const d=getUnitDef(u.unitId), r=RARITIES[u.rarity];
-  const lvl=1+(u.level-1)*.18, rl=1+(u.level-1)*.06;
-  return {
-    damage: Math.floor(d.damage*r.dmgMult*lvl),
-    range: Math.floor(d.range*r.rngMult*rl),
-    cooldown: d.cooldown/(r.spdMult*(1+(u.level-1)*.04)),
-    skill: d.skill, icon: d.icon, name: d.name
-  };
+  const d=getUnitDef(u.unitId),r=RARITIES[u.rarity];
+  const lvl=1+(u.level-1)*.18,rl=1+(u.level-1)*.06;
+  return{damage:Math.floor(d.damage*r.dmg*lvl),range:Math.floor(d.range*r.rng*rl),
+    cooldown:d.cooldown/(r.spd*(1+(u.level-1)*.04)),skill:d.skill,icon:d.icon,name:d.name};
 }
-function upgradeCost(u){
-  const d=getUnitDef(u.unitId), r=RARITIES[u.rarity];
-  return Math.floor(d.cost*.6*r.costMult*Math.pow(1.5,u.level-1));
-}
-function rollRarity(){
-  const r=Math.random(); let a=0;
-  for(const k of ['common','rare','epic','legendary','mythic','td']){
-    a+=RARITIES[k].chance; if(r<a) return k;
-  }
-  return 'common';
-}
-function summonUnit(){
-  const rar=rollRarity(), pool=UNIT_POOL[rar];
+function upgradeCost(u){const d=getUnitDef(u.unitId),r=RARITIES[u.rarity];
+  return Math.floor(d.cost*.6*r.cost*Math.pow(1.5,u.level-1));}
+function rollRarity(){const x=Math.random();let a=0;
+  for(const k of ['common','rare','epic','legendary','mythic','td']){a+=RARITIES[k].chance;if(x<a)return k;}
+  return 'common';}
+function summonUnit(){const rar=rollRarity(),pool=UNIT_POOL[rar];
   const def=pool[Math.floor(Math.random()*pool.length)];
-  return {instanceId:state.nextInstanceId++, unitId:def.id, rarity:rar, level:1};
-}
+  return{instanceId:state.nextInstanceId++,unitId:def.id,rarity:rar,level:1};}
+function getMatInfo(id){return ALL_MATS.find(m=>m.id===id);}
+function stageKey(s){if(!s)return'';return s.type+'_'+(s.mapId||s.realmId)+'_'+(s.act||s.lv);}
 
-/* ================= UI ================= */
-function toast(msg,d=2000){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),d);
-}
+/* ============ UI ============ */
+function toast(msg,d=2200){const t=document.getElementById('toast');t.textContent=msg;
+  t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),d);}
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(n+'Screen').classList.add('active');}
+
 function updateMenuUI(){
   document.getElementById('menuGems').textContent=state.gems;
   document.getElementById('menuCoins').textContent=state.coins;
-  document.getElementById('menuWave').textContent=state.wave;
   document.getElementById('summonBtn').disabled=state.gems<100;
   document.getElementById('summon10Btn').disabled=state.gems<1000;
-  renderInventory();
+  document.getElementById('loadoutSlots').textContent=state.loadout.length+'/'+MAX_LOADOUT;
+  renderMatBar();renderInventory();renderLoadout();renderSelectedStage();
+  document.getElementById('playBtn').disabled=!state.currentStage||state.loadout.length===0;
+}
+function renderMatBar(){
+  const el=document.getElementById('matBar');el.innerHTML='';
+  for(const m of ALL_MATS){
+    const c=state.materials[m.id]||0;
+    if(c>0)el.innerHTML+=`<span class="mat-chip">${m.icon} ${c}</span>`;
+  }
 }
 function renderInventory(){
-  const g=document.getElementById('inventoryGrid'); g.innerHTML='';
-  if(!state.inventory.length){g.innerHTML='<p style="color:#888;grid-column:1/-1;text-align:center">Belum ada unit. Coba summon!</p>';return;}
+  const g=document.getElementById('inventoryGrid');g.innerHTML='';
+  if(!state.inventory.length){g.innerHTML='<div class="empty-hint">Belum ada unit. Summon!</div>';return;}
   const ord=['td','mythic','legendary','epic','rare','common'];
   const sorted=[...state.inventory].sort((a,b)=>ord.indexOf(a.rarity)-ord.indexOf(b.rarity));
   for(const u of sorted){
-    const d=getUnitDef(u.unitId), s=computeStats(u), r=RARITIES[u.rarity];
+    const d=getUnitDef(u.unitId),s=computeStats(u),r=RARITIES[u.rarity];
+    const inL=state.loadout.includes(u.instanceId);
     const c=document.createElement('div');
-    c.className='unit-card'; c.style.borderColor=r.color;
-    c.innerHTML=`<div style="font-size:22px">${d.icon}</div>
+    c.className='unit-card'+(inL?' in-loadout':'');c.style.borderColor=r.color;
+    c.innerHTML=`${inL?'<div class="badge">✓</div>':''}
+      <div style="font-size:20px">${d.icon}</div>
       <div class="name">${d.name}</div>
       <div class="rarity" style="color:${r.color}">${r.name}</div>
       <div class="lvl">Lv ${u.level}</div>
-      <div class="stats">DMG ${s.damage} · RNG ${s.range}<br>Skill: ${s.skill}</div>`;
+      <div class="stats">DMG ${s.damage}·RNG ${s.range}</div>`;
+    c.onclick=()=>toggleLoadout(u.instanceId);
     g.appendChild(c);
   }
 }
+function renderLoadout(){
+  const g=document.getElementById('loadoutGrid');g.innerHTML='';
+  if(!state.loadout.length){g.innerHTML='<div class="empty-hint">Klik unit di inventori untuk masuk loadout. Maks 6.</div>';return;}
+  for(const id of state.loadout){
+    const u=state.inventory.find(x=>x.instanceId===id);if(!u)continue;
+    const d=getUnitDef(u.unitId),s=computeStats(u),r=RARITIES[u.rarity];
+    const c=document.createElement('div');c.className='unit-card';c.style.borderColor=r.color;
+    c.innerHTML=`<div style="font-size:20px">${d.icon}</div>
+      <div class="name">${d.name}</div>
+      <div class="rarity" style="color:${r.color}">${r.name}</div>
+      <div class="lvl">Lv ${u.level}</div>
+      <div class="stats">DMG ${s.damage}·RNG ${s.range}</div>
+      <div style="font-size:9px;color:#e74c3c;margin-top:3px">Klik keluar</div>`;
+    c.onclick=()=>toggleLoadout(id);
+    g.appendChild(c);
+  }
+}
+function toggleLoadout(id){
+  const i=state.loadout.indexOf(id);
+  if(i!==-1)state.loadout.splice(i,1);
+  else{if(state.loadout.length>=MAX_LOADOUT){toast('Maks '+MAX_LOADOUT+' unit!');return;}state.loadout.push(id);}
+  updateMenuUI();
+}
+function renderSelectedStage(){
+  const el=document.getElementById('selectedStageBox');
+  if(!state.currentStage){el.innerHTML='<span style="color:#aaa">Belum ada stage dipilih.</span>';return;}
+  const s=state.currentStage;
+  const key=stageKey(s);
+  const cleared=state.cleared[key]?state.cleared[key].times:0;
+  el.innerHTML=`<b style="color:#f1c40f;font-size:16px">${s.name}</b><br>
+    <span style="font-size:12px;color:#aaa">Difficulty x${s.diff} · 20 Wave · ${s.boss?'👑 BOSS':''}</span><br>
+    <span style="font-size:12px;color:#2ecc71">Cleared: ${cleared}x ${cleared===0?'(first clear = 150 💎)':'(+50 💎)'}</span>`;
+}
+
+/* ============ ACTIONS ============ */
+function doSummon(count){
+  const cost=100*count;if(state.gems<cost)return;
+  state.gems-=cost;
+  const res=[];for(let i=0;i<count;i++)res.push(summonUnit());
+  state.inventory.push(...res);updateMenuUI();
+  const ord=['td','mythic','legendary','epic','rare','common'];
+  res.sort((a,b)=>ord.indexOf(a.rarity)-ord.indexOf(b.rarity));
+  const b=res[0],d=getUnitDef(b.unitId);
+  toast(`${d.icon} ${d.name} (${RARITIES[b.rarity].name})!`);
+}
+function doUpgrade(u){
+  const c=upgradeCost(u);if(state.coins<c)return;
+  state.coins-=c;u.level++;
+  if((u.rarity==='mythic'||u.rarity==='td')&&u.level%3===0)toast(`✨ Skill diperkuat! Lv${u.level}`);
+  else toast(`⬆️ Lv${u.level}`);
+  updateGameUI();
+}
+function doEvolve(u){
+  const recipe=RECIPES[u.unitId];if(!recipe)return;
+  const d=getUnitDef(u.unitId);
+  for(const[mat,cnt]of Object.entries(recipe.mats)){
+    if((state.materials[mat]||0)<cnt){toast('❌ Bahan tidak cukup!');return;}
+  }
+  for(const[mat,cnt]of Object.entries(recipe.mats))state.materials[mat]-=cnt;
+  u.unitId=recipe.result;u.rarity='td';u.level=1;
+  toast(`🌟 EVOLVED! → ${getUnitDef(u.unitId).name}`);
+  updateGameUI();
+}
+function doPickup(u){state.placedUnits=state.placedUnits.filter(p=>p.instanceId!==u.instanceId);
+  state.selectedPlacedId=null;updateGameUI();}
+
+/* ============ STAGE SELECT ============ */
+function openCampaign(){renderCampaign();showScreen('campaign');}
+function openLegend(){renderLegend();showScreen('legend');}
+function renderCampaign(){
+  const g=document.getElementById('mapsList');g.innerHTML='';
+  for(const m of MAPS){
+    const c=document.createElement('div');c.className='stage-card';c.style.borderColor=m.color;
+    const totalCleared=m.acts.filter(a=>state.cleared['campaign_'+m.id+'_'+a.act]).length;
+    c.innerHTML=`<div class="sname">${m.name}</div>
+      <div class="sinfo">${totalCleared}/7 act cleared</div>`;
+    c.onclick=()=>renderActs(m);
+    g.appendChild(c);
+  }
+  document.getElementById('actsPanel').style.display='none';
+}
+function renderActs(m){
+  document.getElementById('actsPanel').style.display='block';
+  document.getElementById('actsTitle').textContent=m.name+' — Pilih Act';
+  const g=document.getElementById('actsList');g.innerHTML='';
+  for(const a of m.acts){
+    const key='campaign_'+m.id+'_'+a.act;
+    const cl=state.cleared[key]?state.cleared[key].times:0;
+    const c=document.createElement('div');
+    c.className='stage-card'+(cl>0?' cleared':'');
+    c.innerHTML=`<div class="sname">Act ${a.act}${a.boss?' 👑':''}</div>
+      <div class="sinfo">Diff x${a.diff} · 20 wave<br>
+      ${cl>0?`✅ Cleared ${cl}x`:'✨ Belum dimainkan (150 💎)'}</div>`;
+    c.onclick=()=>{
+      state.currentStage={
+        type:'campaign',mapId:m.id,act:a.act,diff:a.diff,boss:!!a.boss,
+        name:`${m.name} - Act ${a.act}${a.boss?' (BOSS)':''}`
+      };
+      updateMenuUI();showScreen('menu');
+      toast('Stage dipilih: '+state.currentStage.name);
+    };
+    g.appendChild(c);
+  }
+}
+function renderLegend(){
+  const g=document.getElementById('realmsList');g.innerHTML='';
+  for(const r of REALMS){
+    const c=document.createElement('div');c.className='stage-card';
+    const totalCleared=r.levels.filter(l=>state.cleared['legend_'+r.id+'_'+l.lv]).length;
+    c.innerHTML=`<div class="sname">${r.name}</div>
+      <div class="sinfo">${r.matIcon} ${r.matName}<br>${totalCleared}/3 level cleared</div>`;
+    c.onclick=()=>renderLevels(r);
+    g.appendChild(c);
+  }
+  document.getElementById('levelsPanel').style.display='none';
+}
+function renderLevels(r){
+  document.getElementById('levelsPanel').style.display='block';
+  document.getElementById('levelsTitle').textContent=r.name+' — Pilih Level';
+  const g=document.getElementById('levelsList');g.innerHTML='';
+  for(const l of r.levels){
+    const key='legend_'+r.id+'_'+l.lv;
+    const cl=state.cleared[key]?state.cleared[key].times:0;
+    const c=document.createElement('div');
+    c.className='stage-card'+(cl>0?' cleared':'');
+    c.innerHTML=`<div class="sname">Level ${l.lv}</div>
+      <div class="sinfo">Diff x${l.diff} · 20 wave<br>
+      🎁 Drop: ${r.matIcon} x${l.drop}<br>
+      ${cl>0?`✅ Cleared ${cl}x`:'✨ Belum dimainkan (150 💎)'}</div>`;
+    c.onclick=()=>{
+      state.currentStage={
+        type:'legend',realmId:r.id,lv:l.lv,diff:l.diff,
+        mat:r.mat,matName:r.matName,matIcon:r.matIcon,drop:l.drop,
+        name:`${r.name} - Lv ${l.lv}`
+      };
+      updateMenuUI();showScreen('menu');
+      toast('Stage dipilih: '+state.currentStage.name);
+    };
+    g.appendChild(c);
+  }
+}
+
+/* ============ GAME UI ============ */
 function updateGameUI(){
   document.getElementById('gameCoins').textContent=state.coins;
   document.getElementById('gameLives').textContent=state.lives;
   document.getElementById('gameWave').textContent=state.wave;
-  document.getElementById('gameGems').textContent=state.gems;
-  document.getElementById('startWaveBtn').disabled=state.waveActive||state.gameOver;
-  renderHand(); renderInfoPanel();
+  document.getElementById('gameStageName').textContent=state.currentStage?.name||'';
+  document.getElementById('startWaveBtn').disabled=state.waveActive||state.gameOver||state.victory;
+  renderHand();renderInfoPanel();
 }
 function renderHand(){
-  const g=document.getElementById('handGrid'); g.innerHTML='';
-  if(!state.inventory.length){g.innerHTML='<p style="color:#888;font-size:12px">Tidak ada unit di tangan.</p>';return;}
-  for(const u of state.inventory){
-    const d=getUnitDef(u.unitId), r=RARITIES[u.rarity];
+  const g=document.getElementById('handGrid');g.innerHTML='';
+  const placed=new Set(state.placedUnits.map(p=>p.instanceId));
+  const hand=state.inventory.filter(u=>state.loadout.includes(u.instanceId)&&!placed.has(u.instanceId));
+  if(!hand.length){g.innerHTML='<div class="empty-hint">Semua unit sudah ditempatkan.</div>';return;}
+  for(const u of hand){
+    const d=getUnitDef(u.unitId),r=RARITIES[u.rarity];
     const el=document.createElement('div');
     el.className='hand-unit'+(state.selectedInventoryId===u.instanceId?' selected':'');
     el.style.borderColor=state.selectedInventoryId===u.instanceId?'#f1c40f':r.color;
     el.innerHTML=`<div>${d.icon} <span class="name">${d.name}</span></div>
-      <div class="rarity" style="color:${r.color}">${r.name} Lv${u.level}</div>`;
+      <div style="font-size:9px;color:${r.color}">${r.name} Lv${u.level}</div>`;
     el.onclick=()=>{
       state.selectedInventoryId=state.selectedInventoryId===u.instanceId?null:u.instanceId;
-      state.selectedPlacedId=null;
-      renderHand(); renderInfoPanel();
+      state.selectedPlacedId=null;renderHand();renderInfoPanel();
     };
     g.appendChild(el);
   }
@@ -269,457 +537,418 @@ function renderInfoPanel(){
   if(state.selectedPlacedId){
     const u=state.placedUnits.find(x=>x.instanceId===state.selectedPlacedId);
     if(u){
-      const s=computeStats(u), d=getUnitDef(u.unitId), r=RARITIES[u.rarity];
+      const s=computeStats(u),d=getUnitDef(u.unitId),r=RARITIES[u.rarity];
       const cost=upgradeCost(u);
-      const canEvolve=d.evolveTo&&u.rarity==='mythic';
-      p.innerHTML=`
-        <h3>ℹ️ ${d.icon} ${d.name}</h3>
+      const recipe=RECIPES[u.unitId];
+      let matHTML='';
+      let canEvolve=false;
+      if(recipe){
+        canEvolve=true;
+        for(const[mat,cnt]of Object.entries(recipe.mats)){
+          const have=state.materials[mat]||0;
+          const mi=getMatInfo(mat);
+          const ok=have>=cnt;
+          if(!ok)canEvolve=false;
+          matHTML+=`<div class="mat-row ${ok?'ok':'no'}">
+            <span>${mi.icon} ${mi.name}</span><span>${have}/${cnt}</span></div>`;
+        }
+      }
+      p.innerHTML=`<h3>ℹ️ ${d.icon} ${d.name}</h3>
         <div class="stat-row"><span>Rarity</span><span style="color:${r.color}">${r.name}</span></div>
         <div class="stat-row"><span>Level</span><span>${u.level}</span></div>
-        <div class="stat-row"><span>Damage</span><span>${s.damage}</span></div>
+        <div class="stat-row"><span>DMG</span><span>${s.damage}</span></div>
         <div class="stat-row"><span>Range</span><span>${s.range}</span></div>
-        <div class="stat-row"><span>Cooldown</span><span>${s.cooldown.toFixed(2)}s</span></div>
+        <div class="stat-row"><span>CD</span><span>${s.cooldown.toFixed(2)}s</span></div>
         <div class="stat-row"><span>Skill</span><span>${s.skill}</span></div>
-        <button id="upgradeBtn" style="width:100%;margin-top:10px" ${state.coins<cost?'disabled':''}>Upgrade (${cost} 🪙)</button>
-        ${canEvolve?`<button id="evolveBtn" class="gold" style="width:100%;margin-top:5px" ${state.gems<500?'disabled':''}>Evolve → ${getUnitDef(d.evolveTo).name} (500 💎)</button>`:''}
-        <button id="sellBtn" class="danger" style="width:100%;margin-top:5px">Jual (+${Math.floor(d.cost*.5)} 🪙)</button>`;
+        <button id="upgradeBtn" style="width:100%;margin-top:8px" ${state.coins<cost?'disabled':''}>Upgrade (${cost} 🪙)</button>
+        ${recipe?`<div style="margin-top:8px;font-size:11px;color:#aaa">🧬 Evolve → ${getUnitDef(recipe.result).name}</div>${matHTML}
+          <button id="evolveBtn" class="gold" style="width:100%;margin-top:5px" ${canEvolve?'':'disabled'}>Evolve</button>`:''}
+        <button id="pickupBtn" style="width:100%;margin-top:5px">Angkat Kembali</button>`;
       document.getElementById('upgradeBtn').onclick=()=>doUpgrade(u);
-      if(canEvolve) document.getElementById('evolveBtn').onclick=()=>doEvolve(u);
-      document.getElementById('sellBtn').onclick=()=>doSell(u);
+      const eb=document.getElementById('evolveBtn');if(eb)eb.onclick=()=>doEvolve(u);
+      document.getElementById('pickupBtn').onclick=()=>doPickup(u);
       return;
     }
   }
   p.innerHTML=`<h3>ℹ️ Info</h3>
-    <p style="color:#888;font-size:12px;line-height:1.6">
-    Klik unit di field → upgrade/evolve.<br>
-    Klik unit di tangan → klik canvas untuk tempatkan.<br><br>
-    🪙 Selesai wave: <b>+250</b><br>
-    🪙 Kill: 12-250 (tergantung tipe)<br>
-    👑 Boss setiap <b>25 wave</b><br>
-    ✨ Mythic Lv3/6/9 → skill makin kuat<br>
-    🧬 Mythic → bisa di-Evolve jadi TD (500 💎)</p>`;
+    <p style="color:#888;font-size:11px;line-height:1.7">
+    Wave 1-20 · Wave 20 = Boss 👑<br>
+    🪙 Selesai wave: +250<br>
+    💎 Clear: 150 pertama, 50 selanjutnya<br>
+    ⏩ Skip muncul setelah 30 detik<br>
+    🧬 Mythic bisa evolve jadi TD dengan bahan dari Legend Stage</p>`;
 }
 
-/* ================= ACTIONS ================= */
-function doSummon(count){
-  const cost=100*count;
-  if(state.gems<cost) return;
-  state.gems-=cost;
-  const results=[];
-  for(let i=0;i<count;i++) results.push(summonUnit());
-  state.inventory.push(...results);
-  updateMenuUI();
-  const ord=['td','mythic','legendary','epic','rare','common'];
-  results.sort((a,b)=>ord.indexOf(a.rarity)-ord.indexOf(b.rarity));
-  const best=results[0];
-  const d=getUnitDef(best.unitId);
-  if(count===1) toast(`${d.icon} ${d.name} (${RARITIES[best.rarity].name})!`);
-  else toast(`Terbaik: ${d.icon} ${d.name} (${RARITIES[best.rarity].name})!`);
-}
-function doUpgrade(u){
-  const c=upgradeCost(u);
-  if(state.coins<c) return;
-  state.coins-=c; u.level++;
-  if((u.rarity==='mythic'||u.rarity==='td') && u.level%3===0){
-    toast(`✨ ${getUnitDef(u.unitId).name} skill diperkuat! Lv${u.level}`);
-  } else {
-    toast(`⬆️ ${getUnitDef(u.unitId).name} → Lv${u.level}`);
-  }
-  updateGameUI();
-}
-function doEvolve(u){
-  if(state.gems<500) return;
-  const d=getUnitDef(u.unitId);
-  if(!d.evolveTo) return;
-  state.gems-=500;
-  u.unitId=d.evolveTo; u.rarity='td'; u.level=1;
-  toast(`🌟 EVOLVED! → ${getUnitDef(u.unitId).name}`);
-  updateGameUI();
-}
-function doSell(u){
-  const d=getUnitDef(u.unitId);
-  state.coins+=Math.floor(d.cost*.5);
-  state.placedUnits=state.placedUnits.filter(p=>p.instanceId!==u.instanceId);
-  state.selectedPlacedId=null;
-  updateGameUI();
-}
-
-/* ================= CANVAS ================= */
+/* ============ CANVAS ============ */
 const canvas=document.getElementById('gameCanvas');
 const ctx=canvas.getContext('2d');
-
 canvas.addEventListener('click',e=>{
-  if(state.gameOver) return;
+  if(state.gameOver||state.victory||state.paused)return;
   const r=canvas.getBoundingClientRect();
-  const x=e.clientX-r.left, y=e.clientY-r.top;
-
+  const x=(e.clientX-r.left)*(canvas.width/r.width);
+  const y=(e.clientY-r.top)*(canvas.height/r.height);
   for(const u of state.placedUnits){
-    if(Math.hypot(x-u.x,y-u.y)<20){
-      state.selectedPlacedId=u.instanceId;
-      state.selectedInventoryId=null;
-      updateGameUI(); return;
-    }
+    if(Math.hypot(x-u.x,y-u.y)<20){state.selectedPlacedId=u.instanceId;state.selectedInventoryId=null;updateGameUI();return;}
   }
   if(state.selectedInventoryId){
     if(isOnPath(x,y)){toast('❌ Tidak bisa di jalan!');return;}
-    if(isNearPlaced(x,y)){toast('❌ Terlalu dekat unit lain!');return;}
-    const idx=state.inventory.findIndex(u=>u.instanceId===state.selectedInventoryId);
-    if(idx===-1) return;
-    const u=state.inventory[idx];
-    state.inventory.splice(idx,1);
-    state.placedUnits.push({...u,x,y,cooldownTimer:0,aimAngle:0,econTimer:0});
-    state.selectedInventoryId=null;
-    updateGameUI(); return;
+    if(isNearPlaced(x,y)){toast('❌ Terlalu dekat!');return;}
+    const u=state.inventory.find(v=>v.instanceId===state.selectedInventoryId);if(!u)return;
+    state.placedUnits.push({instanceId:u.instanceId,unitId:u.unitId,rarity:u.rarity,level:u.level,
+      x,y,cooldownTimer:0,aimAngle:0,econTimer:0});
+    state.selectedInventoryId=null;updateGameUI();return;
   }
-  state.selectedPlacedId=null;
-  updateGameUI();
+  state.selectedPlacedId=null;updateGameUI();
 });
+function pointSeg(px,py,x1,y1,x2,y2){const dx=x2-x1,dy=y2-y1,ls=dx*dx+dy*dy;
+  if(ls===0)return Math.hypot(px-x1,py-y1);
+  let t=((px-x1)*dx+(py-y1)*dy)/ls;t=Math.max(0,Math.min(1,t));
+  return Math.hypot(px-(x1+t*dx),py-(y1+t*dy));}
+function isOnPath(x,y){for(let i=0;i<WAYPOINTS.length-1;i++)
+  if(pointSeg(x,y,WAYPOINTS[i].x,WAYPOINTS[i].y,WAYPOINTS[i+1].x,WAYPOINTS[i+1].y)<32)return true;return false;}
+function isNearPlaced(x,y){for(const u of state.placedUnits)if(Math.hypot(x-u.x,y-u.y)<42)return true;return false;}
 
-function pointSeg(px,py,x1,y1,x2,y2){
-  const dx=x2-x1,dy=y2-y1,ls=dx*dx+dy*dy;
-  if(ls===0) return Math.hypot(px-x1,py-y1);
-  let t=((px-x1)*dx+(py-y1)*dy)/ls; t=Math.max(0,Math.min(1,t));
-  return Math.hypot(px-(x1+t*dx),py-(y1+t*dy));
-}
-function isOnPath(x,y){
-  for(let i=0;i<WAYPOINTS.length-1;i++){
-    if(pointSeg(x,y,WAYPOINTS[i].x,WAYPOINTS[i].y,WAYPOINTS[i+1].x,WAYPOINTS[i+1].y)<32) return true;
-  }
-  return false;
-}
-function isNearPlaced(x,y){
-  for(const u of state.placedUnits) if(Math.hypot(x-u.x,y-u.y)<42) return true;
-  return false;
-}
-
-/* ================= GAME LOOP ================= */
-let lastTime=performance.now();
-function loop(now){
-  const dt=Math.min((now-lastTime)/1000,.1); lastTime=now;
-  if(document.getElementById('gameScreen').classList.contains('active')){
-    update(dt); draw();
-  }
-  requestAnimationFrame(loop);
+/* ============ START STAGE ============ */
+function startStage(){
+  if(!state.currentStage){toast('Pilih stage dulu!');return;}
+  if(!state.loadout.length){toast('Loadout kosong!');return;}
+  state.placedUnits=[];state.enemies=[];state.projectiles=[];state.effects=[];
+  state.wave=0;state.lives=20;state.waveActive=false;state.spawnQueue=[];state.spawnTimer=0;
+  state.gameOver=false;state.victory=false;state.hpScale=1;state.paused=false;
+  state.selectedInventoryId=null;state.selectedPlacedId=null;
+  state.waveElapsed=0;state.skipUsed=false;
+  document.getElementById('skipBtn').style.display='none';
+  showScreen('game');updateGameUI();
 }
 
+/* ============ WAVE ============ */
 function startWave(){
-  if(state.waveActive||state.gameOver) return;
+  if(state.waveActive||state.gameOver||state.victory)return;
+  if(state.wave>=MAX_WAVE)return;
   state.wave++;
-  state.waveActive=true;
-  state.spawnTimer=0;
-  state.spawnQueue=[];
+  state.waveActive=true;state.spawnTimer=0;state.spawnQueue=[];state.waveElapsed=0;state.skipUsed=false;
+  document.getElementById('skipBtn').style.display='none';
   const w=state.wave;
-  if(w%25===0){
-    for(let i=0;i<8;i++) state.spawnQueue.push('normal');
+  const isBossWave=w===MAX_WAVE;
+  if(isBossWave){
+    for(let i=0;i<6;i++)state.spawnQueue.push('normal');
     state.spawnQueue.push('boss');
-    for(let i=0;i<10;i++) state.spawnQueue.push('fast');
+    if(state.currentStage?.boss){for(let i=0;i<4;i++)state.spawnQueue.push('tank');}
     toast('⚠️ BOSS WAVE!');
-  } else {
-    const count=5+Math.floor(w*1.2);
+  }else{
+    const count=5+Math.floor(w*.8);
     for(let i=0;i<count;i++){
-      const r=Math.random();
-      let t='normal';
-      if(w>=3 && r<.3) t='fast';
-      else if(w>=5 && r>=.3 && r<.5) t='tank';
-      else if(w>=8 && r>=.5 && r<.65) t='flying';
+      const r=Math.random();let t='normal';
+      if(w>=3&&r<.3)t='fast';
+      else if(w>=5&&r>=.3&&r<.5)t='tank';
+      else if(w>=8&&r>=.5&&r<.65)t='flying';
       state.spawnQueue.push(t);
     }
   }
-  state.hpScale=1+(w-1)*.12;
+  state.hpScale=(state.currentStage?.diff||1)*(1+(w-1)*.10);
   updateGameUI();
 }
-
 function spawnEnemy(type){
   const d=ENEMY_TYPES[type];
-  state.enemies.push({
-    x:WAYPOINTS[0].x,y:WAYPOINTS[0].y,
-    hp:d.hp*state.hpScale, maxHp:d.hp*state.hpScale,
-    speed:d.speed, reward:d.reward, color:d.color, radius:d.radius,
-    type, waypointIndex:1, slowTimer:0, slowFactor:1
-  });
+  let hpMul=1;
+  if(type==='boss')hpMul=state.currentStage?.boss?1.5:1;
+  state.enemies.push({x:WAYPOINTS[0].x,y:WAYPOINTS[0].y,
+    hp:d.hp*state.hpScale*hpMul,maxHp:d.hp*state.hpScale*hpMul,
+    speed:d.speed,reward:d.reward,color:d.color,radius:d.radius,
+    type,waypointIndex:1,slowTimer:0,slowFactor:1});
+}
+function skipWave(){
+  if(!state.waveActive)return;
+  while(state.spawnQueue.length){const t=state.spawnQueue.shift();
+    state.enemies.push({x:WAYPOINTS[0].x,y:WAYPOINTS[0].y,
+      hp:ENEMY_TYPES[t].hp*state.hpScale*(t==='boss'&&state.currentStage?.boss?1.5:1),
+      maxHp:ENEMY_TYPES[t].hp*state.hpScale*(t==='boss'&&state.currentStage?.boss?1.5:1),
+      speed:ENEMY_TYPES[t].speed,reward:ENEMY_TYPES[t].reward,color:ENEMY_TYPES[t].color,
+      radius:ENEMY_TYPES[t].radius,type:t,waypointIndex:1,slowTimer:0,slowFactor:1});
+  }
+  state.skipUsed=true;document.getElementById('skipBtn').style.display='none';
+  toast('⏩ Wave dipercepat!');
 }
 
+/* ============ UPDATE ============ */
 function update(dt){
-  if(state.gameOver) return;
+  if(state.paused)return;
+  if(state.gameOver||state.victory)return;
 
-  if(state.waveActive && state.spawnQueue.length){
-    state.spawnTimer+=dt;
-    const iv=state.wave%25===0?.7:.55;
-    if(state.spawnTimer>=iv){state.spawnTimer=0;spawnEnemy(state.spawnQueue.shift());}
+  if(state.waveActive){
+    state.waveElapsed+=dt;
+    if(!state.skipUsed&&state.waveElapsed>=SKIP_DELAY){
+      document.getElementById('skipBtn').style.display='inline-block';
+    }
+    if(state.spawnQueue.length){
+      state.spawnTimer+=dt;
+      const iv=state.wave===MAX_WAVE?.6:.55;
+      if(state.spawnTimer>=iv){state.spawnTimer=0;spawnEnemy(state.spawnQueue.shift());}
+    }
   }
-  if(state.waveActive && !state.spawnQueue.length && !state.enemies.length){
+
+  // wave finished
+  if(state.waveActive&&!state.spawnQueue.length&&!state.enemies.length){
     state.waveActive=false;
     state.coins+=250;
-    state.gems+=state.wave%25===0?100:25;
-    toast(state.wave%25===0?`🎉 Boss wave selesai! +250 🪙 +100 💎`:`🌊 Wave ${state.wave} selesai! +250 🪙 +25 💎`);
+    document.getElementById('skipBtn').style.display='none';
+    if(state.wave>=MAX_WAVE){handleVictory();}
+    else toast(`🌊 Wave ${state.wave} selesai! +250 🪙`);
     updateGameUI();
   }
 
-  // Enemies
+  // enemies
   for(let i=state.enemies.length-1;i>=0;i--){
     const e=state.enemies[i];
-    if(e.slowTimer>0){e.slowTimer-=dt; if(e.slowTimer<=0) e.slowFactor=1;}
+    if(e.slowTimer>0){e.slowTimer-=dt;if(e.slowTimer<=0)e.slowFactor=1;}
     const t=WAYPOINTS[e.waypointIndex];
     if(!t){
       state.lives-=(e.type==='boss'?5:1);
       state.enemies.splice(i,1);
-      if(state.lives<=0){state.lives=0;state.gameOver=true;updateGameUI();return;}
+      if(state.lives<=0){state.lives=0;state.gameOver=true;handleDefeat();return;}
       continue;
     }
     const dx=t.x-e.x,dy=t.y-e.y,d=Math.hypot(dx,dy),mv=e.speed*e.slowFactor*dt;
     if(d<=mv){e.x=t.x;e.y=t.y;e.waypointIndex++;}
-    else{e.x+=dx/d*mv; e.y+=dy/d*mv;}
+    else{e.x+=dx/d*mv;e.y+=dy/d*mv;}
   }
 
-  // Towers
+  // towers
   for(const u of state.placedUnits){
-    const s=computeStats(u);
-    u.cooldownTimer-=dt;
-
+    const s=computeStats(u);u.cooldownTimer-=dt;
     if(s.skill==='economy'){
       u.econTimer=(u.econTimer||0)+dt;
-      if(u.econTimer>=3){
-        u.econTimer=0;
-        const b=3+u.level*3+Math.floor(RARITIES[u.rarity].costMult*2);
+      if(u.econTimer>=3){u.econTimer=0;
+        const b=3+u.level*3+Math.floor(RARITIES[u.rarity].cost*2);
         state.coins+=b;
         state.effects.push({type:'text',x:u.x,y:u.y-25,life:.9,maxLife:.9,text:`+${b}`,color:'#f1c40f'});
       }
     }
-
     if(u.cooldownTimer<=0){
       let tgt=null,md=Infinity;
-      for(const e of state.enemies){
-        const d=Math.hypot(u.x-e.x,u.y-e.y);
-        if(d<=s.range && d<md){md=d;tgt=e;}
-      }
-      if(tgt){
-        u.aimAngle=Math.atan2(tgt.y-u.y,tgt.x-u.x);
-        fireAttack(u,s,tgt);
-        u.cooldownTimer=s.cooldown;
-      }
+      for(const e of state.enemies){const d=Math.hypot(u.x-e.x,u.y-e.y);
+        if(d<=s.range&&d<md){md=d;tgt=e;}}
+      if(tgt){u.aimAngle=Math.atan2(tgt.y-u.y,tgt.x-u.x);fireAttack(u,s,tgt);u.cooldownTimer=s.cooldown;}
     }
   }
 
-  for(let i=state.projectiles.length-1;i>=0;i--){
-    state.projectiles[i].life-=dt;
-    if(state.projectiles[i].life<=0) state.projectiles.splice(i,1);
-  }
-  for(let i=state.effects.length-1;i>=0;i--){
-    state.effects[i].life-=dt;
-    if(state.effects[i].life<=0) state.effects.splice(i,1);
-  }
+  for(let i=state.projectiles.length-1;i>=0;i--){state.projectiles[i].life-=dt;
+    if(state.projectiles[i].life<=0)state.projectiles.splice(i,1);}
+  for(let i=state.effects.length-1;i>=0;i--){state.effects[i].life-=dt;
+    if(state.effects[i].life<=0)state.effects.splice(i,1);}
 }
-
-function skillTier(u){
-  if(u.rarity!=='mythic'&&u.rarity!=='td') return 0;
-  return Math.floor(u.level/3);
-}
-
+function skillTier(u){if(u.rarity!=='mythic'&&u.rarity!=='td')return 0;return Math.floor(u.level/3);}
 function fireAttack(u,s,tgt){
-  const tier=skillTier(u), dmg=s.damage;
-  if(s.skill==='single'){
-    dmgEnemy(tgt,dmg,u); addBeam(u,tgt,'#ffff00');
-  } else if(s.skill==='slow'){
-    dmgEnemy(tgt,dmg,u);
-    tgt.slowTimer=1.5+tier*.4;
-    tgt.slowFactor=Math.max(.25,.6-tier*.06);
-    addBeam(u,tgt,'#66ccff');
-  } else if(s.skill==='aoe'){
-    const rad=50+tier*18;
-    addExplosion(tgt.x,tgt.y,rad);
-    for(const e of [...state.enemies]){
-      if(Math.hypot(e.x-tgt.x,e.y-tgt.y)<=rad) dmgEnemy(e,dmg,u);
-    }
-  } else if(s.skill==='crit'){
-    const cc=.3+tier*.12, cm=2+tier*.6;
-    const crit=Math.random()<cc;
-    const fd=crit?dmg*cm:dmg;
-    dmgEnemy(tgt,fd,u);
+  const tier=skillTier(u),dmg=s.damage;
+  if(s.skill==='single'){dmgEnemy(tgt,dmg,u);addBeam(u,tgt,'#ffff00');}
+  else if(s.skill==='slow'){dmgEnemy(tgt,dmg,u);tgt.slowTimer=1.5+tier*.4;
+    tgt.slowFactor=Math.max(.25,.6-tier*.06);addBeam(u,tgt,'#66ccff');}
+  else if(s.skill==='aoe'){const rad=50+tier*18;addExplosion(tgt.x,tgt.y,rad);
+    for(const e of [...state.enemies])if(Math.hypot(e.x-tgt.x,e.y-tgt.y)<=rad)dmgEnemy(e,dmg,u);}
+  else if(s.skill==='crit'){const cc=.3+tier*.12,cm=2+tier*.6;
+    const crit=Math.random()<cc;const fd=crit?dmg*cm:dmg;dmgEnemy(tgt,fd,u);
     addBeam(u,tgt,crit?'#ff0000':'#ff8800',crit?4:2);
-    if(crit) state.effects.push({type:'text',x:tgt.x,y:tgt.y-25,life:.8,maxLife:.8,text:'CRIT!',color:'#ff0000'});
-  } else if(s.skill==='chain'){
-    const n=3+tier;
-    let cur=tgt, src=u; const hit=new Set();
-    for(let i=0;i<n&&cur;i++){
-      hit.add(cur);
-      dmgEnemy(cur,dmg*(1-i*.1),u);
-      addBeam(src,cur,'#aa66ff');
-      src=cur;
+    if(crit)state.effects.push({type:'text',x:tgt.x,y:tgt.y-25,life:.8,maxLife:.8,text:'CRIT!',color:'#ff0000'});}
+  else if(s.skill==='chain'){const n=3+tier;let cur=tgt,src=u;const hit=new Set();
+    for(let i=0;i<n&&cur;i++){hit.add(cur);dmgEnemy(cur,dmg*(1-i*.1),u);addBeam(src,cur,'#aa66ff');src=cur;
       let nx=null,nd=Infinity;
-      for(const e of state.enemies){
-        if(hit.has(e)) continue;
-        const d=Math.hypot(src.x-e.x,src.y-e.y);
-        if(d<120 && d<nd){nd=d;nx=e;}
-      }
-      cur=nx;
-    }
-  } else if(s.skill==='economy'){
-    dmgEnemy(tgt,dmg,u); addBeam(u,tgt,'#f1c40f');
-  }
+      for(const e of state.enemies){if(hit.has(e))continue;
+        const d=Math.hypot(src.x-e.x,src.y-e.y);if(d<120&&d<nd){nd=d;nx=e;}}
+      cur=nx;}}
+  else if(s.skill==='economy'){dmgEnemy(tgt,dmg,u);addBeam(u,tgt,'#f1c40f');}
 }
 function dmgEnemy(e,dmg,src){
   e.hp-=dmg;
-  if(src) src.totalDamage=(src.totalDamage||0)+dmg;
-  if(e.hp<=0){
-    state.coins+=e.reward;
+  if(e.hp<=0){state.coins+=e.reward;
     state.effects.push({type:'text',x:e.x,y:e.y-15,life:.7,maxLife:.7,text:`+${e.reward}`,color:'#f1c40f'});
-    const i=state.enemies.indexOf(e);
-    if(i!==-1) state.enemies.splice(i,1);
+    const i=state.enemies.indexOf(e);if(i!==-1)state.enemies.splice(i,1);}
+}
+function addBeam(a,b,c,w=2){state.projectiles.push({x1:a.x,y1:a.y,x2:b.x,y2:b.y,color:c,width:w,life:.1,maxLife:.1});}
+function addExplosion(x,y,r){state.effects.push({type:'explosion',x,y,radius:r,life:.3,maxLife:.3});}
+
+/* ============ VICTORY / DEFEAT ============ */
+function handleVictory(){
+  state.victory=true;
+  const s=state.currentStage;const key=stageKey(s);
+  const wasCleared=!!state.cleared[key];
+  if(!state.cleared[key])state.cleared[key]={times:0};
+  state.cleared[key].times++;
+  const gemReward=wasCleared?50:150;
+  state.gems+=gemReward;
+  let matReward='';
+  if(s.type==='legend'){
+    const amt=s.drop+(wasCleared?0:2);
+    state.materials[s.mat]=(state.materials[s.mat]||0)+amt;
+    matReward=`<div style="margin-top:10px;color:#f1c40f">🎁 ${s.matIcon} ${s.matName} x${amt}${wasCleared?'':' (first clear bonus +2)'}</div>`;
   }
+  const box=document.getElementById('resultBox');
+  box.innerHTML=`<h2 style="color:#2ecc71">🎉 VICTORY!</h2>
+    <div style="color:#aaa;font-size:13px;margin-bottom:10px">${s.name}</div>
+    <div style="font-size:18px">💎 +${gemReward}</div>
+    ${matReward}
+    <button id="resultMenuBtn" class="danger" style="margin-top:15px">🏠 Main Menu</button>
+    <button id="resultRetryBtn" style="margin-top:5px">🔄 Main Lagi</button>`;
+  document.getElementById('resultOverlay').style.display='flex';
+  document.getElementById('resultMenuBtn').onclick=()=>{document.getElementById('resultOverlay').style.display='none';backToMenu();};
+  document.getElementById('resultRetryBtn').onclick=()=>{document.getElementById('resultOverlay').style.display='none';startStage();};
+  save();
 }
-function addBeam(a,b,c,w=2){
-  state.projectiles.push({x1:a.x,y1:a.y,x2:b.x,y2:b.y,color:c,width:w,life:.1,maxLife:.1});
-}
-function addExplosion(x,y,r){
-  state.effects.push({type:'explosion',x,y,radius:r,life:.3,maxLife:.3});
+function handleDefeat(){
+  state.gameOver=true;
+  const s=state.currentStage;
+  const box=document.getElementById('resultBox');
+  box.innerHTML=`<h2 style="color:#e74c3c">💀 DEFEAT</h2>
+    <div style="color:#aaa;font-size:13px;margin-bottom:10px">${s.name}</div>
+    <div style="font-size:14px">Mencapai Wave ${state.wave}</div>
+    <button id="resultMenuBtn" class="danger" style="margin-top:15px">🏠 Main Menu</button>
+    <button id="resultRetryBtn" style="margin-top:5px">🔄 Coba Lagi</button>`;
+  document.getElementById('resultOverlay').style.display='flex';
+  document.getElementById('resultMenuBtn').onclick=()=>{document.getElementById('resultOverlay').style.display='none';backToMenu();};
+  document.getElementById('resultRetryBtn').onclick=()=>{document.getElementById('resultOverlay').style.display='none';startStage();};
 }
 
-/* ================= DRAW ================= */
+/* ============ NAV ============ */
+function backToMenu(){
+  // sync unit level
+  for(const p of state.placedUnits){
+    const inv=state.inventory.find(v=>v.instanceId===p.instanceId);
+    if(inv){inv.unitId=p.unitId;inv.rarity=p.rarity;inv.level=p.level;}
+  }
+  state.placedUnits=[];state.enemies=[];state.waveActive=false;state.spawnQueue=[];
+  state.projectiles=[];state.effects=[];state.selectedInventoryId=null;state.selectedPlacedId=null;
+  state.paused=false;state.gameOver=false;state.victory=false;
+  document.getElementById('skipBtn').style.display='none';
+  document.getElementById('pauseOverlay').style.display='none';
+  document.getElementById('resultOverlay').style.display='none';
+  showScreen('menu');updateMenuUI();save();
+}
+
+/* ============ DRAW ============ */
 function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  // grid
-  ctx.strokeStyle='rgba(50,60,100,.25)'; ctx.lineWidth=1;
+  ctx.strokeStyle='rgba(50,60,100,.25)';ctx.lineWidth=1;
   for(let x=0;x<canvas.width;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke();}
   for(let y=0;y<canvas.height;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke();}
-
-  // path
-  ctx.strokeStyle='#333a55'; ctx.lineWidth=55; ctx.lineCap='round'; ctx.lineJoin='round';
-  ctx.beginPath(); ctx.moveTo(WAYPOINTS[0].x,WAYPOINTS[0].y);
-  for(let i=1;i<WAYPOINTS.length;i++) ctx.lineTo(WAYPOINTS[i].x,WAYPOINTS[i].y);
+  ctx.strokeStyle='#333a55';ctx.lineWidth=55;ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.beginPath();ctx.moveTo(WAYPOINTS[0].x,WAYPOINTS[0].y);
+  for(let i=1;i<WAYPOINTS.length;i++)ctx.lineTo(WAYPOINTS[i].x,WAYPOINTS[i].y);
   ctx.stroke();
-  ctx.strokeStyle='#4a5580'; ctx.lineWidth=48; ctx.stroke();
+  ctx.strokeStyle='#4a5580';ctx.lineWidth=48;ctx.stroke();
 
-  // selected placed unit range
   if(state.selectedPlacedId){
     const u=state.placedUnits.find(p=>p.instanceId===state.selectedPlacedId);
-    if(u){
-      const s=computeStats(u);
-      ctx.beginPath(); ctx.arc(u.x,u.y,s.range,0,Math.PI*2);
-      ctx.fillStyle='rgba(241,196,15,.08)'; ctx.fill();
-      ctx.strokeStyle='rgba(241,196,15,.5)'; ctx.lineWidth=2; ctx.stroke();
-    }
+    if(u){const s=computeStats(u);
+      ctx.beginPath();ctx.arc(u.x,u.y,s.range,0,Math.PI*2);
+      ctx.fillStyle='rgba(241,196,15,.08)';ctx.fill();
+      ctx.strokeStyle='rgba(241,196,15,.5)';ctx.lineWidth=2;ctx.stroke();}
   }
 
-  // placed units
   for(const u of state.placedUnits){
-    const r=RARITIES[u.rarity], d=getUnitDef(u.unitId);
-    ctx.beginPath(); ctx.arc(u.x,u.y,18,0,Math.PI*2);
-    ctx.fillStyle='#0a0e27'; ctx.fill();
-    ctx.strokeStyle=r.color; ctx.lineWidth=3; ctx.stroke();
-    ctx.font='20px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    const r=RARITIES[u.rarity],d=getUnitDef(u.unitId);
+    ctx.beginPath();ctx.arc(u.x,u.y,18,0,Math.PI*2);
+    ctx.fillStyle='#0a0e27';ctx.fill();
+    ctx.strokeStyle=r.color;ctx.lineWidth=3;ctx.stroke();
+    ctx.font='20px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(d.icon,u.x,u.y+1);
-    ctx.font='bold 11px sans-serif'; ctx.fillStyle='#f1c40f';
-    ctx.strokeStyle='#000'; ctx.lineWidth=3;
-    ctx.strokeText('Lv'+u.level,u.x,u.y+28);
-    ctx.fillText('Lv'+u.level,u.x,u.y+28);
+    ctx.font='bold 11px sans-serif';ctx.fillStyle='#f1c40f';
+    ctx.strokeStyle='#000';ctx.lineWidth=3;
+    ctx.strokeText('Lv'+u.level,u.x,u.y+28);ctx.fillText('Lv'+u.level,u.x,u.y+28);
     if(state.selectedPlacedId===u.instanceId){
-      ctx.beginPath(); ctx.arc(u.x,u.y,22,0,Math.PI*2);
-      ctx.strokeStyle='#f1c40f'; ctx.lineWidth=2; ctx.stroke();
+      ctx.beginPath();ctx.arc(u.x,u.y,22,0,Math.PI*2);
+      ctx.strokeStyle='#f1c40f';ctx.lineWidth=2;ctx.stroke();
     }
   }
 
-  // enemies
   for(const e of state.enemies){
-    ctx.beginPath(); ctx.arc(e.x,e.y,e.radius,0,Math.PI*2);
-    ctx.fillStyle=e.color; ctx.fill();
-    ctx.strokeStyle='#000'; ctx.lineWidth=2; ctx.stroke();
-    if(e.slowTimer>0){
-      ctx.beginPath(); ctx.arc(e.x,e.y,e.radius+3,0,Math.PI*2);
-      ctx.strokeStyle='#66ccff'; ctx.lineWidth=2; ctx.stroke();
-    }
-    const w=e.radius*3, hy=e.y-e.radius-10;
-    ctx.fillStyle='rgba(0,0,0,.7)'; ctx.fillRect(e.x-w/2,hy,w,5);
+    ctx.beginPath();ctx.arc(e.x,e.y,e.radius,0,Math.PI*2);
+    ctx.fillStyle=e.color;ctx.fill();
+    ctx.strokeStyle='#000';ctx.lineWidth=2;ctx.stroke();
+    if(e.slowTimer>0){ctx.beginPath();ctx.arc(e.x,e.y,e.radius+3,0,Math.PI*2);
+      ctx.strokeStyle='#66ccff';ctx.lineWidth=2;ctx.stroke();}
+    const w=e.radius*3,hy=e.y-e.radius-10;
+    ctx.fillStyle='rgba(0,0,0,.7)';ctx.fillRect(e.x-w/2,hy,w,5);
     const pct=Math.max(0,e.hp/e.maxHp);
     ctx.fillStyle=pct>.5?'#2ecc71':pct>.25?'#f1c40f':'#e74c3c';
     ctx.fillRect(e.x-w/2,hy,w*pct,5);
-    if(e.type==='boss'){
-      ctx.font='16px sans-serif'; ctx.textAlign='center';
-      ctx.fillText('👑',e.x,e.y-e.radius-18);
-    }
+    if(e.type==='boss'){ctx.font='16px sans-serif';ctx.textAlign='center';
+      ctx.fillText('👑',e.x,e.y-e.radius-18);}
   }
-
-  // beams
   for(const p of state.projectiles){
     const a=p.life/p.maxLife;
-    ctx.beginPath(); ctx.moveTo(p.x1,p.y1); ctx.lineTo(p.x2,p.y2);
-    ctx.strokeStyle=p.color; ctx.globalAlpha=a; ctx.lineWidth=p.width;
-    ctx.stroke(); ctx.globalAlpha=1;
+    ctx.beginPath();ctx.moveTo(p.x1,p.y1);ctx.lineTo(p.x2,p.y2);
+    ctx.strokeStyle=p.color;ctx.globalAlpha=a;ctx.lineWidth=p.width;ctx.stroke();ctx.globalAlpha=1;
   }
-
-  // effects
   for(const e of state.effects){
     const a=e.life/(e.maxLife||1);
     if(e.type==='explosion'){
-      ctx.beginPath(); ctx.arc(e.x,e.y,e.radius*(1-a*.5),0,Math.PI*2);
-      ctx.fillStyle=`rgba(255,100,0,${a*.4})`; ctx.fill();
-      ctx.strokeStyle=`rgba(255,200,0,${a})`; ctx.lineWidth=3; ctx.stroke();
-    } else if(e.type==='text'){
-      ctx.font='bold 14px sans-serif'; ctx.textAlign='center';
-      ctx.fillStyle=e.color||'#fff'; ctx.globalAlpha=a;
-      ctx.fillText(e.text,e.x,e.y-(1-a)*20); ctx.globalAlpha=1;
+      ctx.beginPath();ctx.arc(e.x,e.y,e.radius*(1-a*.5),0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,100,0,${a*.4})`;ctx.fill();
+      ctx.strokeStyle=`rgba(255,200,0,${a})`;ctx.lineWidth=3;ctx.stroke();
+    }else if(e.type==='text'){
+      ctx.font='bold 14px sans-serif';ctx.textAlign='center';
+      ctx.fillStyle=e.color||'#fff';ctx.globalAlpha=a;
+      ctx.fillText(e.text,e.x,e.y-(1-a)*20);ctx.globalAlpha=1;
     }
   }
-
-  // HUD
-  if(state.waveActive){
-    ctx.fillStyle='rgba(255,255,255,.7)'; ctx.font='14px sans-serif';
-    ctx.textAlign='left';
-    ctx.fillText(`Enemies: ${state.enemies.length + state.spawnQueue.length}`,15,25);
-  }
-
-  if(state.gameOver){
-    ctx.fillStyle='rgba(0,0,0,.75)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle='#e74c3c'; ctx.font='bold 56px sans-serif';
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('GAME OVER',canvas.width/2,canvas.height/2);
-    ctx.fillStyle='#fff'; ctx.font='24px sans-serif';
-    ctx.fillText(`Mencapai Wave ${state.wave}`,canvas.width/2,canvas.height/2+50);
-  }
 }
 
-/* ================= INIT ================= */
-function showScreen(n){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(n+'Screen').classList.add('active');
+/* ============ LOOP ============ */
+let lastTime=performance.now();
+function loop(now){
+  const dt=Math.min((now-lastTime)/1000,.1);lastTime=now;
+  if(document.getElementById('gameScreen').classList.contains('active')){
+    update(dt);draw();
+  }
+  requestAnimationFrame(loop);
 }
 
+/* ============ EVENT BINDINGS ============ */
 document.getElementById('summonBtn').onclick=()=>doSummon(1);
 document.getElementById('summon10Btn').onclick=()=>doSummon(10);
-document.getElementById('playBtn').onclick=()=>{showScreen('game');updateGameUI();};
-document.getElementById('backToMenuBtn').onclick=()=>{
-  for(const u of state.placedUnits){
-    state.inventory.push({instanceId:u.instanceId,unitId:u.unitId,rarity:u.rarity,level:u.level});
-  }
-  state.placedUnits=[]; state.enemies=[]; state.waveActive=false;
-  state.spawnQueue=[]; state.projectiles=[]; state.effects=[];
-  state.selectedInventoryId=null; state.selectedPlacedId=null;
-  showScreen('menu'); updateMenuUI();
-};
+document.getElementById('playBtn').onclick=startStage;
+document.getElementById('campaignBtn').onclick=openCampaign;
+document.getElementById('legendBtn').onclick=openLegend;
+document.getElementById('backFromCampaign').onclick=()=>{showScreen('menu');updateMenuUI();};
+document.getElementById('backFromLegend').onclick=()=>{showScreen('menu');updateMenuUI();};
+document.getElementById('clearLoadoutBtn').onclick=()=>{state.loadout=[];updateMenuUI();};
+document.getElementById('resetBtn').onclick=()=>{if(confirm('Reset semua progress?')){localStorage.removeItem('td_save');location.reload();}};
 document.getElementById('startWaveBtn').onclick=startWave;
-document.getElementById('resetBtn').onclick=()=>{
-  if(confirm('Reset semua progress?')){localStorage.removeItem('td_save');location.reload();}
+document.getElementById('skipBtn').onclick=skipWave;
+document.getElementById('pauseBtn').onclick=()=>{
+  state.paused=true;
+  document.getElementById('pauseOverlay').style.display='flex';
+};
+document.getElementById('resumeBtn').onclick=()=>{
+  state.paused=false;document.getElementById('pauseOverlay').style.display='none';
+};
+document.getElementById('mainMenuBtn').onclick=()=>{
+  document.getElementById('pauseOverlay').style.display='none';
+  backToMenu();
 };
 
-(function renderRates(){
-  const el=document.getElementById('ratesDisplay');
+/* ============ RATES DISPLAY ============ */
+(function(){const el=document.getElementById('ratesDisplay');
   for(const k of ['common','rare','epic','legendary','mythic','td']){
     const r=RARITIES[k];
     el.innerHTML+=`<div class="rate" style="border-color:${r.color};color:${r.color}">${r.name}: ${(r.chance*100).toFixed(1)}%</div>`;
-  }
-})();
+  }})();
 
+/* ============ SAVE/LOAD ============ */
 function save(){
   localStorage.setItem('td_save',JSON.stringify({
-    gems:state.gems,coins:state.coins,wave:state.wave,lives:state.lives,
-    inventory:state.inventory,nextInstanceId:state.nextInstanceId
+    gems:state.gems,coins:state.coins,inventory:state.inventory,loadout:state.loadout,
+    materials:state.materials,cleared:state.cleared,nextInstanceId:state.nextInstanceId
   }));
 }
 function load(){
-  const s=localStorage.getItem('td_save');
-  if(s){try{Object.assign(state,JSON.parse(s));}catch(e){}}
+  const s=localStorage.getItem('td_save');if(!s)return;
+  try{const d=JSON.parse(s);Object.assign(state,d);
+    state.loadout=state.loadout||[];state.materials=state.materials||{};state.cleared=state.cleared||{};
+    const ids=new Set(state.inventory.map(u=>u.instanceId));
+    state.loadout=state.loadout.filter(id=>ids.has(id));
+  }catch(e){}
 }
-load(); updateMenuUI();
+load();updateMenuUI();
 requestAnimationFrame(loop);
 setInterval(save,10000);
 window.addEventListener('beforeunload',save);
