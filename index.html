@@ -236,13 +236,12 @@ e.onclick=()=>{const nm=L?`${REALMS[S.ri].n} - Lv ${j+1}`:`${MAPS[S.mi].n} - Act
 if(L){const rm=REALMS[S.ri].m;
 const hasToken=TOKEN_DROP_MATS.includes(rm);
 if(SECRET_DROPS[rm]){const sID=SECRET_DROPS[rm];
-a.innerHTML+=`<div style="grid-column:1/-1;background:linear-gradient(135deg,#1a0033,#0a0e27);border:2px solid #ff00ff;border-radius:8px;padding:12px;margin-top:6px;text-align:center;box-shadow:0 0 15px rgba(255,0,255,.4)">
+a.insertAdjacentHTML('beforeend',`<div style="grid-column:1/-1;background:linear-gradient(135deg,#1a0033,#0a0e27);border:2px solid #ff00ff;border-radius:8px;padding:12px;margin-top:6px;text-align:center;box-shadow:0 0 15px rgba(255,0,255,.4)">
 <div style="font-size:13px;color:#ff00ff;font-weight:bold">🌟 SECRET DROP (0.85%)</div>
 <div style="font-size:26px;margin:6px 0">${DEF[sID].icon}</div>
 <div style="color:#fff;font-weight:bold">${DEF[sID].name}</div>
 <div style="font-size:10px;color:#aaa;margin-top:4px">Rarity: <b style="color:#ff00ff">SECRET</b> · ${STAT_HINT(sID)}</div>
-<div style="font-size:10px;color:#f1c40f;margin-top:4px">🧬 Bisa di-Evolve jadi God!</div></div>`}
-if(hasToken){
+<div style="font-size:10px;color:#f1c40f;margin-top:4px">🧬 Bisa di-Evolve jadi God!</div></div>`)}
 a.innerHTML+=`<div style="grid-column:1/-1;background:linear-gradient(135deg,#003344,#0a0e27);border:2px solid #66ccff;border-radius:8px;padding:10px;margin-top:6px;text-align:center;box-shadow:0 0 15px rgba(102,204,255,.4)">
 <div style="font-size:13px;color:#66ccff;font-weight:bold">🎲 TRAIT REROLL DROP</div>
 <div style="font-size:24px;margin:4px 0">🎲</div>
