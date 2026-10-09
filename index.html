@@ -128,7 +128,7 @@ button{font-size:10px;padding:5px 8px;min-height:30px;margin:1px}
 <div id="toast"></div>
 <div id="rotatePrompt"><div class="icon">📱</div><h2 style="margin-bottom:10px">Putar HP ke Landscape</h2><p style="color:#888;font-size:13px;line-height:1.6;max-width:300px">Game ini lebih nyaman dimainkan dalam posisi <b style="color:#f1c40f">landscape</b>.</p><button id="rotateForce" class="g" style="margin-top:20px;padding:12px 24px">🔄 Paksa Landscape</button><button id="rotateSkip" style="margin-top:10px;padding:8px 20px;font-size:12px;background:linear-gradient(#555,#333)">Mainkan Saja</button></div>
 <button id="fsBtn" title="Fullscreen">⛶</button>
-<button id="ultShortcut" style="display:none;position:fixed;bottom:max(60px,env(safe-area-inset-bottom));right:max(10px,env(safe-area-inset-right));padding:10px 14px;font-size:12px;font-weight:bold;background:linear-gradient(180deg,#ff2266,#aa0033);border:2px solid #fff;border-radius:50px;z-index:98;min-height:auto;box-shadow:0 4px 12px rgba(255,34,102,.5);color:#fff">⚡ ULT</button>
+<div id="ultShortcutBar" style="position:fixed;bottom:max(60px,env(safe-area-inset-bottom));right:max(10px,env(safe-area-inset-right));z-index:98;display:none;flex-direction:column;gap:5px;align-items:flex-end;pointer-events:none"></div>
 
 <div id="login" class="sc"><h1 style="margin-top:40px">⚔️ HERO TOWER DEFENSE ⚔️</h1><div class="pn" style="max-width:420px;margin:30px auto;text-align:center"><div style="font-size:60px;margin-bottom:10px">🎮</div><h3 style="font-size:18px">Login dengan Google</h3><p style="color:#888;font-size:12px;margin-bottom:14px">Progress otomatis tersimpan di cloud</p><button id="googleLoginBtn" class="g" style="width:100%;padding:14px;font-size:16px">🔐 Login Google</button><div id="loginMsg" style="font-size:12px;margin-top:8px;min-height:16px"></div><div style="margin-top:14px;padding-top:14px;border-top:1px solid #2a3a6a"><div style="font-size:11px;color:#888;margin-bottom:6px">Atau main offline:</div><button id="offlineBtn" style="width:100%;padding:10px;font-size:13px;background:linear-gradient(#555,#333)">▶ Main Offline</button></div></div></div>
 
@@ -186,6 +186,18 @@ button{font-size:10px;padding:5px 8px;min-height:30px;margin:1px}
   <div style="background:#151a3a;border:3px solid #9b59b6;border-radius:12px;padding:15px;width:min(600px,95vw);max-height:90vh;display:flex;flex-direction:column;position:relative">
     <button id="closeIndex" class="r" style="position:absolute;top:10px;right:10px;padding:5px 10px;min-height:auto;margin:0">✕</button>
     <h2 style="margin-bottom:10px;color:#9b59b6;text-align:center">📖 UNIT INDEX</h2>
+    <div id="indexFilterBar" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;justify-content:center">
+      <button class="idxF" data-role="all" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#2ecc71,#27ae60)">All</button>
+      <button class="idxF" data-role="dps" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">⚔️ DPS</button>
+      <button class="idxF" data-role="sniper" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">🎯 Snipe</button>
+      <button class="idxF" data-role="aoe" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">💣 AOE</button>
+      <button class="idxF" data-role="chain" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">⛓️ Chain</button>
+      <button class="idxF" data-role="crit" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">⚡ Crit</button>
+      <button class="idxF" data-role="cc" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">❄️ CC</button>
+      <button class="idxF" data-role="economy" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">💰 Eco</button>
+      <button class="idxF" data-role="supporter" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">✨ Supp</button>
+      <button class="idxF" data-role="summoner" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">👥 Summon</button>
+    </div>
     <div id="indexContent" style="flex:1;overflow-y:auto;background:#0a0e27;border-radius:8px;padding:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;"></div>
   </div>
 </div>
@@ -325,21 +337,22 @@ function resolveTrait(tr){if(!tr)return null;const id=typeof tr==='string'?tr:tr
 function getTrait(u){return resolveTrait(u&&u.trait)}
 
 const REDEEM_CODES={HTD2026:{gems:1000,rr:25,desc:'1000 💎 + 25 🎲'},TDREROLL:{gems:0,rr:100,desc:'100 🎲'},NIAMATD:{gems:1500,rr:0,desc:'1500 💎'},REROLLBOI:{gems:0,rr:250,desc:'250 🎲'}};
-let S={user:null,nickname:null,gems:500,coins:0,rr:0,inv:[],load:[],clr:{},nid:1,mi:0,ri:0,mode:'c',mats:{},auto:false,fx:true,autoUpg:false,stage:null,best:0,usedCodes:{},stats:{bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0}},G=null;
+let S={user:null,nickname:null,gems:500,coins:0,rr:0,inv:[],load:[],clr:{},nid:1,mi:0,ri:0,mode:'c',mats:{},auto:false,fx:true,autoUpg:false,traitFilter:{},stage:null,best:0,usedCodes:{},stats:{bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0}},G=null;
 const cv=$('cv'),ctx=cv.getContext('2d');
 
-function save(){try{localStorage.setItem('td2',JSON.stringify({user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,autoUpg:S.autoUpg,best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{}}))}catch(e){}if(isOnline){clearTimeout(window._csTimer);window._csTimer=setTimeout(cloudSave,2000)}}
+function save(){try{localStorage.setItem('td2',JSON.stringify({user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{}}))}catch(e){}if(isOnline){clearTimeout(window._csTimer);window._csTimer=setTimeout(cloudSave,2000)}}
 try{const d=JSON.parse(localStorage.getItem('td2'));if(d)Object.assign(S,d)}catch(e){}
 if(!S.usedCodes)S.usedCodes={};
 if(typeof S.rr!=='number')S.rr=0;
 if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};
 if(S.nickname === undefined) S.nickname = null;
 if(S.autoUpg === undefined) S.autoUpg = false;
+if(!S.traitFilter) S.traitFilter = {};
 if(!S.inv.length)for(const id of['archer','swordsman','hunter'])S.inv.push({iid:S.nid++,id,rar:'common',lv:1,trait:null});
 S.inv.forEach(u=>{if(typeof u.trait==='string')u.trait=null;if(u.lv===undefined||u.lv===null||u.lv<1)u.lv=1});
 S.load=S.load.filter(i=>S.inv.some(u=>u.iid===i));
-async function cloudSave(){if(!isOnline||!currentUser)return;try{const data={user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,autoUpg:S.autoUpg,best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},updatedAt:Date.now()};await fbDb.collection('users').doc(currentUser.uid).set(data)}catch(e){console.warn(e)}}
-async function cloudLoad(){if(!currentUser)return false;try{const doc=await fbDb.collection('users').doc(currentUser.uid).get();if(!doc.exists)return false;const d=doc.data();if(confirm(`📦 Save cloud!\n\n💎 ${d.gems||0}\n🪙 ${Math.floor(d.coins||0)}\n🎒 ${(d.inv||[]).length} unit\n🏆 Wave ${d.best||0}\n\nLoad CLOUD?`)){Object.assign(S,d);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};if(S.nickname === undefined) S.nickname = null;if(S.autoUpg === undefined) S.autoUpg = false;S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();toast('☁️ Loaded!')}return true}catch(e){return false}}
+async function cloudSave(){if(!isOnline||!currentUser)return;try{const data={user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},updatedAt:Date.now()};await fbDb.collection('users').doc(currentUser.uid).set(data)}catch(e){console.warn(e)}}
+async function cloudLoad(){if(!currentUser)return false;try{const doc=await fbDb.collection('users').doc(currentUser.uid).get();if(!doc.exists)return false;const d=doc.data();if(confirm(`📦 Save cloud!\n\n💎 ${d.gems||0}\n🪙 ${Math.floor(d.coins||0)}\n🎒 ${(d.inv||[]).length} unit\n🏆 Wave ${d.best||0}\n\nLoad CLOUD?`)){Object.assign(S,d);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};if(S.nickname === undefined) S.nickname = null;if(S.autoUpg === undefined) S.autoUpg = false;if(!S.traitFilter) S.traitFilter = {};S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();toast('☁️ Loaded!')}return true}catch(e){return false}}
 function startCloudAutoSave(){if(cloudSaveTimer)clearInterval(cloudSaveTimer);cloudSaveTimer=setInterval(()=>{if(isOnline)cloudSave()},10000)}
 try{firebase.initializeApp(firebaseConfig);fbAuth=firebase.auth();fbDb=firebase.firestore()}catch(e){console.warn(e)}
 
@@ -366,8 +379,8 @@ function playEvoCinematic(oldName,newName,icon,color,skillName,skillDesc,ult,cb)
 
 function redeemMenu(){$('ov').style.display='flex';let h=`<h2 style="margin-bottom:6px">🎁 Redeem</h2><div style="display:flex;gap:6px;margin:8px 0"><input id="rdi" type="text" placeholder="Kode..." style="flex:1;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#fff;font-size:14px;font-weight:bold;text-transform:uppercase;outline:none"><button id="rdo" class="g" style="margin:0;padding:10px 16px">Redeem</button></div><div id="rdm" style="font-size:12px;min-height:18px;margin-bottom:8px"></div><div style="border-top:1px solid #2a3a6a;padding-top:8px">`;for(const code in REDEEM_CODES){const c=REDEEM_CODES[code],used=S.usedCodes[code];h+=`<div style="display:flex;justify-content:space-between;align-items:center;background:#0a0e27;border:1px solid ${used?'#333':'#2a3a6a'};border-radius:6px;padding:6px 10px;margin:4px 0;font-size:12px"><div><b style="color:${used?'#666':'#f1c40f'};font-family:monospace">${code}</b><div style="color:#888;font-size:10px">${c.desc}</div></div><span style="color:${used?'#e74c3c':'#2ecc71'};font-size:11px">${used?'✓':'OK'}</span></div>`}$('ob').innerHTML=h+`</div><button id="rdx" class="r" style="margin-top:10px;width:100%">Tutup</button>`;$('rdx').onclick=()=>{$('ov').style.display='none';updMenu()};const doRedeem=()=>{const raw=$('rdi').value.trim().toUpperCase(),msg=$('rdm');if(!raw){msg.innerHTML='<span style="color:#e74c3c">❌ Isi kode!</span>';return}if(!REDEEM_CODES[raw]){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>';return}if(S.usedCodes[raw]){msg.innerHTML='<span style="color:#f39c12">⚠️ Sudah dipakai</span>';return}const r=REDEEM_CODES[raw];S.usedCodes[raw]=Date.now();let lines=[];if(r.gems){S.gems+=r.gems;lines.push(`+${r.gems}💎`)}if(r.rr){S.rr=(S.rr||0)+r.rr;lines.push(`+${r.rr}🎲`)}save();msg.innerHTML=`<span style="color:#2ecc71">✅ ${lines.join(' ')}</span>`;$('rdi').value='';setTimeout(()=>redeemMenu(),700)};$('rdo').onclick=doRedeem;$('rdi').addEventListener('keydown',e=>{if(e.key==='Enter')doRedeem()});setTimeout(()=>$('rdi').focus(),100)}
 
-function exportSave(){const data={user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,autoUpg:S.autoUpg,best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{}};const json=JSON.stringify(data);const code=btoa(unescape(encodeURIComponent(json)));const chunks=code.match(/.{1,80}/g).join('\n');$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📤 Export</h2><div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:8px;padding:10px;text-align:left;max-height:40vh;overflow-y:auto;margin-bottom:8px"><textarea id="expText" readonly style="width:100%;background:transparent;border:none;color:#0ff;font-family:monospace;font-size:10px;resize:none;outline:none" rows="8">${chunks}</textarea></div><div style="font-size:10px;color:#666;margin-bottom:8px">Size: ${(json.length/1024).toFixed(2)} KB</div><button id="expCopy" class="g" style="width:100%;margin-bottom:6px">📋 Copy</button><button id="expDl" class="y" style="width:100%;margin-bottom:6px">💾 Download .txt</button><button id="expClose" style="width:100%">Tutup</button>`;$('expCopy').onclick=()=>{const txt=$('expText');txt.select();txt.setSelectionRange(0,999999);try{if(navigator.clipboard)navigator.clipboard.writeText(txt.value).then(()=>toast('✅ Copy!')).catch(()=>{document.execCommand('copy');toast('✅ Copy!')});else{document.execCommand('copy');toast('✅ Copy!')}}catch(e){toast('❌ Gagal')}};$('expDl').onclick=()=>{const blob=new Blob([code],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='htd_save_'+Date.now()+'.txt';a.click();URL.revokeObjectURL(url);toast('💾 OK')};$('expClose').onclick=()=>{$('ov').style.display='none'}}
-function importSave(){$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📥 Import</h2><textarea id="impText" placeholder="Paste kode..." style="width:100%;height:120px;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#0ff;font-family:monospace;font-size:10px;resize:vertical;outline:none;margin-bottom:8px"></textarea><input type="file" id="impFile" accept=".txt" style="display:none"><button id="impPick" class="y" style="width:100%;margin-bottom:6px">📁 File .txt</button><button id="impGo" class="g" style="width:100%;margin-bottom:6px">▶ Import</button><button id="impClose" style="width:100%">Tutup</button><div id="impMsg" style="font-size:11px;margin-top:8px;min-height:16px"></div>`;$('impPick').onclick=()=>$('impFile').click();$('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('impText').value=ev.target.result.trim();$('impMsg').innerHTML='<span style="color:#2ecc71">✅ Loaded</span>'};r.readAsText(f)};$('impGo').onclick=()=>{const code=$('impText').value.trim().replace(/\s+/g,'');const msg=$('impMsg');if(!code){msg.innerHTML='<span style="color:#e74c3c">❌ Kosong!</span>';return}try{const json=decodeURIComponent(escape(atob(code)));const data=JSON.parse(json);if(!data.inv||!Array.isArray(data.inv))throw new Error();if(!confirm('⚠️ Data DIGANTI. Lanjut?'))return;Object.assign(S,data);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};if(S.nickname === undefined) S.nickname = null;if(S.autoUpg === undefined) S.autoUpg = false;S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();msg.innerHTML='<span style="color:#2ecc71">✅ OK! Reload...</span>';setTimeout(()=>location.reload(),900)}catch(err){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>'}};$('impClose').onclick=()=>{$('ov').style.display='none'}}
+function exportSave(){const data={user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{}};const json=JSON.stringify(data);const code=btoa(unescape(encodeURIComponent(json)));const chunks=code.match(/.{1,80}/g).join('\n');$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📤 Export</h2><div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:8px;padding:10px;text-align:left;max-height:40vh;overflow-y:auto;margin-bottom:8px"><textarea id="expText" readonly style="width:100%;background:transparent;border:none;color:#0ff;font-family:monospace;font-size:10px;resize:none;outline:none" rows="8">${chunks}</textarea></div><div style="font-size:10px;color:#666;margin-bottom:8px">Size: ${(json.length/1024).toFixed(2)} KB</div><button id="expCopy" class="g" style="width:100%;margin-bottom:6px">📋 Copy</button><button id="expDl" class="y" style="width:100%;margin-bottom:6px">💾 Download .txt</button><button id="expClose" style="width:100%">Tutup</button>`;$('expCopy').onclick=()=>{const txt=$('expText');txt.select();txt.setSelectionRange(0,999999);try{if(navigator.clipboard)navigator.clipboard.writeText(txt.value).then(()=>toast('✅ Copy!')).catch(()=>{document.execCommand('copy');toast('✅ Copy!')});else{document.execCommand('copy');toast('✅ Copy!')}}catch(e){toast('❌ Gagal')}};$('expDl').onclick=()=>{const blob=new Blob([code],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='htd_save_'+Date.now()+'.txt';a.click();URL.revokeObjectURL(url);toast('💾 OK')};$('expClose').onclick=()=>{$('ov').style.display='none'}}
+function importSave(){$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📥 Import</h2><textarea id="impText" placeholder="Paste kode..." style="width:100%;height:120px;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#0ff;font-family:monospace;font-size:10px;resize:vertical;outline:none;margin-bottom:8px"></textarea><input type="file" id="impFile" accept=".txt" style="display:none"><button id="impPick" class="y" style="width:100%;margin-bottom:6px">📁 File .txt</button><button id="impGo" class="g" style="width:100%;margin-bottom:6px">▶ Import</button><button id="impClose" style="width:100%">Tutup</button><div id="impMsg" style="font-size:11px;margin-top:8px;min-height:16px"></div>`;$('impPick').onclick=()=>$('impFile').click();$('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('impText').value=ev.target.result.trim();$('impMsg').innerHTML='<span style="color:#2ecc71">✅ Loaded</span>'};r.readAsText(f)};$('impGo').onclick=()=>{const code=$('impText').value.trim().replace(/\s+/g,'');const msg=$('impMsg');if(!code){msg.innerHTML='<span style="color:#e74c3c">❌ Kosong!</span>';return}try{const json=decodeURIComponent(escape(atob(code)));const data=JSON.parse(json);if(!data.inv||!Array.isArray(data.inv))throw new Error();if(!confirm('⚠️ Data DIGANTI. Lanjut?'))return;Object.assign(S,data);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};if(S.nickname === undefined) S.nickname = null;if(S.autoUpg === undefined) S.autoUpg = false;if(!S.traitFilter) S.traitFilter = {};S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();msg.innerHTML='<span style="color:#2ecc71">✅ OK! Reload...</span>';setTimeout(()=>location.reload(),900)}catch(err){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>'}};$('impClose').onclick=()=>{$('ov').style.display='none'}}
 
 function card(u,fn){
   const d=DEF[u.id],r=R[u.rar],s=stats(u),tr=s.trait,e=document.createElement('div');
@@ -466,7 +479,7 @@ function sigil(u,c){const t=performance.now()/1000,hi=u.i.rar==='td'||u.i.rar===
 function aura(u,c){const t=performance.now()/1000,n=3+(u.i.lv>=5?2:0)+(u.i.rar==='td'?2:0)+(u.i.rar==='secret'?3:0)+(u.i.rar==='transcendent'?4:0)+(u.i.rar==='primordial'?5:0)+(u.i.rar==='eternal'?6:0)+(u.i.rar==='exotic'?8:0)+Math.floor(u.i.lv/5);ctx.save();ctx.globalCompositeOperation='lighter';const g=ctx.createRadialGradient(u.x,u.y,4,u.x,u.y,44);g.addColorStop(0,c+'66');g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(u.x,u.y,44,0,6.283);ctx.fill();for(let i=0;i<n;i++){const dir=i%2?-1:1,an=t*(1.6+(i%2)*.8)*dir+i*6.283/n,Rr=30+(i%2)*6;ctx.fillStyle=i%2?'#fff':c;ctx.shadowColor=c;ctx.shadowBlur=12;ctx.beginPath();ctx.arc(u.x+Math.cos(an)*Rr,u.y+Math.sin(an)*Rr*.8,3,0,6.283);ctx.fill()}ctx.restore()}
 function fxSkill(u,k,t){const c=tc(u),hi=isHi(u.i),es=EVO_SKILL[u.i.id];trail(u,t,c);beam(u,t,c,hi?7:5);parts(t.x,t.y,'#fff',hi?10:6,170,.4);if(hi)shake(3,.1);if(k==='single'||k==='economy'||k.startsWith('support')){ring(t.x,t.y,34,c,.4,3)}else if(k==='slow'){ring(t.x,t.y,46,'#66ccff',.6,4);ring(t.x,t.y,28,'#fff',.4,2);parts(t.x,t.y,'#aee6ff',14,120,.8)}else if(k==='aoe'){nova(t.x,t.y,70+(hi?30:0),'#ff8800',.45);ring(t.x,t.y,90,'#fc0',.55,5);parts(t.x,t.y,'#fa0',20,220,.8);if(es&&u.i.id==='exotic_metatron'){nova(t.x,t.y,500,'#ff00aa',1.2);ring(t.x,t.y,600,'#fff',1.5,12);parts(t.x,t.y,'#ff00aa',120,500,2);shake(30,.9)}}else if(k==='crit'){slash(t.x,t.y,hi?'#f0a':'#f22');if(es&&u.i.id==='exotic_lucifer'){for(let i=0;i<10;i++){slash(t.x,t.y,'#ff00aa');slash(t.x,t.y,'#fff')}ring(t.x,t.y,150,'#ff00aa',1,10);parts(t.x,t.y,'#ff00aa',80,400,1.8);shake(30,.9)}}else if(k==='chain'){nova(t.x,t.y,30,'#c6f',.3);if(es&&u.i.id==='exotic_nidhogg'){nova(t.x,t.y,300,'#ff00aa',1.3);ring(t.x,t.y,350,'#fff',1.6,12);parts(t.x,t.y,'#ff00aa',120,500,2);shake(30,.9)}}ring(u.x,u.y,hi?34:28,c,.3,3)}
 
-function startStage(){if(!S.stage){toast('❌ Pilih stage!');return}if(!S.load.length){toast('❌ Loadout kosong!');return}S.coins=200;S.stats.gamesPlayed++;G={pl:[],en:[],mn:[],fx:[],par:[],bm:[],wave:0,lives:BASE,act:false,q:[],qt:0,hp:1,over:false,paused:false,cd:15,sel:null,selP:null,lastUltTower:null,shake:0,sk:0,flash:0,fc:'#fff',we:0,skipped:false,inf:S.mode==='i',wp:WPS[S.stage.wp]||WPS.forest};$('sk').style.display='none';pop.style.display='none';$('ov').style.display='none';show('game');updateUltShortcut();ui()}
+function startStage(){if(!S.stage){toast('❌ Pilih stage!');return}if(!S.load.length){toast('❌ Loadout kosong!');return}S.coins=200;S.stats.gamesPlayed++;S.autoUpg=false;updateAutoUpgBtn();G={pl:[],en:[],mn:[],fx:[],par:[],bm:[],wave:0,lives:BASE,act:false,q:[],qt:0,hp:1,over:false,paused:false,cd:15,sel:null,selP:null,lastUltTower:null,shake:0,sk:0,flash:0,fc:'#fff',we:0,skipped:false,inf:S.mode==='i',wp:WPS[S.stage.wp]||WPS.forest};$('sk').style.display='none';pop.style.display='none';$('ov').style.display='none';$('ultShortcutBar').style.display='none';show('game');updateUltShortcut();ui()}
 function startWave(){if(G.act||G.over)return;if(!G.inf&&G.wave>=MAXW)return;G.cd=0;G.nx=0;G.wave++;G.act=true;G.qt=0;G.q=[];G.we=0;G.skipped=false;$('sk').style.display='none';const w=G.wave;const isBoss=G.inf?(w%10===0):(w===MAXW);if(isBoss){if(G.inf){const cnt=Math.min(12,5+Math.floor(w/5));for(let i=0;i<cnt;i++)G.q.push('normal');G.q.push('boss');const ex=Math.floor(w/10);for(let i=0;i<Math.min(6,ex);i++)G.q.push('tank');for(let i=0;i<Math.min(8,ex);i++)G.q.push('flying');toast('⚠️ BOSS '+w+'!')}else{for(let i=0;i<6;i++)G.q.push('normal');G.q.push('boss');if(S.stage.boss)for(let i=0;i<4;i++)G.q.push('tank');toast('⚠️ BOSS!')}flash('#e74c3c',.5)}else{let n;if(G.inf)n=Math.min(40,3+Math.floor(w*1.3));else n=(w<=5?3:5)+Math.floor(w*.8);for(let i=0;i<n;i++){const r=Math.random();let t='normal';if(G.inf){if(w>=3&&r<.35)t='fast';else if(w>=5&&r>=.35&&r<.55)t='tank';else if(w>=8&&r>=.55&&r<.75)t='flying'}else{if(w>=3&&r<.3)t='fast';else if(w>=5&&r>=.3&&r<.5)t='tank';else if(w>=8&&r>=.5&&r<.65)t='flying'}G.q.push(t)}}const hpRate=G.inf?0.18:0.1;G.hp=S.stage.diff*(1+(w-1)*hpRate);ui()}
 function spawn(t){const d=ET[t],m=t==='boss'&&S.stage.boss?1.5:1;G.en.push({x:G.wp[0].x,y:G.wp[0].y,hp:d.hp*G.hp*m,mx:d.hp*G.hp*m,sp:d.sp,rw:d.rw,c:d.c,r:d.r,t,wi:1,sl:0,sf:1,hf:0,dead:false})}
 function hit(e,d){if(e.dead)return false;e.hp-=d;e.hf=.15;if(e.hp<=0){e.dead=true;if(e.t==='boss')S.stats.bossesKilled++;S.coins+=e.rw;ftext(e.x,e.y-15,'+'+e.rw,'#f1c40f',.7);parts(e.x,e.y,e.c,8,120,.6);return true}return false}
@@ -511,97 +524,18 @@ function update(dt){
         }
     }
     if(G.shake>0)G.shake-=dt;if(G.flash>0)G.flash-=dt;if(G.dim>0)G.dim-=dt;if(G.cd>0){G.cd-=dt;if(G.cd<=0){G.cd=0;startWave()}}if(G.nx>0){G.nx-=dt;if(G.nx<=0){G.nx=0;startWave()}}if(G.act){G.we+=dt;if(!G.skipped&&G.we>=30){if(S.auto){while(G.q.length)spawn(G.q.shift());G.skipped=true;toast('⏩ Skip!')}else $('sk').style.display='inline-block'}if(G.q.length){G.qt+=dt;const iv=G.inf?(G.wave%10===0?.4:.35):(G.wave===MAXW?.4:.35);if(G.qt>=iv){G.qt=0;spawn(G.q.shift())}}}for(const e of G.en){if(e.dead)continue;if(e.sl>0){e.sl-=dt;if(e.sl<=0)e.sf=1}if(e.hf>0)e.hf-=dt;const t=G.wp[e.wi];if(!t){e.dead=true;const boss=e.t==='boss';if(boss){if(G.inf){const dmg=DMG*10;G.lives=Math.max(0,G.lives-dmg);shake(15,.4);flash('#f00',.5);ftext(850,420,'💀 BOSS -'+dmg,'#f33',1.2)}else{G.lives=0;shake(22,.6);flash('#f00',.6);ftext(850,420,'💀 BOSS!','#f33',1.2)}}else{G.lives=Math.max(0,G.lives-DMG);shake(8,.3);flash('#f00',.2);ftext(850,420,'-'+DMG,'#f33',1.2)}if(G.lives<=0){G.over=true;defeat(boss);return}continue}const dx=t.x-e.x,dy=t.y-e.y,d=Math.hypot(dx,dy),mv=e.sp*e.sf*dt;if(d<=mv){e.x=t.x;e.y=t.y;e.wi++}else{e.x+=dx/d*mv;e.y+=dy/d*mv}}for(const u of G.pl){const st=stats(u.i);u.cdT-=dt;if(S.fx&&isHi(u.i)&&Math.random()<dt*8)G.par.push({x:u.x+(Math.random()-.5)*30,y:u.y+12,vx:(Math.random()-.5)*10,vy:-40-Math.random()*30,l:1,m:1,c:tc(u),z:2.5});u.pulse+=dt;if(u.ultCd>0)u.ultCd=Math.max(0,u.ultCd-dt);if(u.cdT<=0){const effRng = st.rng * (1 + (u.buffRng||0));let t=null,md=1e9;for(const e of G.en){if(e.dead)continue;const d=Math.hypot(u.x-e.x,u.y-e.y);if(d<=effRng&&d<md){md=d;t=e}}if(t){u.aimAngle=Math.atan2(t.y-u.y,t.x-u.x);fire(u,st,t);u.cdT=st.cd/(1+(u.buffSpd||0))}}}
-    // AUTO UPGRADE
-    if(S.autoUpg){
-        for(const u of G.pl){
-            const i = u.i;
-            const mx = MAXL[i.rar] || 10;
-            if(i.lv >= mx) continue;
-            const c = upCost(i);
-            if(S.coins >= c){
-                S.coins -= c;
-                i.lv++;
-                parts(u.x, u.y, '#f1c40f', 8, 70, .5);
-                if(isHi(i) && i.lv === 5){
-                    const col = R[i.rar].c;
-                    ring(u.x, u.y, 90, col, .9, 6);
-                    nova(u.x, u.y, 70, col, .6);
-                    parts(u.x, u.y, col, 40, 220, 1.2);
-                    flash(col, .3);
-                }
-            }
-        }
-    }
-    // Minion AI
-    for(const m of G.mn){
-        if(m.dead) continue;
-        m.lt -= dt;
-        if(m.lt <= 0){ m.dead = true; continue; }
-        m.cdT -= dt;
-        let mt = null, md = 1e9;
-        for(const e of G.en){
-            if(e.dead) continue;
-            const d = Math.hypot(m.x - e.x, m.y - e.y);
-            if(d < md){ md = d; mt = e; }
-        }
-        if(mt){
-            if(md > 20){
-                const dx = mt.x - m.x, dy = mt.y - m.y, dd = Math.hypot(dx, dy) || 1;
-                m.x += dx/dd * m.spd * dt;
-                m.y += dy/dd * m.spd * dt;
-            } else if(m.cdT <= 0){
-                hit(mt, m.dmg);
-                m.cdT = 0.4;
-                parts(mt.x, mt.y, m.c, 3, 60, .3);
-            }
-        }
-    }
-    G.mn = G.mn.filter(m => !m.dead);
-    G.en=G.en.filter(e=>!e.dead);if(G.act&&!G.q.length&&!G.en.length){G.act=false;let ec=0;for(const u of G.pl)if(DEF[u.i.id].skill==='economy'){const rarK=ECO_K[u.i.rar]||1.0;const r=Math.floor((80+u.i.lv*35)*rarK);ec+=r;ftext(u.x,u.y-30,'+'+r+'🪙','#f1c40f',1.2)}const bonus=G.inf?Math.floor(250*(1+G.wave*.05)):250;S.coins+=bonus+ec;let gemBonus=0;if(G.inf&&G.wave%15===0){gemBonus=100;S.gems+=gemBonus;G.fx.push({t:'banner',s:'💎 +100 GEMS!',c:'#00ffff',l:2,m:2});flash('#00ffff',.5);shake(15,.4)}$('sk').style.display='none';if(!G.inf&&G.wave>=MAXW)victory();else{let msg=`🌊 Wave ${G.wave}! +${bonus+ec}🪙`;if(gemBonus)msg+=` +${gemBonus}💎`;toast(msg);G.nx=2}ui()}for(const a of[G.par,G.bm,G.fx])for(let i=a.length-1;i>=0;i--){a[i].l-=dt;if(a[i].l<=0)a.splice(i,1)}for(const p of G.par){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.94;p.vy*=.94}ui(true)}
-function sync(){
-    if(G && G.inf && G.wave > 0){
-        if(G.wave > (S.best || 0)) S.best = G.wave;
-        if(G.wave > (S.stats.highestInf || 0)) S.stats.highestInf = G.wave;
-        save();
-        if(isOnline && currentUser){
-            clearTimeout(window._csTimer);
-            cloudSave();
-        }
-    }
-}
-function box(h){sync();save();$('ob').innerHTML=h;$('ov').style.display='flex';$('r1').onclick=()=>{G=null;$('ov').style.display='none';show('menu');updMenu();save()};if($('r2'))$('r2').onclick=()=>{$('ov').style.display='none';startStage()}}
+    if(S.autoUpg){for(const u of G.pl){const i=u.i;const mx=MAXL[i.rar]||10;if(i.lv>=mx)continue;const c=upCost(i);if(S.coins>=c){S.coins-=c;i.lv++;parts(u.x,u.y,'#f1c40f',8,70,.5);if(isHi(i)&&i.lv===5){const col=R[i.rar].c;ring(u.x,u.y,90,col,.9,6);nova(u.x,u.y,70,col,.6);parts(u.x,u.y,col,40,220,1.2);flash(col,.3)}}}}
+    for(const m of G.mn){if(m.dead)continue;m.lt-=dt;if(m.lt<=0){m.dead=true;continue}m.cdT-=dt;let mt=null,md=1e9;for(const e of G.en){if(e.dead)continue;const d=Math.hypot(m.x-e.x,m.y-e.y);if(d<md){md=d;mt=e}}if(mt){if(md>20){const dx=mt.x-m.x,dy=mt.y-m.y,dd=Math.hypot(dx,dy)||1;m.x+=dx/dd*m.spd*dt;m.y+=dy/dd*m.spd*dt}else if(m.cdT<=0){hit(mt,m.dmg);m.cdT=0.4;parts(mt.x,mt.y,m.c,3,60,.3)}}}
+    G.mn=G.mn.filter(m=>!m.dead);G.en=G.en.filter(e=>!e.dead);if(G.act&&!G.q.length&&!G.en.length){G.act=false;let ec=0;for(const u of G.pl)if(DEF[u.i.id].skill==='economy'){const rarK=ECO_K[u.i.rar]||1.0;const r=Math.floor((80+u.i.lv*35)*rarK);ec+=r;ftext(u.x,u.y-30,'+'+r+'🪙','#f1c40f',1.2)}const bonus=G.inf?Math.floor(250*(1+G.wave*.05)):250;S.coins+=bonus+ec;let gemBonus=0;if(G.inf&&G.wave%15===0){gemBonus=100;S.gems+=gemBonus;G.fx.push({t:'banner',s:'💎 +100 GEMS!',c:'#00ffff',l:2,m:2});flash('#00ffff',.5);shake(15,.4)}$('sk').style.display='none';if(!G.inf&&G.wave>=MAXW)victory();else{let msg=`🌊 Wave ${G.wave}! +${bonus+ec}🪙`;if(gemBonus)msg+=` +${gemBonus}💎`;toast(msg);G.nx=2}ui()}for(const a of[G.par,G.bm,G.fx])for(let i=a.length-1;i>=0;i--){a[i].l-=dt;if(a[i].l<=0)a.splice(i,1)}for(const p of G.par){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.94;p.vy*=.94}ui(true)}
+function sync(){if(G && G.inf && G.wave > 0){if(G.wave > (S.best || 0)) S.best = G.wave;if(G.wave > (S.stats.highestInf || 0)) S.stats.highestInf = G.wave;save();if(isOnline && currentUser){clearTimeout(window._csTimer);cloudSave()}}}
+function box(h){sync();save();$('ob').innerHTML=h;$('ov').style.display='flex';$('r1').onclick=()=>{G=null;$('ov').style.display='none';$('ultShortcutBar').style.display='none';show('menu');updMenu();save()};if($('r2'))$('r2').onclick=()=>{$('ov').style.display='none';$('ultShortcutBar').style.display='none';startStage()}}
 function victory(){G.over=true;S.stats.gamesWon++;if(G.lives===BASE)S.stats.mvps++;const s=S.stage,k=s.k,first=!S.clr[k];S.clr[k]=(S.clr[k]||0)+1;const g=first?150:100;S.gems+=g;let mt='';if(s.mat){const a=s.drop+(first?1:0);S.mats[s.mat]=(S.mats[s.mat]||0)+a;mt=`<p style="color:#f1c40f">🎁 ${MATS[s.mat][1]} ${MATS[s.mat][0]} x${a}</p>`}let tok='';if(s.mat&&TOKEN_DROP_MATS.includes(s.mat)){const t=Math.floor(Math.random()*4);if(t>0){S.rr=(S.rr||0)+t;tok=`<p style="color:#66ccff">🎲 Token x${t}</p>`}}let sec='';if(s.mat&&SECRET_DROPS[s.mat]){const roll=Math.random();if(roll<SECRET_CHANCE){const id=SECRET_DROPS[s.mat];const dup=S.inv.some(u=>u.id===id);if(dup){S.gems+=500;sec=`<div style="border:2px solid #ff00ff;border-radius:10px;padding:12px;margin:10px 0"><b style="color:#ff00ff">🌟 SECRET DUP! +500💎</b></div>`}else{S.inv.push({iid:S.nid++,id,rar:'secret',lv:1,trait:null});sec=`<div style="border:3px solid #ff00ff;border-radius:10px;padding:14px;margin:10px 0;box-shadow:0 0 25px #ff00ff"><b style="color:#ff00ff;font-size:18px">✨ SECRET! ${DEF[id].name}</b></div>`}}}save();box(`<h2 style="color:#2ecc71">🎉 VICTORY!</h2><p style="color:#aaa">${s.n}</p><p style="font-size:18px">💎 +${g}</p>${mt}${tok}${sec}<button id="r1" class="r">🏠 Menu</button><button id="r2">🔄 Lagi</button>`)}
 function defeat(boss){if(G.inf && G.wave>S.stats.highestInf)S.stats.highestInf=G.wave;if(G.inf && G.wave>(S.best||0))S.best=G.wave;let ex='';if(G.inf){const prev=S.best||0;const nb=G.wave>=prev;if(nb){ex=`<p style="color:#f1c40f">🏆 REKOR BARU! Wave ${G.wave}</p>`}else ex=`<p style="color:#aaa">Rekor: ${prev}</p>`}box(`<h2 style="color:#e74c3c">💀 DEFEAT</h2><p style="color:#aaa">${S.stage.n}</p><p>Wave ${G.wave}</p>${ex}<button id="r1" class="r">🏠 Menu</button><button id="r2">🔄 Lagi</button>`)}
 
 let lastUi=0,PID=1;const pop=$('pop');
 const cnt=i=>G.pl.filter(p=>p.i.iid===i.iid).length;
 function ui(soft){const now=performance.now();if(soft&&now-lastUi<200)return;lastUi=now;const ultBtn=document.getElementById('ult');if(ultBtn&&G.selP){const pu=G.pl.find(x=>x.pid===G.selP);if(pu&&isHi(pu.i)&&pu.i.lv>=5){const st2=stats(pu.i),es2=EVO_SKILL[pu.i.id];const un2=es2?es2.ult:(ULT_DEF[st2.skill]?ULT_DEF[st2.skill].n:'ULTIMATE');if(pu.ultCd>0){ultBtn.disabled=true;ultBtn.textContent='⏳ '+Math.ceil(pu.ultCd)+'s'}else{ultBtn.disabled=false;ultBtn.textContent='⚡ '+un2}}}$('gc').textContent=Math.floor(S.coins);$('gl').textContent=G.lives;$('gw').textContent=G.wave;$('gwm').textContent=G.inf?' ♾️':'/'+MAXW;if(G.inf){const nb=15-(G.wave%15||15);$('gn').textContent='♾️ W'+G.wave+' · 💎+100 dlm '+nb+'w · 🏆'+(S.best||0)}else{$('gn').textContent=S.stage.n}$('sw').disabled=G.act||G.over||(!G.inf&&G.wave>=MAXW);updateUltShortcut();if(soft)return;hand();info()}
-function hand(){
-    const h=$('hand');
-    h.innerHTML='';
-    const hand=S.inv.filter(u=>S.load.includes(u.iid));
-    if(!hand.length){
-        h.innerHTML='<div style="color:#666;font-size:11px;padding:8px">Semua unit di field / loadout kosong</div>';
-        return;
-    }
-    for(const u of hand){
-        const d=DEF[u.id],r=R[u.rar],ro=ROLE[role(d)]||['-','#fff'],c=cnt(u),m=maxDep(u),full=c>=m,tr=getTrait(u),e=document.createElement('div');
-        const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';
-        const trHTML=tr?`<div style="color:${tr.c};font-size:9px">${tr.i} ${tr.n}${tl}</div>`:`<div style="color:#666;font-size:9px">—</div>`;
-        e.className='hc'+(full?' dim':'')+(G.sel===u.iid?' sel':'');
-        e.style.borderColor=G.sel===u.iid?'#f1c40f':r.c;
-        e.innerHTML=`<span>${d.icon}</span><div><b style="color:#fff;font-size:10px">${d.name}</b><div style="color:${ro[1]};font-size:8px">${ro[0]}</div>${trHTML}<div style="color:#f1c40f;font-size:9px">🪙${placeCost(u)}</div></div><i>${m-c}/${m}</i>`;
-        e.onclick=()=>{
-            if(full){toast('Batas '+m+' penuh!');return}
-            G.sel=G.sel===u.iid?null:u.iid;
-            G.selP=null;
-            [...h.children].forEach(c=>c.classList.remove('sel'));
-            if(G.sel===u.iid)e.classList.add('sel');
-            info();
-        };
-        h.appendChild(e);
-    }
-}
+function hand(){const h=$('hand');h.innerHTML='';const hand=S.inv.filter(u=>S.load.includes(u.iid));if(!hand.length){h.innerHTML='<div style="color:#666;font-size:11px;padding:8px">Semua unit di field / loadout kosong</div>';return}for(const u of hand){const d=DEF[u.id],r=R[u.rar],ro=ROLE[role(d)]||['-','#fff'],c=cnt(u),m=maxDep(u),full=c>=m,tr=getTrait(u),e=document.createElement('div');const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';const trHTML=tr?`<div style="color:${tr.c};font-size:9px">${tr.i} ${tr.n}${tl}</div>`:`<div style="color:#666;font-size:9px">—</div>`;e.className='hc'+(full?' dim':'')+(G.sel===u.iid?' sel':'');e.style.borderColor=G.sel===u.iid?'#f1c40f':r.c;e.innerHTML=`<span>${d.icon}</span><div><b style="color:#fff;font-size:10px">${d.name}</b><div style="color:${ro[1]};font-size:8px">${ro[0]}</div>${trHTML}<div style="color:#f1c40f;font-size:9px">🪙${placeCost(u)}</div></div><i>${m-c}/${m}</i>`;e.onclick=()=>{if(full){toast('Batas '+m+' penuh!');return}G.sel=G.sel===u.iid?null:u.iid;G.selP=null;[...h.children].forEach(c=>c.classList.remove('sel'));if(G.sel===u.iid)e.classList.add('sel');info()};h.appendChild(e)}}
 function info(){try{const u=G.pl.find(x=>x.pid===G.selP);if(!u){pop.style.display='none';return}const i=u.i,st=stats(i),mx=MAXL[i.rar]||10,c=upCost(i),d=DEF[i.id],rc=RECIPES[i.id],ro=ROLE[role(d)]||['-','#fff'];let ev='';const tr=st.trait;const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';const traitHTML=tr?`<div class="row"><span>🎲</span><b style="color:${tr.c}">${tr.i} ${tr.n}${tl}</b></div>`:`<div class="row"><span>🎲</span><b style="color:#666">—</b></div>`;const es=EVO_SKILL[i.id];const skillName=es?`${es.icon} ${es.name}`:st.skill;const ultName=es?es.ult:(ULT_DEF[st.skill]?ULT_DEF[st.skill].n:'ULT');const ec=(st.skill==='economy')?Math.floor((80+i.lv*35)*(ECO_K[i.rar]||1)):0;if(rc){let can=true;ev=`<div style="margin-top:4px;color:#aaa;font-size:10px">🧬 → ${DEF[rc.r].name}</div>`;for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;ev+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}const gc=rc.cost||0,hasG=S.gems>=gc;if(!hasG)can=false;ev+=`<div class="mr" style="border-color:${hasG?'#2ecc71':'#e74c3c'}"><span>💎</span><span>${S.gems}/${gc}</span></div><button id="ev" class="y" ${can?'':'disabled'}>Evolve</button>`}
     const buffedDmg = u.buff > 0 ? Math.floor(st.dmg * (1 + u.buff)) : st.dmg;
     const buffedRng = u.buffRng > 0 ? Math.floor(st.rng * (1 + u.buffRng)) : st.rng;
@@ -611,28 +545,8 @@ function info(){try{const u=G.pl.find(x=>x.pid===G.selP);if(!u){pop.style.displa
     const rc2=cv.getBoundingClientRect(),wr=$('cw').getBoundingClientRect(),k=rc2.width/900,px=rc2.left-wr.left+u.x*k,py=rc2.top-wr.top+u.y*k;pop.style.display='block';if(window.innerWidth<=640){pop.style.left='50%';pop.style.transform='translateX(-50%)';pop.style.top='auto';pop.style.bottom='10px';pop.style.width='min(280px,90vw)'}else{pop.style.transform='';pop.style.bottom='';pop.style.width='180px';const pw=pop.offsetWidth||180,ph=pop.offsetHeight||200;let lx=px+26;if(lx+pw>wr.width-4)lx=px-pw-26;pop.style.left=Math.max(4,lx)+'px';pop.style.top=Math.max(4,Math.min(wr.height-ph-4,py-ph/2))+'px'}const ultEl=$('ult');if(ultEl)ultEl.onclick=()=>{if(u.ultCd>0||i.lv<5)return;fireUltimate(u,st);save();setTimeout(()=>info(),100)};const upEl=$('up');if(upEl)upEl.onclick=()=>{if(i.lv>=mx||S.coins<c)return;S.coins-=c;i.lv++;parts(u.x,u.y,'#f1c40f',14,90,.8);if(isHi(i)&&i.lv===5){const col=R[i.rar].c;ring(u.x,u.y,90,col,.9,6);nova(u.x,u.y,70,col,.6);parts(u.x,u.y,col,40,220,1.2);flash(col,.3)}toast('⬆️ Lv'+i.lv);save();ui()};const pkEl=$('pk');if(pkEl)pkEl.onclick=()=>{S.coins+=Math.floor(placeCost(u.i)/2);G.pl=G.pl.filter(x=>x!==u);G.selP=null;if(G.lastUltTower===u.pid)G.lastUltTower=null;pop.style.display='none';ui()};const eb=$('ev');if(eb)eb.onclick=()=>{if(!rc)return;for(const k in rc.m)if((S.mats[k]||0)<rc.m[k])return toast('❌ Bahan kurang!');const gc=rc.cost||0;if(S.gems<gc)return toast('❌ Butuh '+gc+'💎!');for(const k in rc.m)S.mats[k]-=rc.m[k];S.gems-=gc;S.stats.gemsSpent += gc;const oldN=DEF[i.id].name;ring(u.x,u.y,120,EVO_SKILL[rc.r].color,.9,7);nova(u.x,u.y,150,EVO_SKILL[rc.r].color,.8);parts(u.x,u.y,EVO_SKILL[rc.r].color,60,320,1.3);i.id=rc.r;u.i.id=rc.r;i.rar=DEF[rc.r].rar;u.i.rar=DEF[rc.r].rar;i.lv=1;u.i.lv=1;const es2=EVO_SKILL[i.id];save();pop.style.display='none';G.paused=true;playEvoCinematic(oldN,DEF[i.id].name,DEF[i.id].icon,es2.color,es2.icon+' '+es2.name,es2.desc,es2.ult,()=>{if(G){G.paused=false;ui();if(G.pl.includes(u))G.selP=u.pid;info()}toast('🌟 '+oldN+' → '+DEF[i.id].name)})}}catch(e){console.error(e);pop.style.display='none'}}
 function placeUnit(x,y){
     if(!G||G.over||G.paused)return;
-    for(const u of G.pl)if(Math.hypot(x-u.x,y-u.y)<25){
-        G.selP=u.pid;
-        G.sel=null;
-        if(isHi(u.i) && u.i.lv >= 5) G.lastUltTower = u.pid;
-        return ui()
-    }
-    if(G.sel){
-        const i=S.inv.find(v=>v.iid===G.sel);
-        if(!i)return;
-        if(G.wp.slice(0,-1).some((a,k)=>seg(x,y,a,G.wp[k+1])<32))return toast('❌ Di jalan!');
-        if(G.pl.some(u=>Math.hypot(x-u.x,y-u.y)<42))return toast('❌ Dekat!');
-        if(cnt(i)>=maxDep(i))return toast('Batas penuh!');
-        const pc=placeCost(i);
-        if(S.coins<pc)return toast('❌ Butuh '+pc+'🪙');
-        S.coins-=pc;
-        G.pl.push({pid:PID++,i:{...i,trait:i.trait?{...i.trait}:null},x,y,cdT:0,pulse:0,buff:0,buffRng:0,buffSpd:0,ultCd:0,aimAngle:0});
-        parts(x,y,R[i.rar].c,15,100,.7);
-        if(isHi(i)){const c=tc({i});ring(x,y,80,c,.7,5);ring(x,y,45,'#fff',.5,3);nova(x,y,60,c,.5);parts(x,y,'#fff',25,200,1);shake(4,.15)}
-        if(cnt(i)>=maxDep(i))G.sel=null;
-        if(G.cd>0&&G.wave===0&&!G.act){toast('⚔️ Wave 1!');startWave()}
-        return ui()
-    }
+    for(const u of G.pl)if(Math.hypot(x-u.x,y-u.y)<25){G.selP=u.pid;G.sel=null;return ui()}
+    if(G.sel){const i=S.inv.find(v=>v.iid===G.sel);if(!i)return;if(G.wp.slice(0,-1).some((a,k)=>seg(x,y,a,G.wp[k+1])<32))return toast('❌ Di jalan!');if(G.pl.some(u=>Math.hypot(x-u.x,y-u.y)<42))return toast('❌ Dekat!');if(cnt(i)>=maxDep(i))return toast('Batas penuh!');const pc=placeCost(i);if(S.coins<pc)return toast('❌ Butuh '+pc+'🪙');S.coins-=pc;G.pl.push({pid:PID++,i:{...i,trait:i.trait?{...i.trait}:null},x,y,cdT:0,pulse:0,buff:0,buffRng:0,buffSpd:0,ultCd:0,aimAngle:0});parts(x,y,R[i.rar].c,15,100,.7);if(isHi(i)){const c=tc({i});ring(x,y,80,c,.7,5);ring(x,y,45,'#fff',.5,3);nova(x,y,60,c,.5);parts(x,y,'#fff',25,200,1);shake(4,.15)}if(cnt(i)>=maxDep(i))G.sel=null;if(G.cd>0&&G.wave===0&&!G.act){toast('⚔️ Wave 1!');startWave()}return ui()}
     G.selP=null;
     ui()
 }
@@ -641,59 +555,55 @@ let _tl=0;cv.addEventListener('touchstart',(e)=>{const n=Date.now();if(n-_tl<300
 document.addEventListener('pointerdown',e=>{if(!G||!G.selP||pop.contains(e.target)||e.target===cv)return;G.selP=null;pop.style.display='none';ui()});
 function seg(px,py,a,b){const dx=b.x-a.x,dy=b.y-a.y,l=dx*dx+dy*dy;let t=((px-a.x)*dx+(py-a.y)*dy)/l;t=Math.max(0,Math.min(1,t));return Math.hypot(px-(a.x+t*dx),py-(a.y+t*dy))}
 $('sw').onclick=startWave;
-function updateAutoUpgBtn(){
-    $('autoUpgBtn').textContent = S.autoUpg ? '⬆ Auto ON' : '⬆ Auto OFF';
-    $('autoUpgBtn').style.background = S.autoUpg ? 'linear-gradient(#2ecc71,#27ae60)' : 'linear-gradient(#555,#333)';
-}
-$('autoUpgBtn').onclick = () => {
-    S.autoUpg = !S.autoUpg;
-    save();
-    updateAutoUpgBtn();
-    toast(S.autoUpg ? '⬆ Auto Upgrade ON' : '⬆ Auto Upgrade OFF');
-};
+function updateAutoUpgBtn(){$('autoUpgBtn').textContent = S.autoUpg ? '⬆ Auto ON' : '⬆ Auto OFF';$('autoUpgBtn').style.background = S.autoUpg ? 'linear-gradient(#2ecc71,#27ae60)' : 'linear-gradient(#555,#333)';}
+$('autoUpgBtn').onclick = () => {S.autoUpg = !S.autoUpg;save();updateAutoUpgBtn();toast(S.autoUpg ? '⬆ Auto Upgrade ON' : '⬆ Auto Upgrade OFF');};
 updateAutoUpgBtn();
+
 function updateUltShortcut(){
-    const btn = $('ultShortcut');
-    if(!G || !G.lastUltTower){ btn.style.display='none'; return; }
-    const u = G.pl.find(x => x.pid === G.lastUltTower);
-    if(!u || !isHi(u.i) || u.i.lv < 5){ btn.style.display='none'; return; }
-    btn.style.display = 'block';
-    if(u.ultCd > 0){
-        btn.textContent = '⏳ ' + Math.ceil(u.ultCd) + 's';
-        btn.disabled = true;
-        btn.style.opacity = '.6';
-    } else {
+    const bar = $('ultShortcutBar');
+    if(!G || !$('game').classList.contains('on')){bar.style.display = 'none';return;}
+    const towers = G.pl.filter(u => isHi(u.i) && u.i.lv >= 5);
+    if(towers.length === 0){bar.style.display = 'none';return;}
+    bar.style.display = 'flex';
+    let html = '';
+    for(const u of towers){
         const es = EVO_SKILL[u.i.id];
         const nm = es ? es.ult : (ULT_DEF[stats(u.i).skill] ? ULT_DEF[stats(u.i).skill].n : 'ULT');
-        btn.textContent = '⚡ ' + nm;
-        btn.disabled = false;
-        btn.style.opacity = '1';
+        const icon = DEF[u.i.id].icon;
+        if(u.ultCd > 0){
+            html += `<button class="ultSC" data-pid="${u.pid}" disabled style="pointer-events:auto;padding:7px 11px;font-size:11px;font-weight:bold;background:linear-gradient(180deg,#444,#222);border:2px solid #666;border-radius:8px;color:#aaa;min-height:auto;box-shadow:0 4px 12px rgba(0,0,0,.5);opacity:.7">${icon} ⏳ ${Math.ceil(u.ultCd)}s</button>`;
+        } else {
+            html += `<button class="ultSC" data-pid="${u.pid}" style="pointer-events:auto;padding:7px 11px;font-size:11px;font-weight:bold;background:linear-gradient(180deg,#ff2266,#aa0033);border:2px solid #fff;border-radius:8px;color:#fff;min-height:auto;box-shadow:0 4px 12px rgba(255,34,102,.6)">${icon} ⚡ ${nm}</button>`;
+        }
     }
+    bar.innerHTML = html;
+    bar.querySelectorAll('.ultSC').forEach(btn => {
+        btn.onclick = () => {
+            const pid = +btn.dataset.pid;
+            const u = G.pl.find(x => x.pid === pid);
+            if(!u) return;
+            const i = u.i;
+            if(!isHi(i) || i.lv < 5) return toast('❌ Butuh Lv 5+');
+            if(u.ultCd > 0) return toast('⏳ Cooldown '+Math.ceil(u.ultCd)+'s');
+            fireUltimate(u, stats(i));
+            save();
+            updateUltShortcut();
+        };
+    });
 }
-$('ultShortcut').onclick = () => {
-    if(!G || !G.lastUltTower) return;
-    const u = G.pl.find(x => x.pid === G.lastUltTower);
-    if(!u){ G.lastUltTower = null; updateUltShortcut(); return; }
-    const i = u.i;
-    if(!isHi(i) || i.lv < 5) return toast('❌ Butuh Lv 5+');
-    if(u.ultCd > 0) return toast('⏳ Cooldown '+Math.ceil(u.ultCd)+'s');
-    const st = stats(i);
-    fireUltimate(u, st);
-    save();
-    updateUltShortcut();
-};
-$('speedBtn').onclick = () => {
-    gameSpeed = gameSpeed === 1 ? 2 : 1;
-    $('speedBtn').textContent = gameSpeed === 1 ? '▶ x1' : '⏩ x2';
-    $('speedBtn').style.background = gameSpeed === 1 ? 'linear-gradient(#3498db,#2980b9)' : 'linear-gradient(#e74c3c,#c0392b)';
-};
+setInterval(() => {
+    if(G && !G.paused && !G.over && $('game').classList.contains('on')){
+        updateUltShortcut();
+    }
+}, 250);
+
+$('speedBtn').onclick = () => {gameSpeed = gameSpeed === 1 ? 2 : 1;$('speedBtn').textContent = gameSpeed === 1 ? '▶ x1' : '⏩ x2';$('speedBtn').style.background = gameSpeed === 1 ? 'linear-gradient(#3498db,#2980b9)' : 'linear-gradient(#e74c3c,#c0392b)';};
 $('sk').onclick=()=>{while(G.q.length)spawn(G.q.shift());G.skipped=true;$('sk').style.display='none'};
 function sets(back){$('ob').innerHTML=`<h2 style="margin-bottom:8px">⚙️ Settings</h2><label class="tg"><span>⏩ Auto Skip</span><input type="checkbox" id="t1" ${S.auto?'checked':''}></label><label class="tg"><span>✨ Efek</span><input type="checkbox" id="t2" ${S.fx?'checked':''}></label><button id="sb" class="g">← Kembali</button>`;$('t1').onchange=e=>{S.auto=e.target.checked;save()};$('t2').onchange=e=>{S.fx=e.target.checked;save()};$('sb').onclick=back}
-function pmenu(g){if(g&&G&&!G.over)G.paused=true;$('ov').style.display='flex';if(!g)return sets(()=>{$('ov').style.display='none'});const b='style="display:block;width:220px;margin:6px auto"';$('ob').innerHTML=`<h2 style="margin-bottom:10px">⏸ Menu</h2><button id="p1" class="g" ${b}>▶ Lanjut</button><button id="p2" ${b}>⚙️ Settings</button><button id="p3" class="r" ${b}>🏠 Menu</button>`;$('p1').onclick=()=>{$('ov').style.display='none';if(G)G.paused=false};$('p2').onclick=()=>sets(()=>pmenu(true));$('p3').onclick=()=>{sync();G=null;$('ov').style.display='none';pop.style.display='none';$('ultShortcut').style.display='none';show('menu');updMenu();save()}}
+function pmenu(g){if(g&&G&&!G.over)G.paused=true;$('ov').style.display='flex';if(!g)return sets(()=>{$('ov').style.display='none'});const b='style="display:block;width:220px;margin:6px auto"';$('ob').innerHTML=`<h2 style="margin-bottom:10px">⏸ Menu</h2><button id="p1" class="g" ${b}>▶ Lanjut</button><button id="p2" ${b}>⚙️ Settings</button><button id="p3" class="r" ${b}>🏠 Menu</button>`;$('p1').onclick=()=>{$('ov').style.display='none';if(G)G.paused=false};$('p2').onclick=()=>sets(()=>pmenu(true));$('p3').onclick=()=>{sync();G=null;$('ov').style.display='none';pop.style.display='none';$('ultShortcutBar').style.display='none';show('menu');updMenu();save()}}
 function evMenu(){$('ov').style.display='flex';const list=S.inv.filter(u=>RECIPES[u.id]);let h='<h2 style="margin-bottom:8px">🧬 Evolve</h2><div style="max-height:60vh;overflow-y:auto;width:min(440px,86vw)">';if(!list.length)h+='<p style="color:#888;font-size:13px">Belum ada unit yang bisa di-evolve.</p>';for(const u of list){const rc=RECIPES[u.id];let can=true,rows='';for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;rows+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}const gc=rc.cost||0,hasG=S.gems>=gc;if(!hasG)can=false;rows+=`<div class="mr" style="border-color:${hasG?'#2ecc71':'#e74c3c'}"><span>💎</span><span>${S.gems}/${gc}</span></div>`;const isExotic=rc.r.startsWith('exotic_')||rc.r==='shadow_king',isPrim=rc.r.endsWith('_primordial')||rc.r==='shadow_god',isGod=rc.r.endsWith('_god')||rc.r==='shadow_emperor';const bc=isExotic?'#ff00aa':(isPrim?'#ff0066':(isGod?'#ffd700':R.mythic.c));const lbl=isExotic?'💎 ETERNAL → EXOTIC':(isPrim?'🔥 TRANSCENDENT → PRIMORDIAL':(isGod?'🌟 SECRET → TRANSCENDENT':'MYTHIC → TD'));h+=`<div class="card" style="cursor:default;text-align:left;margin:6px 0;border-color:${bc};${isExotic?'box-shadow:0 0 25px #ff00aa':isPrim?'box-shadow:0 0 20px #ff0066':''}"><div style="font-size:9px;color:${bc};font-weight:bold">${lbl}</div>${DEF[u.id].icon} <b style="color:#fff">${DEF[u.id].name}</b> → ${DEF[rc.r].icon} <b style="color:${bc}">${DEF[rc.r].name}</b>${rows}<button class="y evgo" data-i="${u.iid}" style="width:100%;margin:4px 0 0" ${can?'':'disabled'}>Evolve</button></div>`}$('ob').innerHTML=h+'</div><button id="evx" class="r" style="margin-top:8px">Tutup</button>';$('evx').onclick=()=>{$('ov').style.display='none'};document.querySelectorAll('.evgo').forEach(b=>b.onclick=()=>{const u=S.inv.find(x=>x.iid==b.dataset.i),rc=RECIPES[u.id];if(!rc)return;for(const k in rc.m)if((S.mats[k]||0)<rc.m[k])return toast('❌ Bahan!');const gc=rc.cost||0;if(S.gems<gc)return toast('❌ Butuh '+gc+'💎!');for(const k in rc.m)S.mats[k]-=rc.m[k];S.gems-=gc;S.stats.gemsSpent += gc;const oldName=DEF[u.id].name;u.id=rc.r;u.rar=DEF[rc.r].rar;u.lv=1;const es=EVO_SKILL[u.id];save();updMenu();const newName=DEF[u.id].name;$('ov').style.display='none';playEvoCinematic(oldName,newName,DEF[u.id].icon,es.color,es.icon+' '+es.name,es.desc,es.ult,()=>{evMenu();toast('🌟 '+newName)})})}
 
-/* ============ TRAIT MANAGER ============ */
-let TM={selected:null,pending:null,old:null,kept:null};
+let TM={selected:null,pending:null,old:null,kept:null,autoSkip:false};
 function resetTM(){TM.selected=null;TM.pending=null;TM.old=null;TM.kept=null;}
 function traitMenu(){resetTM();$('ov').style.display='flex';renderTraitMenu();}
 function renderTraitMenu(){
@@ -707,84 +617,61 @@ function renderTraitMenu(){
   <div style="max-height:50vh;overflow-y:auto;width:min(460px,88vw)">`;
   if(!S.inv.length)h+='<p style="color:#888;text-align:center">Belum ada unit.</p>';
   const sorted=[...S.inv].sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar));
-  for(const u of sorted){
-    const d=DEF[u.id],r=R[u.rar],tr=getTrait(u);
-    const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';
-    h+=`<div style="background:#0a0e27;border:1px solid ${r.c};border-radius:6px;padding:8px;margin:4px 0;display:flex;justify-content:space-between;align-items:center;gap:8px">
-      <div style="flex:1;min-width:0">
-        <div><b style="color:#fff;font-size:13px">${d.icon} ${d.name}</b> <span style="color:${r.c};font-size:10px">${r.n}</span></div>
-        <div style="font-size:11px;color:${tr?tr.c:'#666'};margin-top:2px">${tr?`${tr.i} <b>${tr.n}${tl}</b>`:'— belum ada trait —'}</div>
-      </div>
-      <button class="tm-pick" data-i="${u.iid}" style="margin:0;padding:6px 12px;font-size:12px;flex-shrink:0;background:linear-gradient(#9b59b6,#8e44ad)">Reroll ▶</button>
-    </div>`;
-  }
+  for(const u of sorted){const d=DEF[u.id],r=R[u.rar],tr=getTrait(u);const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';h+=`<div style="background:#0a0e27;border:1px solid ${r.c};border-radius:6px;padding:8px;margin:4px 0;display:flex;justify-content:space-between;align-items:center;gap:8px"><div style="flex:1;min-width:0"><div><b style="color:#fff;font-size:13px">${d.icon} ${d.name}</b> <span style="color:${r.c};font-size:10px">${r.n}</span></div><div style="font-size:11px;color:${tr?tr.c:'#666'};margin-top:2px">${tr?`${tr.i} <b>${tr.n}${tl}</b>`:'— belum ada trait —'}</div></div><button class="tm-pick" data-i="${u.iid}" style="margin:0;padding:6px 12px;font-size:12px;flex-shrink:0;background:linear-gradient(#9b59b6,#8e44ad)">Reroll ▶</button></div>`}
   h+=`</div><button id="tmClose" class="r" style="width:100%;margin-top:10px">Tutup</button>`;
   $('ob').innerHTML=h;
   if($('tmClose')) $('tmClose').onclick = () => { $('ov').style.display='none'; resetTM(); };
-  document.querySelectorAll('.tm-pick').forEach(b=>{
-    b.onclick=()=>{
-      TM.selected=+b.dataset.i;
-      TM.old=S.inv.find(x=>x.iid===TM.selected).trait;
-      renderTraitReroll();
-    };
-  });
+  document.querySelectorAll('.tm-pick').forEach(b=>{b.onclick=()=>{TM.selected=+b.dataset.i;TM.old=S.inv.find(x=>x.iid===TM.selected).trait;renderTraitReroll();};});
 }
 function renderTraitReroll(){
-    const u=S.inv.find(x=>x.iid===TM.selected);
-    if(!u)return;
+    const u=S.inv.find(x=>x.iid===TM.selected);if(!u)return;
     const d=DEF[u.id],r=R[u.rar];
     let h=`<h2 style="margin-bottom:6px">🎲 Reroll Trait</h2>
-    <div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between">
-      <span style="color:#aaa">🎲 Token</span><b style="color:#f1c40f">${S.rr||0}</b>
-    </div>
-    <div style="background:#0a0e27;border:1px solid ${r.c};border-radius:6px;padding:10px;margin-bottom:10px;text-align:left">
-      <div><b style="color:#fff;font-size:14px">${d.icon} ${d.name}</b> <span style="color:${r.c};font-size:11px">${r.n}</span></div>
-      <div style="font-size:12px;color:#888;margin-top:4px">Trait saat ini:</div>
-      <div style="font-size:13px;color:${TM.old?TRAITS[TM.old.id].c:'#666'};margin-top:2px">${TM.old?`${TRAITS[TM.old.id].i} <b>${TRAITS[TM.old.id].n}</b>`:'— Tidak ada —'}</div>
-    </div>`;
-    if(TM.kept){
-        const kt=TRAITS[TM.kept.id], ktl=kt.tiers.length>1?[' I',' II',' III'][TM.kept.tier]:'';
-        h+=`<div style="background:#0a0e27;border:2px solid #2ecc71;border-radius:6px;padding:8px;margin-bottom:8px;text-align:left">
-          <div style="font-size:11px;color:#2ecc71;font-weight:bold">🔒 Disimpan (Kept):</div>
-          <div style="font-size:12px;color:${kt.c};margin-top:3px">${kt.i} <b>${kt.n}${ktl}</b></div>
-          <div style="font-size:10px;color:#aaa;margin-top:1px">${kt.f(kt.tiers[TM.kept.tier])}</div>
-        </div>`;
-    }
-    if(TM.pending){
-        const pt=TRAITS[TM.pending.id], tl=pt.tiers.length>1?[' I',' II',' III'][TM.pending.tier]:'';
-        h+=`<div style="background:#0a0e27;border:2px dashed #f1c40f;border-radius:6px;padding:10px;margin-bottom:10px;text-align:left">
-          <div style="font-size:12px;color:#f1c40f;font-weight:bold">✨ Hasil Reroll:</div>
-          <div style="font-size:13px;color:${pt.c};margin-top:4px">${pt.i} <b>${pt.n}${tl}</b></div>
-          <div style="font-size:11px;color:#aaa;margin-top:2px">${pt.f(pt.tiers[TM.pending.tier])}</div>
-        </div>
-        <button id="tmApply" class="g" style="width:100%;margin-bottom:6px">✅ Terapkan</button>
-        <button id="tmKeep" style="width:100%;margin-bottom:6px;background:linear-gradient(#2ecc71,#27ae60)">🔒 Keep (Simpan Hasil Ini)</button>
-        <button id="tmRerollAgain" class="y" style="width:100%;margin-bottom:6px">🎲 Reroll Lagi (1 🎲)</button>
-        <button id="tmCancel" class="r" style="width:100%;margin-bottom:6px">❌ Batal</button>
-        <button id="tmCloseReroll" class="r" style="width:100%;background:linear-gradient(#555,#333)">Tutup</button>`;
-    }else if(TM.kept){
-        h+=`<button id="tmRestore" class="g" style="width:100%;margin-bottom:6px">♻️ Pakai Yang Disimpan (Keep)</button>
-        <button id="tmApply" class="g" style="width:100%;margin-bottom:6px;background:linear-gradient(#f39c12,#d68910)">✅ Terapkan Kept</button>
-        <button id="tmDoReroll" class="y" style="width:100%;margin-bottom:6px" ${S.rr<1?'disabled':''}>🎲 Reroll Trait (1 🎲)</button>
-        <button id="tmBack" style="width:100%;margin-bottom:6px">← Kembali</button>
-        <button id="tmCloseReroll" class="r" style="width:100%;background:linear-gradient(#555,#333)">Tutup</button>`;
-    }else{
-        h+=`<button id="tmDoReroll" class="y" style="width:100%;margin-bottom:6px" ${S.rr<1?'disabled':''}>🎲 Reroll Trait (1 🎲)</button>
-        <button id="tmBack" style="width:100%;margin-bottom:6px">← Kembali</button>
-        <button id="tmCloseReroll" class="r" style="width:100%;background:linear-gradient(#555,#333)">Tutup</button>`;
-    }
+    <div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between"><span style="color:#aaa">🎲 Token</span><b style="color:#f1c40f">${S.rr||0}</b></div>
+    <div style="background:#0a0e27;border:1px solid ${r.c};border-radius:6px;padding:10px;margin-bottom:10px;text-align:left"><div><b style="color:#fff;font-size:14px">${d.icon} ${d.name}</b> <span style="color:${r.c};font-size:11px">${r.n}</span></div><div style="font-size:12px;color:#888;margin-top:4px">Trait saat ini:</div><div style="font-size:13px;color:${TM.old?TRAITS[TM.old.id].c:'#666'};margin-top:2px">${TM.old?`${TRAITS[TM.old.id].i} <b>${TRAITS[TM.old.id].n}</b>`:'— Tidak ada —'}</div></div>`;
+    if(TM.kept){const kt=TRAITS[TM.kept.id], ktl=kt.tiers.length>1?[' I',' II',' III'][TM.kept.tier]:'';h+=`<div style="background:#0a0e27;border:2px solid #2ecc71;border-radius:6px;padding:8px;margin-bottom:8px;text-align:left"><div style="font-size:11px;color:#2ecc71;font-weight:bold">🔒 Disimpan (Kept):</div><div style="font-size:12px;color:${kt.c};margin-top:3px">${kt.i} <b>${kt.n}${ktl}</b></div><div style="font-size:10px;color:#aaa;margin-top:1px">${kt.f(kt.tiers[TM.kept.tier])}</div></div>`}
+    if(TM.pending){const pt=TRAITS[TM.pending.id], tl=pt.tiers.length>1?[' I',' II',' III'][TM.pending.tier]:'';h+=`<div style="background:#0a0e27;border:2px dashed #f1c40f;border-radius:6px;padding:10px;margin-bottom:10px;text-align:left"><div style="font-size:12px;color:#f1c40f;font-weight:bold">✨ Hasil Reroll:</div><div style="font-size:13px;color:${pt.c};margin-top:4px">${pt.i} <b>${pt.n}${tl}</b></div><div style="font-size:11px;color:#aaa;margin-top:2px">${pt.f(pt.tiers[TM.pending.tier])}</div></div><button id="tmApply" class="g" style="width:100%;margin-bottom:6px">✅ Terapkan</button><button id="tmKeep" style="width:100%;margin-bottom:6px;background:linear-gradient(#2ecc71,#27ae60)">🔒 Keep (Simpan Hasil Ini)</button><button id="tmRerollAgain" class="y" style="width:100%;margin-bottom:6px">🎲 Reroll Lagi (1 🎲)</button><button id="tmCancel" class="r" style="width:100%;margin-bottom:6px">❌ Batal</button><button id="tmCloseReroll" class="r" style="width:100%;background:linear-gradient(#555,#333)">Tutup</button>`}
+    else if(TM.kept){h+=`<button id="tmRestore" class="g" style="width:100%;margin-bottom:6px">♻️ Pakai Yang Disimpan (Keep)</button><button id="tmApply" class="g" style="width:100%;margin-bottom:6px;background:linear-gradient(#f39c12,#d68910)">✅ Terapkan Kept</button><button id="tmDoReroll" class="y" style="width:100%;margin-bottom:6px" ${S.rr<1?'disabled':''}>🎲 Reroll Trait (1 🎲)</button><button id="tmBack" style="width:100%;margin-bottom:6px">← Kembali</button><button id="tmCloseReroll" class="r" style="width:100%;background:linear-gradient(#555,#333)">Tutup</button>`}
+    else{h+=`<button id="tmDoReroll" class="y" style="width:100%;margin-bottom:6px" ${S.rr<1?'disabled':''}>🎲 Reroll Trait (1 🎲)</button><button id="tmFilter" style="width:100%;margin-bottom:6px;background:linear-gradient(#9b59b6,#8e44ad)">🎯 Filter Trait (Keep/Skip)</button><button id="tmTraitList" style="width:100%;margin-bottom:6px;background:linear-gradient(#3498db,#2980b9)">📖 Lihat Semua Trait</button><button id="tmBack" style="width:100%;margin-bottom:6px">← Kembali</button><button id="tmCloseReroll" class="r" style="width:100%;background:linear-gradient(#555,#333)">Tutup</button>`}
     $('ob').innerHTML=h;
     if($('tmCloseReroll')) $('tmCloseReroll').onclick = () => { $('ov').style.display='none'; resetTM(); };
-    if($('tmDoReroll'))$('tmDoReroll').onclick=()=>{if(S.rr<1)return toast('❌ Token kurang!');S.rr--;TM.pending=rndTrait();save();renderTraitReroll()};
-    if($('tmRerollAgain'))$('tmRerollAgain').onclick=()=>{if(S.rr<1)return toast('❌ Token kurang!');S.rr--;TM.pending=rndTrait();save();renderTraitReroll()};
+    if($('tmDoReroll'))$('tmDoReroll').onclick=()=>{if(S.rr<1)return toast('❌ Token kurang!');S.rr--;TM.pending=rndTrait();applyAutoSkip();save();renderTraitReroll()};
+    if($('tmRerollAgain'))$('tmRerollAgain').onclick=()=>{if(S.rr<1)return toast('❌ Token kurang!');S.rr--;TM.pending=rndTrait();applyAutoSkip();save();renderTraitReroll()};
     if($('tmApply'))$('tmApply').onclick=()=>{u.trait=TM.pending||TM.kept;TM.pending=null;TM.kept=null;save();updMenu();toast('✅ Trait diterapkan!');renderTraitMenu()};
     if($('tmCancel'))$('tmCancel').onclick=()=>{TM.pending=null;renderTraitReroll()};
     if($('tmBack'))$('tmBack').onclick=()=>{resetTM();renderTraitMenu()};
     if($('tmKeep'))$('tmKeep').onclick=()=>{TM.kept=TM.pending;TM.pending=null;toast('🔒 Hasil disimpan!');renderTraitReroll()};
     if($('tmRestore'))$('tmRestore').onclick=()=>{TM.pending=TM.kept;TM.kept=null;renderTraitReroll()};
+    if($('tmFilter'))$('tmFilter').onclick=()=>renderTraitFilter();
+    if($('tmTraitList'))$('tmTraitList').onclick=()=>renderTraitList();
+}
+function applyAutoSkip(){if(!TM.autoSkip || !TM.pending) return;const filt = S.traitFilter || {};let tries = 0;while(filt[TM.pending.id] === 'skip' && S.rr >= 1 && tries < 100){S.rr--;TM.pending = rndTrait();tries++;}if(tries > 0){save();toast('🎯 Auto-reroll '+tries+'x');}}
+function renderTraitFilter(){
+    let h = `<h2 style="margin-bottom:6px">🎯 Filter Trait</h2>
+    <div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between"><span style="color:#aaa">🎲 Token</span><b style="color:#f1c40f">${S.rr||0}</b></div>
+    <button id="tfAutoBtn" class="${TM.autoSkip?'g':'y'}" style="width:100%;margin-bottom:8px">${TM.autoSkip?'🎯 Auto ON - Hasil Skip otomatis di-reroll':'🎯 Auto OFF - Klik untuk aktifkan'}</button>
+    <p style="color:#888;font-size:11px;margin-bottom:8px;line-height:1.4">Tandai trait <b style="color:#e74c3c">SKIP</b> untuk hindari. Saat Auto ON, jika hasil reroll dapat trait Skip, otomatis reroll lagi pakai 1 token.</p>
+    <div style="max-height:45vh;overflow-y:auto;width:min(440px,88vw)">`;
+    const rarOrder = {common:0, legendary:1, mythic:2};
+    const sorted = Object.keys(TRAITS).sort((a,b) => rarOrder[TRAITS[a].rar] - rarOrder[TRAITS[b].rar]);
+    for(const id of sorted){const t = TRAITS[id];const st = (S.traitFilter && S.traitFilter[id]) || 'neutral';h += `<div style="background:#0a0e27;border:1px solid ${t.c};border-radius:6px;padding:8px;margin:4px 0"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><b style="color:${t.c};font-size:13px">${t.i} ${t.n}</b> <span style="color:#888;font-size:10px">(${t.rar}, ${t.chance}%)</span></div></div><div style="display:flex;gap:4px"><button class="tf-set" data-id="${id}" data-state="keep" style="flex:1;padding:4px;font-size:10px;min-height:auto;margin:0;background:${st==='keep'?'linear-gradient(#2ecc71,#27ae60)':'linear-gradient(#333,#222)'};border:1px solid ${st==='keep'?'#2ecc71':'#2a3a6a'}">⭐ KEEP</button><button class="tf-set" data-id="${id}" data-state="neutral" style="flex:1;padding:4px;font-size:10px;min-height:auto;margin:0;background:${st==='neutral'?'linear-gradient(#f39c12,#d68910)':'linear-gradient(#333,#222)'};border:1px solid ${st==='neutral'?'#f39c12':'#2a3a6a'}">⚪ NEUTRAL</button><button class="tf-set" data-id="${id}" data-state="skip" style="flex:1;padding:4px;font-size:10px;min-height:auto;margin:0;background:${st==='skip'?'linear-gradient(#e74c3c,#c0392b)':'linear-gradient(#333,#222)'};border:1px solid ${st==='skip'?'#e74c3c':'#2a3a6a'}">❌ SKIP</button></div></div>`}
+    h += `</div><button id="tfReset" class="r" style="width:100%;margin-top:8px">🗑️ Reset Filter</button><button id="tfBack" style="width:100%;margin-top:6px;background:linear-gradient(#555,#333)">← Kembali</button>`;
+    $('ob').innerHTML = h;
+    $('tfAutoBtn').onclick = () => { TM.autoSkip = !TM.autoSkip; renderTraitFilter(); };
+    document.querySelectorAll('.tf-set').forEach(b => {b.onclick = () => {const id = b.dataset.id, state = b.dataset.state;if(!S.traitFilter) S.traitFilter = {};if(state === 'neutral') delete S.traitFilter[id];else S.traitFilter[id] = state;save();renderTraitFilter();};});
+    $('tfReset').onclick = () => {if(!confirm('Reset semua filter trait?')) return;S.traitFilter = {};save();renderTraitFilter();};
+    $('tfBack').onclick = () => { renderTraitReroll(); };
+}
+function renderTraitList(){
+    let h = `<h2 style="margin-bottom:6px">📖 Daftar Trait</h2><p style="color:#888;font-size:11px;margin-bottom:8px">Semua trait yang bisa didapat dari reroll.</p><div style="max-height:60vh;overflow-y:auto;width:min(440px,88vw)">`;
+    const rarOrder = {common:0, legendary:1, mythic:2};
+    const sorted = Object.keys(TRAITS).sort((a,b) => rarOrder[TRAITS[a].rar] - rarOrder[TRAITS[b].rar]);
+    for(const id of sorted){const t = TRAITS[id];const rarColor = t.rar === 'common' ? '#b0b0b0' : t.rar === 'legendary' ? '#f39c12' : '#e74c3c';h += `<div style="background:#0a0e27;border:2px solid ${t.c};border-radius:8px;padding:10px;margin:6px 0"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><b style="color:${t.c};font-size:14px">${t.i} ${t.n}</b><span style="color:${rarColor};font-size:10px;font-weight:bold;text-transform:uppercase">${t.rar}</span></div><div style="font-size:10px;color:#aaa;margin-bottom:6px">Peluang: <b style="color:#f1c40f">${t.chance}%</b>${t.special==='monarch'?' · ⚠️ Max 1':''}</div><div style="border-top:1px solid #2a3a6a;padding-top:6px">`;t.tiers.forEach((tier, i) => {const tierName = t.tiers.length > 1 ? ['Tier I','Tier II','Tier III'][i] : 'Efek';h += `<div style="display:flex;justify-content:space-between;font-size:11px;padding:2px 0"><span style="color:#888">${tierName}</span><b style="color:#fff">${t.f(tier)}</b></div>`;});h += `</div></div>`;}
+    h += `</div><button id="tlBack" class="r" style="width:100%;margin-top:10px">← Kembali</button>`;
+    $('ob').innerHTML = h;
+    $('tlBack').onclick = () => { renderTraitReroll(); };
 }
 
-/* ============ INIT ============ */
 checkLogin();
 $('googleLoginBtn').onclick=()=>{if(!fbAuth)return toast('❌ Firebase error!');const provider=new firebase.auth.GoogleAuthProvider();fbAuth.signInWithPopup(provider).catch(e=>{toast('❌ Login gagal: '+e.message);$('loginMsg').innerHTML='<span style="color:#e74c3c">❌ '+e.message+'</span>'})};
 $('offlineBtn').onclick=()=>{S.user='Guest';save();show('menu');updMenu()};
@@ -805,15 +692,7 @@ $('profileBtn').onclick=()=>{
     $('editNameBtn').style.display = 'inline-block';
     window._viewingOtherProfile = false;
     let uHTML = '';
-    for(let i=0; i<6; i++){
-        const u = S.inv.find(x => x.iid === S.load[i]);
-        if(u){
-            const r = R[u.rar];
-            uHTML += `<div style="background:#151a3a;border:1px solid ${r.c};border-radius:6px;padding:5px;text-align:center;font-size:10px"><div style="font-size:18px">${DEF[u.id].icon}</div><b style="color:#fff;font-size:9px">${DEF[u.id].name}</b><div style="color:${r.c};font-size:8px">Lv ${u.lv}</div></div>`;
-        } else {
-            uHTML += `<div style="background:#151a3a;border:1px dashed #2a3a6a;border-radius:6px;padding:5px;text-align:center;font-size:10px;color:#555;display:flex;align-items:center;justify-content:center;height:55px">Empty</div>`;
-        }
-    }
+    for(let i=0; i<6; i++){const u = S.inv.find(x => x.iid === S.load[i]);if(u){const r = R[u.rar];uHTML += `<div style="background:#151a3a;border:1px solid ${r.c};border-radius:6px;padding:5px;text-align:center;font-size:10px"><div style="font-size:18px">${DEF[u.id].icon}</div><b style="color:#fff;font-size:9px">${DEF[u.id].name}</b><div style="color:${r.c};font-size:8px">Lv ${u.lv}</div></div>`}else{uHTML += `<div style="background:#151a3a;border:1px dashed #2a3a6a;border-radius:6px;padding:5px;text-align:center;font-size:10px;color:#555;display:flex;align-items:center;justify-content:center;height:55px">Empty</div>`}}
     $('profUnits').innerHTML = uHTML;
     $('profStats').innerHTML = `
         <div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Bosses Killed</span><b>${S.stats.bossesKilled}</b></div>
@@ -825,87 +704,30 @@ $('profileBtn').onclick=()=>{
     `;
     $('profileModal').style.display = 'flex';
 };
-$('closeProfile').onclick = () => { 
-    $('profileModal').style.display = 'none'; 
-    if (window._viewingOtherProfile) {
-        window._viewingOtherProfile = false;
-        $('leaderboardModal').style.display = 'flex';
-    }
-};
-$('editNameBtn').onclick = () => {
-    const currentName = S.nickname || (S.user ? S.user.split('@')[0] : 'Guest');
-    const newName = prompt("Masukkan nama baru (maks 15 karakter):", currentName);
-    if (newName && newName.trim() !== '') {
-        S.nickname = newName.trim().substring(0, 15);
-        save();
-        $('profName').textContent = S.nickname;
-        toast('✅ Nama berhasil diubah!');
-    }
-};
+$('closeProfile').onclick = () => { $('profileModal').style.display = 'none'; if (window._viewingOtherProfile) { window._viewingOtherProfile = false; $('leaderboardModal').style.display = 'flex'; } };
+$('editNameBtn').onclick = () => {const currentName = S.nickname || (S.user ? S.user.split('@')[0] : 'Guest');const newName = prompt("Masukkan nama baru (maks 15 karakter):", currentName);if (newName && newName.trim() !== '') {S.nickname = newName.trim().substring(0, 15);save();$('profName').textContent = S.nickname;toast('✅ Nama berhasil diubah!');}};
 
-/* ============ LEADERBOARD LOGIC ============ */
 window._lbCurrentType = 'gems';
-$('leaderboardBtn').onclick = () => {
-    if (!fbDb || !isOnline) return toast('❌ Harus login online untuk melihat Leaderboard!');
-    $('leaderboardModal').style.display = 'flex';
-    fetchLeaderboard('gems');
-};
+$('leaderboardBtn').onclick = () => {if (!fbDb || !isOnline) return toast('❌ Harus login online untuk melihat Leaderboard!');$('leaderboardModal').style.display = 'flex';fetchLeaderboard('gems');};
 $('closeLeaderboard').onclick = () => { $('leaderboardModal').style.display = 'none'; };
-
-$('tabGems').onclick = () => {
-    $('tabGems').className = 'g'; $('tabGems').style.background = 'linear-gradient(#2ecc71,#27ae60)';
-    $('tabInf').className = ''; $('tabInf').style.background = 'linear-gradient(#3498db,#2980b9)';
-    window._lbCurrentType = 'gems';
-    fetchLeaderboard('gems');
-};
-$('tabInf').onclick = () => {
-    $('tabInf').className = 'g'; $('tabInf').style.background = 'linear-gradient(#2ecc71,#27ae60)';
-    $('tabGems').className = ''; $('tabGems').style.background = 'linear-gradient(#3498db,#2980b9)';
-    window._lbCurrentType = 'best';
-    fetchLeaderboard('best');
-};
-
-setInterval(() => {
-    if($('leaderboardModal').style.display === 'flex'){
-        const searchVal = $('searchPlayerInput').value.trim();
-        if(searchVal) return;
-        fetchLeaderboard(window._lbCurrentType);
-    }
-}, 60000);
+$('tabGems').onclick = () => {$('tabGems').className = 'g'; $('tabGems').style.background = 'linear-gradient(#2ecc71,#27ae60)';$('tabInf').className = ''; $('tabInf').style.background = 'linear-gradient(#3498db,#2980b9)';window._lbCurrentType = 'gems';fetchLeaderboard('gems');};
+$('tabInf').onclick = () => {$('tabInf').className = 'g'; $('tabInf').style.background = 'linear-gradient(#2ecc71,#27ae60)';$('tabGems').className = ''; $('tabGems').style.background = 'linear-gradient(#3498db,#2980b9)';window._lbCurrentType = 'best';fetchLeaderboard('best');};
+setInterval(() => {if($('leaderboardModal').style.display === 'flex'){const searchVal = $('searchPlayerInput').value.trim();if(searchVal) return;fetchLeaderboard(window._lbCurrentType);}}, 60000);
 
 async function fetchLeaderboard(type) {
     $('lbContent').innerHTML = '<div style="text-align:center;color:#888;padding:20px">Memuat data...</div>';
     try {
         const snapshot = await fbDb.collection('users').orderBy(type, 'desc').limit(10).get();
-        let html = '';
-        let rank = 1;
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            const username = data.nickname || (data.user ? data.user.split('@')[0] : 'Guest');
-            const score = type === 'gems' ? (data.gems || 0) : (data.best || 0);
-            const icon = type === 'gems' ? '💎' : '♾️';
-            let medal = rank === 1 ? '🥇 ' : rank === 2 ? '🥈 ' : rank === 3 ? '🥉 ' : `#${rank} `;
-            html += `<div class="lb-player" data-uid="${doc.id}" style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #2a3a6a;cursor:pointer;transition:.15s" onmouseover="this.style.background='#1a2050'" onmouseout="this.style.background='transparent'">
-                <div style="font-weight:bold;color:#fff;">${medal} ${username}</div>
-                <div style="color:#f1c40f;">${score.toLocaleString()} ${icon}</div>
-            </div>`;
-            rank++;
-        });
+        let html = '';let rank = 1;
+        snapshot.forEach(doc => {const data = doc.data();const username = data.nickname || (data.user ? data.user.split('@')[0] : 'Guest');const score = type === 'gems' ? (data.gems || 0) : (data.best || 0);const icon = type === 'gems' ? '💎' : '♾️';let medal = rank === 1 ? '🥇 ' : rank === 2 ? '🥈 ' : rank === 3 ? '🥉 ' : `#${rank} `;html += `<div class="lb-player" data-uid="${doc.id}" style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #2a3a6a;cursor:pointer;transition:.15s" onmouseover="this.style.background='#1a2050'" onmouseout="this.style.background='transparent'"><div style="font-weight:bold;color:#fff;">${medal} ${username}</div><div style="color:#f1c40f;">${score.toLocaleString()} ${icon}</div></div>`;rank++;});
         if (rank === 1) html = '<div style="text-align:center;color:#888;padding:20px">Belum ada data.</div>';
         $('lbContent').innerHTML = html;
-        document.querySelectorAll('.lb-player').forEach(el => {
-            el.onclick = () => viewPlayerProfile(el.dataset.uid);
-        });
-    } catch (e) {
-        console.error(e);
-        $('lbContent').innerHTML = '<div style="text-align:center;color:#e74c3c;padding:20px">Gagal memuat data. Pastikan Firebase aktif & aturan Firestore mengizinkan baca (read).</div>';
-    }
+        document.querySelectorAll('.lb-player').forEach(el => {el.onclick = () => viewPlayerProfile(el.dataset.uid);});
+    } catch (e) {console.error(e);$('lbContent').innerHTML = '<div style="text-align:center;color:#e74c3c;padding:20px">Gagal memuat data. Pastikan Firebase aktif & aturan Firestore mengizinkan baca (read).</div>';}
 }
-
 async function viewPlayerProfile(uid) {
     try {
-        const doc = await fbDb.collection('users').doc(uid).get();
-        if (!doc.exists) return toast('❌ Profil tidak ditemukan');
+        const doc = await fbDb.collection('users').doc(uid).get();if (!doc.exists) return toast('❌ Profil tidak ditemukan');
         const data = doc.data();
         const pstats = data.stats || {bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};
         const lvl = Math.floor((pstats.gamesPlayed * 1.5) + (pstats.gamesWon * 3)) + 1;
@@ -913,35 +735,13 @@ async function viewPlayerProfile(uid) {
         $('profLvl').textContent = `Lv. ${lvl}`;
         $('editNameBtn').style.display = 'none';
         window._viewingOtherProfile = true;
-        const inv = data.inv || [];
-        const load = data.load || [];
-        let uHTML = '';
-        for (let i = 0; i < 6; i++) {
-            const u = inv.find(x => x.iid === load[i]);
-            if (u) {
-                const r = R[u.rar];
-                uHTML += `<div style="background:#151a3a;border:1px solid ${r.c};border-radius:6px;padding:5px;text-align:center;font-size:10px"><div style="font-size:18px">${DEF[u.id].icon}</div><b style="color:#fff;font-size:9px">${DEF[u.id].name}</b><div style="color:${r.c};font-size:8px">Lv ${u.lv}</div></div>`;
-            } else {
-                uHTML += `<div style="background:#151a3a;border:1px dashed #2a3a6a;border-radius:6px;padding:5px;text-align:center;font-size:10px;color:#555;display:flex;align-items:center;justify-content:center;height:55px">Empty</div>`;
-            }
-        }
+        const inv = data.inv || [];const load = data.load || [];let uHTML = '';
+        for (let i = 0; i < 6; i++) {const u = inv.find(x => x.iid === load[i]);if (u) {const r = R[u.rar];uHTML += `<div style="background:#151a3a;border:1px solid ${r.c};border-radius:6px;padding:5px;text-align:center;font-size:10px"><div style="font-size:18px">${DEF[u.id].icon}</div><b style="color:#fff;font-size:9px">${DEF[u.id].name}</b><div style="color:${r.c};font-size:8px">Lv ${u.lv}</div></div>`} else {uHTML += `<div style="background:#151a3a;border:1px dashed #2a3a6a;border-radius:6px;padding:5px;text-align:center;font-size:10px;color:#555;display:flex;align-items:center;justify-content:center;height:55px">Empty</div>`}}
         $('profUnits').innerHTML = uHTML;
-        $('profStats').innerHTML = `
-            <div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Bosses Killed</span><b>${pstats.bossesKilled}</b></div>
-            <div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Games Played</span><b>${pstats.gamesPlayed}</b></div>
-            <div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Games Won</span><b>${pstats.gamesWon}</b></div>
-            <div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Gems Spent</span><b>${pstats.gemsSpent}</b></div>
-            <div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Highest Inf Round</span><b>${pstats.highestInf}</b></div>
-            <div class="row" style="padding:4px 0"><span>MVPs Gained</span><b>${pstats.mvps}</b></div>
-        `;
-        $('profileModal').style.display = 'flex';
-        $('leaderboardModal').style.display = 'none';
-    } catch(e) {
-        console.error(e);
-        toast('❌ Gagal memuat profil');
-    }
+        $('profStats').innerHTML = `<div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Bosses Killed</span><b>${pstats.bossesKilled}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Games Played</span><b>${pstats.gamesPlayed}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Games Won</span><b>${pstats.gamesWon}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Gems Spent</span><b>${pstats.gemsSpent}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Highest Inf Round</span><b>${pstats.highestInf}</b></div><div class="row" style="padding:4px 0"><span>MVPs Gained</span><b>${pstats.mvps}</b></div>`;
+        $('profileModal').style.display = 'flex';$('leaderboardModal').style.display = 'none';
+    } catch(e) {console.error(e);toast('❌ Gagal memuat profil');}
 }
-
 $('searchPlayerBtn').onclick = async () => {
     const searchName = $('searchPlayerInput').value.trim();
     if (!searchName) return toast('❌ Masukkan nama player!');
@@ -952,73 +752,53 @@ $('searchPlayerBtn').onclick = async () => {
         let html = '';
         if (snapshot.empty) {
             const emailSnapshot = await fbDb.collection('users').where('user', '==', searchName).limit(5).get();
-            if (!emailSnapshot.empty) {
-                emailSnapshot.forEach(doc => {
-                    const data = doc.data();
-                    const username = data.nickname || (data.user ? data.user.split('@')[0] : 'Guest');
-                    html += `<div class="lb-player" data-uid="${doc.id}" style="background:#151a3a;border:1px solid #3498db;border-radius:8px;padding:10px;margin-bottom:5px;cursor:pointer;transition:.15s" onmouseover="this.style.background='#1a2050'" onmouseout="this.style.background='#151a3a'">
-                        <div style="font-weight:bold;color:#fff;">👤 ${username}</div>
-                        <div style="font-size:11px;color:#aaa;margin-top:5px;">💎 Gems: ${(data.gems||0).toLocaleString()} <br>♾️ Highest Inf: ${data.best||0} <br>🏆 Games Won: ${data.stats?.gamesWon||0}</div>
-                    </div>`;
-                });
-            } else {
-                html = '<div style="text-align:center;color:#e74c3c;padding:20px">Player tidak ditemukan.</div>';
-            }
-        } else {
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                const username = data.nickname || (data.user ? data.user.split('@')[0] : 'Guest');
-                html += `<div class="lb-player" data-uid="${doc.id}" style="background:#151a3a;border:1px solid #3498db;border-radius:8px;padding:10px;margin-bottom:5px;cursor:pointer;transition:.15s" onmouseover="this.style.background='#1a2050'" onmouseout="this.style.background='#151a3a'">
-                    <div style="font-weight:bold;color:#fff;">👤 ${username}</div>
-                    <div style="font-size:11px;color:#aaa;margin-top:5px;">💎 Gems: ${(data.gems||0).toLocaleString()} <br>♾️ Highest Inf: ${data.best||0} <br>🏆 Games Won: ${data.stats?.gamesWon||0}</div>
-                </div>`;
-            });
-        }
+            if (!emailSnapshot.empty) {emailSnapshot.forEach(doc => {const data = doc.data();const username = data.nickname || (data.user ? data.user.split('@')[0] : 'Guest');html += `<div class="lb-player" data-uid="${doc.id}" style="background:#151a3a;border:1px solid #3498db;border-radius:8px;padding:10px;margin-bottom:5px;cursor:pointer;transition:.15s" onmouseover="this.style.background='#1a2050'" onmouseout="this.style.background='#151a3a'"><div style="font-weight:bold;color:#fff;">👤 ${username}</div><div style="font-size:11px;color:#aaa;margin-top:5px;">💎 Gems: ${(data.gems||0).toLocaleString()} <br>♾️ Highest Inf: ${data.best||0} <br>🏆 Games Won: ${data.stats?.gamesWon||0}</div></div>`;});} else {html = '<div style="text-align:center;color:#e74c3c;padding:20px">Player tidak ditemukan.</div>';}
+        } else {snapshot.forEach(doc => {const data = doc.data();const username = data.nickname || (data.user ? data.user.split('@')[0] : 'Guest');html += `<div class="lb-player" data-uid="${doc.id}" style="background:#151a3a;border:1px solid #3498db;border-radius:8px;padding:10px;margin-bottom:5px;cursor:pointer;transition:.15s" onmouseover="this.style.background='#1a2050'" onmouseout="this.style.background='#151a3a'"><div style="font-weight:bold;color:#fff;">👤 ${username}</div><div style="font-size:11px;color:#aaa;margin-top:5px;">💎 Gems: ${(data.gems||0).toLocaleString()} <br>♾️ Highest Inf: ${data.best||0} <br>🏆 Games Won: ${data.stats?.gamesWon||0}</div></div>`;});}
         $('lbContent').innerHTML = html;
-        document.querySelectorAll('.lb-player').forEach(el => {
-            el.onclick = () => viewPlayerProfile(el.dataset.uid);
-        });
-    } catch (e) {
-        console.error(e);
-        $('lbContent').innerHTML = '<div style="text-align:center;color:#e74c3c;padding:20px">Gagal mencari data.</div>';
-    }
+        document.querySelectorAll('.lb-player').forEach(el => {el.onclick = () => viewPlayerProfile(el.dataset.uid);});
+    } catch (e) {console.error(e);$('lbContent').innerHTML = '<div style="text-align:center;color:#e74c3c;padding:20px">Gagal mencari data.</div>';}
 };
-$('searchPlayerInput').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') $('searchPlayerBtn').click();
-});
+$('searchPlayerInput').addEventListener('keydown', (e) => {if (e.key === 'Enter') $('searchPlayerBtn').click();});
 
-/* ============ INDEX LOGIC ============ */
+window._idxRoleFilter = 'all';
 $('indexBtn').onclick = () => {
     $('indexModal').style.display = 'flex';
+    window._idxRoleFilter = 'all';
+    document.querySelectorAll('.idxF').forEach(x => x.style.background = x.dataset.role === 'all' ? 'linear-gradient(#2ecc71,#27ae60)' : 'linear-gradient(#555,#333)');
     renderIndex();
 };
 $('closeIndex').onclick = () => { $('indexModal').style.display = 'none'; };
-
-function renderIndex() {
+document.querySelectorAll('.idxF').forEach(b => {b.onclick = () => {window._idxRoleFilter = b.dataset.role;document.querySelectorAll('.idxF').forEach(x => x.style.background = 'linear-gradient(#555,#333)');b.style.background = 'linear-gradient(#2ecc71,#27ae60)';renderIndex();};});
+function renderIndex(){
+    const roleFilter = window._idxRoleFilter || 'all';
     let html = '';
     const rarities = Object.keys(R).sort((a,b) => ORD.indexOf(a) - ORD.indexOf(b));
     for (const rar of rarities) {
         const pool = POOL[rar] || [];
         if (pool.length === 0) continue;
+        const filteredPool = pool.filter(arr => {const u = DEF[arr[0]];if(!u) return false;if(roleFilter === 'all') return true;return role(u) === roleFilter;});
+        if(filteredPool.length === 0) continue;
         html += `<div style="grid-column:1/-1; color:${R[rar].c}; font-weight:bold; font-size:14px; margin-top:10px; border-bottom:1px solid #2a3a6a; padding-bottom:4px;">${R[rar].n}</div>`;
-        for (const arr of pool) {
-            const u = DEF[arr[0]];
-            if (!u) continue;
+        for (const arr of filteredPool) {
+            const u = DEF[arr[0]];if (!u) continue;
             const owned = S.inv.some(x => x.id === u.id);
             const opacity = owned ? '1' : '0.4';
             const filter = owned ? 'none' : 'grayscale(80%)';
             const borderColor = owned ? R[rar].c : '#2a3a6a';
             const skillName = EVO_SKILL[u.id] ? EVO_SKILL[u.id].name : u.skill;
+            const ro = ROLE[role(u)] || ['-','#fff'];
             const tag = owned ? '<div style="color:#2ecc71;font-size:8px;font-weight:bold;">✅ OWNED</div>' : '<div style="color:#e74c3c;font-size:8px;">🔒 LOCKED</div>';
             html += `<div style="background:#151a3a;border:1px solid ${borderColor};border-radius:6px;padding:5px;text-align:center;opacity:${opacity};filter:${filter};transition:0.3s;cursor:default;" title="${u.name}\nDMG: ${u.dmg} | RNG: ${u.rng}\nSkill: ${skillName}">
                 <div style="font-size:20px">${u.icon}</div>
                 <b style="color:#fff;font-size:10px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.name}</b>
                 <div style="color:${R[rar].c};font-size:8px">${R[rar].n}</div>
+                <div style="color:${ro[1]};font-size:8px;font-weight:bold">${ro[0]}</div>
                 <div style="font-size:8px;color:#aaa;margin-top:2px;">DMG ${u.dmg} · RNG ${u.rng}</div>
                 ${tag}
             </div>`;
         }
     }
+    if(!html) html = '<div style="grid-column:1/-1;text-align:center;color:#888;padding:20px">Tidak ada unit dengan tipe ini.</div>';
     $('indexContent').innerHTML = html;
 }
 
