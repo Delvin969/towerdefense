@@ -217,20 +217,18 @@ if(typeof S.playTime!=='number')S.playTime=0;
 if(typeof S.nid!=='number')S.nid=1;
 if(!Array.isArray(S.inv))S.inv=[];
 
-/* ═══ SANITIZE INVENTORY (fix unit corrupt / invalid) ═══ */
 (function sanitizeInventory(){
   const before=S.inv.length;
   S.inv = S.inv.filter(u => {
-    if(!u || !u.id) { console.warn('[Sanitize] drop: no id'); return false; }
-    if(!DEF[u.id]) { console.warn('[Sanitize] drop invalid unit id:', u.id); return false; }
-    if(!u.rar || !R[u.rar]) { console.warn('[Sanitize] fix rarity for', u.id, 'from', u.rar, 'to', DEF[u.id].rar); u.rar = DEF[u.id].rar; }
-    if(!R[u.rar]) { console.warn('[Sanitize] drop:', u.id, 'has invalid rarity:', u.rar); return false; }
+    if(!u || !u.id) return false;
+    if(!DEF[u.id]) return false;
+    if(!u.rar || !R[u.rar]) u.rar = DEF[u.id].rar;
+    if(!R[u.rar]) return false;
     if(typeof u.lv !== 'number' || u.lv < 1) u.lv = 1;
     if(typeof u.iid !== 'number') u.iid = S.nid++;
     if(u.trait && (typeof u.trait === 'string' || !TRAITS[u.trait.id])) u.trait = null;
     return true;
   });
-  if(before !== S.inv.length) console.warn('[Sanitize] Removed', before - S.inv.length, 'invalid units');
 })();
 
 S.inv.forEach(u=>{if(typeof u.trait==='string')u.trait=null;if(u.lv===undefined||u.lv===null||u.lv<1)u.lv=1});
@@ -568,7 +566,8 @@ function evMenu(){
     } else {
       for(const u of list){
         const rc=RECIPES[u.id];if(!rc) continue;
-        const srcRar=R[u.rar]||R.common,dstRar=R[rc.r]||R.mythic;
+        const srcRar=R[u.rar]||R.common;
+        const dstRar=R[(DEF[rc.r]&&DEF[rc.r].rar)||'mythic']||R.mythic;
         let can=true,rows='';
         for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;rows+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}
         const gc=rc.cost||0,hasG=S.gems>=gc;if(!hasG)can=false;
