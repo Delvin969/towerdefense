@@ -218,7 +218,6 @@ if(!S.inv.length)for(const id of['archer','swordsman','hunter'])S.inv.push({iid:
 S.inv.forEach(u=>{if(typeof u.trait==='string')u.trait=null;if(u.lv===undefined||u.lv===null||u.lv<1)u.lv=1});
 S.load=S.load.filter(i=>S.inv.some(u=>u.iid===i));
 
-/* ═══ TIME PLAYED TRACKER ═══ */
 let _playTimerId=null;
 function startPlayTimer(){if(_playTimerId)return;_playTimerId=setInterval(()=>{if(G && !G.paused && !G.over && $('game').classList.contains('on')){S.playTime=(S.playTime||0)+1;if(S.playTime%30===0)save()}},1000)}
 function stopPlayTimer(){if(_playTimerId){clearInterval(_playTimerId);_playTimerId=null}}
@@ -226,15 +225,12 @@ function fmtPlayTime(sec){sec=Math.floor(sec||0);if(sec<60)return sec+'s';const 
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopPlayTimer();else if(G && $('game').classList.contains('on'))startPlayTimer()});
 window.addEventListener('beforeunload',()=>{save()});
 
-/* ═══ PERIOD TRACKING ═══ */
 function getISOWeek(d){const dt=new Date(d.getTime());dt.setHours(0,0,0,0);dt.setDate(dt.getDate()+3-(dt.getDay()+6)%7);const w1=new Date(dt.getFullYear(),0,4);return dt.getFullYear()+'-W'+String(1+Math.round(((dt-w1)/86400000-3+(w1.getDay()+6)%7)/7)).padStart(2,'0')}
 function getDayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function showRewardPopup(period,rank,gems,rr){
   const rankName=rank===1?'🥇 JUARA 1':rank===2?'🥈 JUARA 2':'🥉 JUARA 3';
   const periodName=period==='week'?'📅 MINGGU LALU':'📆 HARI KEMARIN';
-  const lines=[];
-  if(gems)lines.push(gems+'💎');
-  if(rr)lines.push(rr+'🎲');
+  const lines=[];if(gems)lines.push(gems+'💎');if(rr)lines.push(rr+'🎲');
   $('ob').innerHTML=`<h2 style="color:#ffd700">🎁 REWARD!</h2><p style="color:#aaa;font-size:13px">${rankName} ${periodName}</p><div style="font-size:40px;margin:14px 0">${rank===1?'🥇':rank===2?'🥈':'🥉'}</div><p style="font-size:20px;color:#f1c40f">+${lines.join(' +')}</p><button id="rwOK" class="g" style="width:100%;font-size:16px;padding:12px;margin-top:8px">✅ Klaim</button>`;
   $('ov').style.display='flex';
   $('rwOK').onclick=()=>{$('ov').style.display='none';updMenu();save()};
@@ -243,29 +239,8 @@ function showRewardPopup(period,rank,gems,rr){
 }
 function checkPeriodReset(){
   const dk=getDayKey(),wk=getISOWeek(new Date());let changed=false;
-  if(S.dayKey && S.dayKey!==dk){
-    const key='day_'+S.dayKey;
-    if(S.myLbRanks[key]){
-      const claimKey=key+'_claimed';
-      if(!S.claimedRewards[claimKey]){
-        const rank=S.myLbRanks[key].rank;
-        const rr=rank===1?50:rank===2?35:rank===3?20:0;
-        if(rr){S.claimedRewards[claimKey]=Date.now();S.rr=(S.rr||0)+rr;setTimeout(()=>showRewardPopup('day',rank,0,rr),800)}
-      }
-    }
-  }
-  if(S.weekKey && S.weekKey!==wk){
-    const key='week_'+S.weekKey;
-    if(S.myLbRanks[key]){
-      const claimKey=key+'_claimed';
-      if(!S.claimedRewards[claimKey]){
-        const rank=S.myLbRanks[key].rank;
-        let gems=0,rr=0;
-        if(rank===1){gems=5000;rr=500}else if(rank===2){gems=3500;rr=350}else if(rank===3){gems=1500;rr=150}
-        if(gems||rr){S.claimedRewards[claimKey]=Date.now();S.gems+=gems;S.rr=(S.rr||0)+rr;setTimeout(()=>showRewardPopup('week',rank,gems,rr),800)}
-      }
-    }
-  }
+  if(S.dayKey && S.dayKey!==dk){const key='day_'+S.dayKey;if(S.myLbRanks[key]){const claimKey=key+'_claimed';if(!S.claimedRewards[claimKey]){const rank=S.myLbRanks[key].rank;const rr=rank===1?50:rank===2?35:rank===3?20:0;if(rr){S.claimedRewards[claimKey]=Date.now();S.rr=(S.rr||0)+rr;setTimeout(()=>showRewardPopup('day',rank,0,rr),800)}}}}
+  if(S.weekKey && S.weekKey!==wk){const key='week_'+S.weekKey;if(S.myLbRanks[key]){const claimKey=key+'_claimed';if(!S.claimedRewards[claimKey]){const rank=S.myLbRanks[key].rank;let gems=0,rr=0;if(rank===1){gems=5000;rr=500}else if(rank===2){gems=3500;rr=350}else if(rank===3){gems=1500;rr=150}if(gems||rr){S.claimedRewards[claimKey]=Date.now();S.gems+=gems;S.rr=(S.rr||0)+rr;setTimeout(()=>showRewardPopup('week',rank,gems,rr),800)}}}}
   if(S.dayKey!==dk){S.dayKey=dk;S.gemsSpentToday=0;S.bestToday=0;changed=true;for(const k in S.claimedRewards)if(k.startsWith('day_')&&!k.startsWith('day_'+dk))delete S.claimedRewards[k]}
   if(S.weekKey!==wk){S.weekKey=wk;S.gemsSpentWeek=0;S.bestWeek=0;changed=true;for(const k in S.claimedRewards)if(k.startsWith('week_')&&!k.startsWith('week_'+wk))delete S.claimedRewards[k]}
   if(changed&&isOnline&&currentUser){clearTimeout(window._csTimer);window._csTimer=setTimeout(cloudSave,1500)}
@@ -282,7 +257,6 @@ async function cloudLoad(){if(!currentUser)return false;try{const doc=await fbDb
 function startCloudAutoSave(){if(cloudSaveTimer)clearInterval(cloudSaveTimer);cloudSaveTimer=setInterval(()=>{if(isOnline)cloudSave()},10000)}
 try{firebase.initializeApp(firebaseConfig);fbAuth=firebase.auth();fbDb=firebase.firestore()}catch(e){console.warn(e)}
 
-/* ═══ AUDIO ENGINE ═══ */
 let audioCtx=null;
 function initAudio(){if(audioCtx)return;try{audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume()}
 document.addEventListener('pointerdown',()=>initAudio(),{once:true});
@@ -320,7 +294,6 @@ function togglePanel(id){const p=$(id);if(p)p.classList.toggle('collapsed')}
 const RAR_TRIGGER=['mythic','td','secret','transcendent','primordial','eternal','exotic'];
 const RAR_ORDER=['common','rare','epic','legendary','mythic','td','secret','transcendent','primordial','eternal','exotic'];
 
-/* ═══ SUMMON BURST ANIMATION ═══ */
 function playSummonBurst(rar,cb){
   const stage=$('summonStage'),core=$('ssCore'),flash=$('ssFlash'),shock=$('ssShock');
   if(!stage){cb&&cb();return}
@@ -367,25 +340,14 @@ function playSummonCinematic(unit,cb){
   let _done=false;
   const flash=$('evoFlash'),cin=$('evoCinema'),rays=$('evoRays'),ic=$('evoIcon'),tt=$('evoTitle'),sb=$('evoSub');
   const d=DEF[unit.id],r=R[unit.rar];
-  const _finish=()=>{
-    if(_done)return;
-    _done=true;
-    cin.classList.remove('on');
-    cin.style.pointerEvents='none';
-    cin.onclick=null;
-    cin.ontouchstart=null;
-    flash.classList.remove('on');
-    flash.style.background='#fff';
-    try{if(cb)cb()}catch(e){console.error(e)}
-  };
+  const _finish=()=>{if(_done)return;_done=true;cin.classList.remove('on');cin.style.pointerEvents='none';cin.onclick=null;cin.ontouchstart=null;flash.classList.remove('on');flash.style.background='#fff';try{if(cb)cb()}catch(e){console.error(e)}};
   cin.style.color=r.c;rays.style.color=r.c;tt.style.color=r.c;
   ic.textContent=d.icon;ic.style.color=r.c;
   tt.textContent='✨ '+r.n.toUpperCase()+' ✨';
   const isExo=unit.rar==='exotic',isEter=unit.rar==='eternal',isPrim=unit.rar==='primordial',isTr=unit.rar==='transcendent';
   const extra=isExo?' 💎 MYTHICAL':(isEter?' 🌌 LEGENDARY':(isPrim?' 🔥 ULTRA RARE':(isTr?' ⭐ SUPER RARE':'')));
   sb.innerHTML=`<div style="font-size:1.2em;font-weight:bold;color:#fff;margin-top:6px">${d.name}</div><div style="font-size:.75em;color:${r.c};margin-top:4px;font-weight:bold">${r.n.toUpperCase()}${extra}</div><div style="margin-top:24px;font-size:.85em;color:#fff;animation:blink 1s infinite">👆 TAP UNTUK LANJUT</div>`;
-  flash.classList.add('on');
-  cin.classList.add('on');
+  flash.classList.add('on');cin.classList.add('on');
   cin.onclick=_finish;
   cin.ontouchstart=(e)=>{e.preventDefault();_finish()};
   if(S.fx){shake(isExo?40:isEter?35:isPrim?28:isTr?22:15,.7);flash('#fff',.3)}
@@ -547,7 +509,50 @@ $('speedBtn').onclick = () => {gameSpeed = gameSpeed === 1 ? 2 : 1;$('speedBtn')
 $('sk').onclick=()=>{while(G.q.length)spawn(G.q.shift());G.skipped=true;$('sk').style.display='none'};
 function sets(back){$('ob').innerHTML=`<h2 style="margin-bottom:8px">⚙️ Settings</h2><label class="tg"><span>⏩ Auto Skip</span><input type="checkbox" id="t1" ${S.auto?'checked':''}></label><label class="tg"><span>✨ Efek</span><input type="checkbox" id="t2" ${S.fx?'checked':''}></label><label class="tg"><span>🔊 Suara</span><input type="checkbox" id="t3" ${S.sound?'checked':''}></label><button id="sb" class="g">← Kembali</button>`;$('t1').onchange=e=>{S.auto=e.target.checked;save()};$('t2').onchange=e=>{S.fx=e.target.checked;save()};$('t3').onchange=e=>{S.sound=e.target.checked;soundEnabled=S.sound;save();if(S.sound){initAudio();playTone(600,0.15,'sine',0.1,900)}};$('sb').onclick=back}
 function pmenu(g){if(g&&G&&!G.over)G.paused=true;$('ov').style.display='flex';if(!g)return sets(()=>{$('ov').style.display='none'});const b='style="display:block;width:220px;margin:6px auto"';$('ob').innerHTML=`<h2 style="margin-bottom:10px">⏸ Menu</h2><button id="p1" class="g" ${b}>▶ Lanjut</button><button id="p2" ${b}>⚙️ Settings</button><button id="p3" class="r" ${b}>🏠 Menu</button>`;$('p1').onclick=()=>{$('ov').style.display='none';if(G)G.paused=false};$('p2').onclick=()=>sets(()=>pmenu(true));$('p3').onclick=()=>{sync();G=null;$('ov').style.display='none';pop.style.display='none';$('ultShortcutBar').classList.remove('on');$('evoCinema').classList.remove('on');$('evoFlash').classList.remove('on');stopPlayTimer();show('menu');updMenu();save()}}
-function evMenu(){$('ov').style.display='flex';const list=S.inv.filter(u=>canEvolve(u));let h='<h2 style="margin-bottom:6px">🧬 Evolve</h2><p style="color:#888;font-size:11px;margin-bottom:8px">Hanya unit <b style="color:#e74c3c">Mythic ke atas</b> yang bisa di-evolve</p><div style="max-height:60vh;overflow-y:auto;width:min(440px,86vw)">';if(!list.length)h+='<p style="color:#888;font-size:13px;text-align:center;padding:14px">Belum ada unit Mythic+ yang bisa di-evolve.<br><span style="font-size:11px;color:#666">Kumpulkan material dari Legend Stage!</span></p>';for(const u of list){const rc=RECIPES[u.id];let can=true,rows='';for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;rows+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}const gc=rc.cost||0,hasG=S.gems>=gc;if(!hasG)can=false;rows+=`<div class="mr" style="border-color:${hasG?'#2ecc71':'#e74c3c'}"><span>💎</span><span>${S.gems}/${gc}</span></div>`;const srcRar=R[u.rar],dstRar=R[rc.r];const lbl=`${srcRar.n.toUpperCase()} → ${dstRar.n.toUpperCase()}`;const bc=dstRar.c;h+=`<div class="card" style="cursor:default;text-align:left;margin:6px 0;border-color:${bc}"><div style="font-size:10px;color:${bc};font-weight:bold;letter-spacing:1px">${lbl}</div>${DEF[u.id].icon} <b style="color:#fff">${DEF[u.id].name}</b> <span style="color:${srcRar.c};font-size:10px">(${srcRar.n})</span> → ${DEF[rc.r].icon} <b style="color:${bc}">${DEF[rc.r].name}</b> <span style="color:${dstRar.c};font-size:10px">(${dstRar.n})</span>${rows}<button class="y evgo" data-i="${u.iid}" style="width:100%;margin:4px 0 0" ${can?'':'disabled'}>Evolve</button></div>`}$('ob').innerHTML=h+'</div><button id="evx" class="r" style="margin-top:8px">Tutup</button>';$('evx').onclick=()=>{$('ov').style.display='none'};document.querySelectorAll('.evgo').forEach(b=>b.onclick=()=>{const u=S.inv.find(x=>x.iid==b.dataset.i),rc=RECIPES[u.id];if(!rc)return;for(const k in rc.m)if((S.mats[k]||0)<rc.m[k])return toast('❌ Bahan!');const gc=rc.cost||0;if(S.gems<gc)return toast('❌ Butuh '+gc+'💎!');for(const k in rc.m)S.mats[k]-=rc.m[k];if(!spendGems(gc))return;const oldName=DEF[u.id].name;u.id=rc.r;u.rar=DEF[rc.r].rar;u.lv=1;const es=EVO_SKILL[u.id];save();updMenu();const newName=DEF[u.id].name;$('ov').style.display='none';playEvoCinematic(oldName,newName,DEF[u.id].icon,es.color,es.icon+' '+es.name,es.desc,es.ult,()=>{evMenu();toast('🌟 '+newName)})})}
+
+function evMenu(){
+  try {
+    const ov=$('ov'),ob=$('ob');
+    ov.style.cssText='display:flex;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9;align-items:center;justify-content:center;padding:14px';
+    ob.style.cssText='';
+    ob.className='box';
+    const list=S.inv.filter(u=>canEvolve(u));
+    let h='<h2 style="margin-bottom:6px">🧬 Evolve</h2>';
+    h+='<p style="color:#888;font-size:11px;margin-bottom:8px">Hanya unit <b style="color:#e74c3c">Mythic ke atas</b> yang bisa di-evolve</p>';
+    h+='<div style="max-height:60vh;overflow-y:auto;width:min(440px,86vw)">';
+    if(!list.length){
+      h+='<p style="color:#888;font-size:13px;text-align:center;padding:14px">Belum ada unit Mythic+ yang bisa di-evolve.<br><span style="font-size:11px;color:#666">Kumpulkan material dari Legend Stage!</span></p>';
+    } else {
+      for(const u of list){
+        const rc=RECIPES[u.id];
+        if(!rc) continue;
+        let can=true,rows='';
+        for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;rows+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}
+        const gc=rc.cost||0,hasG=S.gems>=gc;if(!hasG)can=false;
+        rows+=`<div class="mr" style="border-color:${hasG?'#2ecc71':'#e74c3c'}"><span>💎</span><span>${S.gems}/${gc}</span></div>`;
+        const srcRar=R[u.rar],dstRar=R[rc.r];
+        const lbl=`${srcRar.n.toUpperCase()} → ${dstRar.n.toUpperCase()}`;
+        const bc=dstRar.c;
+        h+=`<div class="card" style="cursor:default;text-align:left;margin:6px 0;border-color:${bc}"><div style="font-size:10px;color:${bc};font-weight:bold;letter-spacing:1px">${lbl}</div>${DEF[u.id].icon} <b style="color:#fff">${DEF[u.id].name}</b> <span style="color:${srcRar.c};font-size:10px">(${srcRar.n})</span> → ${DEF[rc.r].icon} <b style="color:${bc}">${DEF[rc.r].name}</b> <span style="color:${dstRar.c};font-size:10px">(${dstRar.n})</span>${rows}<button class="y evgo" data-i="${u.iid}" style="width:100%;margin:4px 0 0" ${can?'':'disabled'}>Evolve</button></div>`;
+      }
+    }
+    h+='</div><button id="evx" class="r" style="margin-top:10px">Tutup</button>';
+    ob.innerHTML=h;
+    $('evx').onclick=()=>{ov.style.cssText='';ov.style.display='none'};
+    document.querySelectorAll('.evgo').forEach(b=>{b.onclick=()=>{
+      const u=S.inv.find(x=>x.iid==b.dataset.i);if(!u)return;const rc=RECIPES[u.id];if(!rc)return;
+      for(const k in rc.m)if((S.mats[k]||0)<rc.m[k])return toast('❌ Bahan!');
+      const gc=rc.cost||0;if(S.gems<gc)return toast('❌ Butuh '+gc+'💎!');
+      for(const k in rc.m)S.mats[k]-=rc.m[k];
+      if(!spendGems(gc))return;
+      const oldName=DEF[u.id].name;u.id=rc.r;u.rar=DEF[rc.r].rar;u.lv=1;
+      const es=EVO_SKILL[u.id];save();updMenu();
+      const newName=DEF[u.id].name;
+      ov.style.cssText='';ov.style.display='none';
+      playEvoCinematic(oldName,newName,DEF[u.id].icon,es.color,es.icon+' '+es.name,es.desc,es.ult,()=>{evMenu();toast('🌟 '+newName)});
+    };});
+  } catch(err){console.error('[evMenu]',err);toast('❌ Error: '+err.message);}
+}
 
 let TM={selected:null,pending:null,old:null,kept:null,autoSkip:false};
 function resetTM(){TM.selected=null;TM.pending=null;TM.old=null;TM.kept=null;}
@@ -607,10 +612,7 @@ async function fetchLeaderboard(type,period){
       const mine = top3.find(x=>x.uid===currentUser.uid);
       if(mine){const periodKey = period==='week' ? S.weekKey : S.dayKey;if(periodKey){if(!S.myLbRanks) S.myLbRanks = {};S.myLbRanks[period+'_'+periodKey] = {rank: mine.rank, score: mine.score, ts: Date.now()};save();}}
     }
-  } catch (e) {
-    console.error(e);
-    $('lbContent').innerHTML = '<div style="text-align:center;color:#e74c3c;padding:20px">Gagal memuat data. Pastikan Firestore rules mengizinkan read.</div>';
-  }
+  } catch (e) {console.error(e);$('lbContent').innerHTML = '<div style="text-align:center;color:#e74c3c;padding:20px">Gagal memuat data. Pastikan Firestore rules mengizinkan read.</div>';}
 }
 async function viewPlayerProfile(uid) {try {const doc = await fbDb.collection('users').doc(uid).get();if (!doc.exists) return toast('❌ Profil tidak ditemukan');const data = doc.data();const pstats = data.stats || {bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};const lvl = Math.floor((pstats.gamesPlayed * 1.5) + (pstats.gamesWon * 3)) + 1;$('profName').textContent = data.nickname || (data.user ? data.user.split('@')[0] : 'Guest');$('profLvl').textContent = `Lv. ${lvl}`;$('editNameBtn').style.display = 'none';window._viewingOtherProfile = true;const inv = data.inv || [];const load = data.load || [];let uHTML = '';for (let i = 0; i < 6; i++) {const u = inv.find(x => x.iid === load[i]);if (u) {const r = R[u.rar];uHTML += `<div style="background:#151a3a;border:1px solid ${r.c};border-radius:6px;padding:5px;text-align:center;font-size:10px"><div style="font-size:18px">${DEF[u.id].icon}</div><b style="color:#fff;font-size:9px">${DEF[u.id].name}</b><div style="color:${r.c};font-size:8px">Lv ${u.lv}</div></div>`} else {uHTML += `<div style="background:#151a3a;border:1px dashed #2a3a6a;border-radius:6px;padding:5px;text-align:center;font-size:10px;color:#555;display:flex;align-items:center;justify-content:center;height:55px">Empty</div>`}}$('profUnits').innerHTML = uHTML;$('profStats').innerHTML = `<div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Bosses Killed</span><b>${pstats.bossesKilled}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Games Played</span><b>${pstats.gamesPlayed}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Games Won</span><b>${pstats.gamesWon}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Gems Spent</span><b>${pstats.gemsSpent}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Highest Inf Round</span><b>${pstats.highestInf}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>MVPs Gained</span><b>${pstats.mvps}</b></div><div class="row" style="padding:4px 0;color:#66ccff"><span>⏱️ Time Played</span><b style="color:#66ccff">${fmtPlayTime(data.playTime||0)}</b></div>`;$('profileModal').style.display = 'flex';$('leaderboardModal').style.display = 'none';} catch(e) {console.error(e);toast('❌ Gagal memuat profil');}}
 $('searchPlayerBtn').onclick = async () => {const searchName = $('searchPlayerInput').value.trim();if (!searchName) return toast('❌ Masukkan nama player!');if (!fbDb || !isOnline) return toast('❌ Harus login online untuk mencari!');$('lbContent').innerHTML = '<div style="text-align:center;color:#888;padding:20px">Mencari player...</div>';try {const snapshot = await fbDb.collection('users').where('nickname', '>=', searchName).where('nickname', '<=', searchName + '\uf8ff').limit(5).get();let html = '';if (snapshot.empty) {const emailSnapshot = await fbDb.collection('users').where('user', '==', searchName).limit(5).get();if (!emailSnapshot.empty) {emailSnapshot.forEach(doc => {const data = doc.data();const username = data.nickname || (data.user ? data.user.split('@')[0] : 'Guest');html += `<div class="lb-player" data-uid="${doc.id}" style="background:#151a3a;border:1px solid #3498db;border-radius:8px;padding:10px;margin-bottom:5px;cursor:pointer;transition:.15s" onmouseover="this.style.background='#1a2050'" onmouseout="this.style.background='#151a3a'"><div style="font-weight:bold;color:#fff;">👤 ${username}</div><div style="font-size:11px;color:#aaa;margin-top:5px;">💎 Gems: ${(data.gems||0).toLocaleString()} <br>♾️ Highest Inf: ${data.best||0} <br>🏆 Games Won: ${data.stats?.gamesWon||0}</div></div>`;});} else {html = '<div style="text-align:center;color:#e74c3c;padding:20px">Player tidak ditemukan.</div>';}} else {snapshot.forEach(doc => {const data = doc.data();const username = data.nickname || (data.user ? data.user.split('@')[0] : 'Guest');html += `<div class="lb-player" data-uid="${doc.id}" style="background:#151a3a;border:1px solid #3498db;border-radius:8px;padding:10px;margin-bottom:5px;cursor:pointer;transition:.15s" onmouseover="this.style.background='#1a2050'" onmouseout="this.style.background='#151a3a'"><div style="font-weight:bold;color:#fff;">👤 ${username}</div><div style="font-size:11px;color:#aaa;margin-top:5px;">💎 Gems: ${(data.gems||0).toLocaleString()} <br>♾️ Highest Inf: ${data.best||0} <br>🏆 Games Won: ${data.stats?.gamesWon||0}</div></div>`;});}$('lbContent').innerHTML = html;document.querySelectorAll('.lb-player').forEach(el => {el.onclick = () => viewPlayerProfile(el.dataset.uid);});} catch (e) {console.error(e);$('lbContent').innerHTML = '<div style="text-align:center;color:#e74c3c;padding:20px">Gagal mencari data.</div>';}};
