@@ -88,7 +88,7 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 
 <div id="login" class="sc"><h1 style="margin-top:40px">⚔️ HERO TOWER DEFENSE ⚔️</h1><div class="pn" style="max-width:420px;margin:30px auto;text-align:center"><div style="font-size:60px;margin-bottom:10px">🎮</div><h3 style="font-size:18px">Login dengan Google</h3><p style="color:#888;font-size:12px;margin-bottom:14px">Progress otomatis tersimpan di cloud</p><button id="googleLoginBtn" class="g" style="width:100%;padding:14px;font-size:16px">🔐 Login Google</button><div id="loginMsg" style="font-size:12px;margin-top:8px;min-height:16px"></div><div style="margin-top:14px;padding-top:14px;border-top:1px solid #2a3a6a"><div style="font-size:11px;color:#888;margin-bottom:6px">Atau main offline:</div><button id="offlineBtn" style="width:100%;padding:10px;font-size:13px;background:linear-gradient(#555,#333)">▶ Main Offline</button></div></div></div>
 
-<div id="menu" class="sc"><div class="top-bar"><div><button id="profileBtn" class="y" style="margin:0;padding:6px 14px;font-size:12px">👤 PROFILE</button><button id="rdb" class="y" style="margin:0 0 0 5px;padding:6px 14px;font-size:12px">🎁 REDEEM</button></div><div style="font-size:12px;text-align:right"><div>👤 <b id="mu" style="color:#66ccff">Guest</b></div><div><span id="cloudBadge" class="cloud-badge cloud-off">⚪ Offline</span></div></div></div>
+<div id="menu" class="sc"><div class="top-bar"><div><button id="profileBtn" class="y" style="margin:0;padding:6px 14px;font-size:12px">👤 PROFILE</button><button id="leaderboardBtn" class="y" style="margin:0 0 0 5px;padding:6px 14px;font-size:12px">🏆 LEADERBOARD</button><button id="rdb" class="y" style="margin:0 0 0 5px;padding:6px 14px;font-size:12px">🎁 REDEEM</button></div><div style="font-size:12px;text-align:right"><div>👤 <b id="mu" style="color:#66ccff">Guest</b></div><div><span id="cloudBadge" class="cloud-badge cloud-off">⚪ Offline</span></div></div></div>
 <h1>⚔️ HERO TOWER DEFENSE ⚔️</h1>
 <div class="bar">💎 <b id="mg"></b> 🎲 <b id="mr"></b> 🪙 <b id="mc"></b> <span id="mt"></span></div>
 <div class="main-panel">
@@ -110,7 +110,7 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;border-bottom:2px solid #2a3a6a;padding-bottom:10px">
       <div style="width:60px;height:60px;background:#0a0e27;border:2px solid #f1c40f;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px">👤</div>
       <div>
-        <div style="font-size:18px;font-weight:bold;color:#fff" id="profName">Player</div>
+        <div style="display:flex;align-items:center;gap:8px"><div style="font-size:18px;font-weight:bold;color:#fff" id="profName">Player</div><button id="editNameBtn" class="y" style="padding:2px 8px;min-height:auto;font-size:10px;margin:0">✏️ Edit</button></div>
         <div style="font-size:14px;color:#f1c40f" id="profLvl">Lv. 1</div>
       </div>
     </div>
@@ -122,6 +122,21 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
       <div style="background:#0a0e27;border-radius:8px;padding:10px;font-size:12px" id="profStats">
         <!-- Stats akan diisi oleh JS -->
       </div>
+    </div>
+  </div>
+</div>
+<div id="leaderboardModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:11;align-items:center;justify-content:center;padding:10px">
+  <div style="background:#151a3a;border:3px solid #f1c40f;border-radius:12px;padding:15px;width:min(400px,95vw);max-height:80vh;display:flex;flex-direction:column;position:relative">
+    <button id="closeLeaderboard" class="r" style="position:absolute;top:10px;right:10px;padding:5px 10px;min-height:auto;margin:0">✕</button>
+    <h2 style="margin-bottom:10px;color:#f1c40f;text-align:center">🏆 LEADERBOARD</h2>
+    
+    <div style="display:flex;gap:5px;margin-bottom:10px">
+      <button id="tabGems" class="g" style="flex:1;margin:0;padding:6px">💎 Top Gems</button>
+      <button id="tabInf" style="flex:1;margin:0;padding:6px;background:linear-gradient(#3498db,#2980b9)">♾️ Top Infinite</button>
+    </div>
+    
+    <div id="lbContent" style="flex:1;overflow-y:auto;background:#0a0e27;border-radius:8px;padding:10px;font-size:13px">
+      <!-- Content akan diisi JS -->
     </div>
   </div>
 </div>
@@ -233,19 +248,20 @@ function resolveTrait(tr){if(!tr)return null;const id=typeof tr==='string'?tr:tr
 function getTrait(u){return resolveTrait(u&&u.trait)}
 
 const REDEEM_CODES={HTD2026:{gems:1000,rr:25,desc:'1000 💎 + 25 🎲'},TDREROLL:{gems:0,rr:100,desc:'100 🎲'},NIAMATD:{gems:1500,rr:0,desc:'1500 💎'},REROLLBOI:{gems:0,rr:250,desc:'250 🎲'}};
-let S={user:null,gems:500,coins:0,rr:0,inv:[],load:[],clr:{},nid:1,mi:0,ri:0,mode:'c',mats:{},auto:false,fx:true,stage:null,best:0,usedCodes:{},stats:{bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0}},G=null;
+let S={user:null,nickname:null,gems:500,coins:0,rr:0,inv:[],load:[],clr:{},nid:1,mi:0,ri:0,mode:'c',mats:{},auto:false,fx:true,stage:null,best:0,usedCodes:{},stats:{bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0}},G=null;
 const cv=$('cv'),ctx=cv.getContext('2d');
 
-function save(){try{localStorage.setItem('td2',JSON.stringify({user:S.user||null,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{}}))}catch(e){}if(isOnline){clearTimeout(window._csTimer);window._csTimer=setTimeout(cloudSave,2000)}}
+function save(){try{localStorage.setItem('td2',JSON.stringify({user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{}}))}catch(e){}if(isOnline){clearTimeout(window._csTimer);window._csTimer=setTimeout(cloudSave,2000)}}
 try{const d=JSON.parse(localStorage.getItem('td2'));if(d)Object.assign(S,d)}catch(e){}
 if(!S.usedCodes)S.usedCodes={};
 if(typeof S.rr!=='number')S.rr=0;
 if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};
+if(S.nickname === undefined) S.nickname = null;
 if(!S.inv.length)for(const id of['archer','swordsman','hunter'])S.inv.push({iid:S.nid++,id,rar:'common',lv:1,trait:null});
 S.inv.forEach(u=>{if(typeof u.trait==='string')u.trait=null;if(u.lv===undefined||u.lv===null||u.lv<1)u.lv=1});
 S.load=S.load.filter(i=>S.inv.some(u=>u.iid===i));
-async function cloudSave(){if(!isOnline||!currentUser)return;try{const data={user:S.user,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},updatedAt:Date.now()};await fbDb.collection('users').doc(currentUser.uid).set(data)}catch(e){console.warn(e)}}
-async function cloudLoad(){if(!currentUser)return false;try{const doc=await fbDb.collection('users').doc(currentUser.uid).get();if(!doc.exists)return false;const d=doc.data();if(confirm(`📦 Save cloud!\n\n💎 ${d.gems||0}\n🪙 ${Math.floor(d.coins||0)}\n🎒 ${(d.inv||[]).length} unit\n🏆 Wave ${d.best||0}\n\nLoad CLOUD?`)){Object.assign(S,d);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();toast('☁️ Loaded!')}return true}catch(e){return false}}
+async function cloudSave(){if(!isOnline||!currentUser)return;try{const data={user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},updatedAt:Date.now()};await fbDb.collection('users').doc(currentUser.uid).set(data)}catch(e){console.warn(e)}}
+async function cloudLoad(){if(!currentUser)return false;try{const doc=await fbDb.collection('users').doc(currentUser.uid).get();if(!doc.exists)return false;const d=doc.data();if(confirm(`📦 Save cloud!\n\n💎 ${d.gems||0}\n🪙 ${Math.floor(d.coins||0)}\n🎒 ${(d.inv||[]).length} unit\n🏆 Wave ${d.best||0}\n\nLoad CLOUD?`)){Object.assign(S,d);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};if(S.nickname === undefined) S.nickname = null;S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();toast('☁️ Loaded!')}return true}catch(e){return false}}
 function startCloudAutoSave(){if(cloudSaveTimer)clearInterval(cloudSaveTimer);cloudSaveTimer=setInterval(()=>{if(isOnline)cloudSave()},10000)}
 try{firebase.initializeApp(firebaseConfig);fbAuth=firebase.auth();fbDb=firebase.firestore()}catch(e){console.warn(e)}
 
@@ -273,8 +289,8 @@ function playEvoCinematic(oldName,newName,icon,color,skillName,skillDesc,ult,cb)
 
 function redeemMenu(){$('ov').style.display='flex';let h=`<h2 style="margin-bottom:6px">🎁 Redeem</h2><div style="display:flex;gap:6px;margin:8px 0"><input id="rdi" type="text" placeholder="Kode..." style="flex:1;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#fff;font-size:14px;font-weight:bold;text-transform:uppercase;outline:none"><button id="rdo" class="g" style="margin:0;padding:10px 16px">Redeem</button></div><div id="rdm" style="font-size:12px;min-height:18px;margin-bottom:8px"></div><div style="border-top:1px solid #2a3a6a;padding-top:8px">`;for(const code in REDEEM_CODES){const c=REDEEM_CODES[code],used=S.usedCodes[code];h+=`<div style="display:flex;justify-content:space-between;align-items:center;background:#0a0e27;border:1px solid ${used?'#333':'#2a3a6a'};border-radius:6px;padding:6px 10px;margin:4px 0;font-size:12px"><div><b style="color:${used?'#666':'#f1c40f'};font-family:monospace">${code}</b><div style="color:#888;font-size:10px">${c.desc}</div></div><span style="color:${used?'#e74c3c':'#2ecc71'};font-size:11px">${used?'✓':'OK'}</span></div>`}$('ob').innerHTML=h+`</div><button id="rdx" class="r" style="margin-top:10px;width:100%">Tutup</button>`;$('rdx').onclick=()=>{$('ov').style.display='none';updMenu()};const doRedeem=()=>{const raw=$('rdi').value.trim().toUpperCase(),msg=$('rdm');if(!raw){msg.innerHTML='<span style="color:#e74c3c">❌ Isi kode!</span>';return}if(!REDEEM_CODES[raw]){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>';return}if(S.usedCodes[raw]){msg.innerHTML='<span style="color:#f39c12">⚠️ Sudah dipakai</span>';return}const r=REDEEM_CODES[raw];S.usedCodes[raw]=Date.now();let lines=[];if(r.gems){S.gems+=r.gems;lines.push(`+${r.gems}💎`)}if(r.rr){S.rr=(S.rr||0)+r.rr;lines.push(`+${r.rr}🎲`)}save();msg.innerHTML=`<span style="color:#2ecc71">✅ ${lines.join(' ')}</span>`;$('rdi').value='';setTimeout(()=>redeemMenu(),700)};$('rdo').onclick=doRedeem;$('rdi').addEventListener('keydown',e=>{if(e.key==='Enter')doRedeem()});setTimeout(()=>$('rdi').focus(),100)}
 
-function exportSave(){const data={user:S.user,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{}};const json=JSON.stringify(data);const code=btoa(unescape(encodeURIComponent(json)));const chunks=code.match(/.{1,80}/g).join('\n');$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📤 Export</h2><div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:8px;padding:10px;text-align:left;max-height:40vh;overflow-y:auto;margin-bottom:8px"><textarea id="expText" readonly style="width:100%;background:transparent;border:none;color:#0ff;font-family:monospace;font-size:10px;resize:none;outline:none" rows="8">${chunks}</textarea></div><div style="font-size:10px;color:#666;margin-bottom:8px">Size: ${(json.length/1024).toFixed(2)} KB</div><button id="expCopy" class="g" style="width:100%;margin-bottom:6px">📋 Copy</button><button id="expDl" class="y" style="width:100%;margin-bottom:6px">💾 Download .txt</button><button id="expClose" style="width:100%">Tutup</button>`;$('expCopy').onclick=()=>{const txt=$('expText');txt.select();txt.setSelectionRange(0,999999);try{if(navigator.clipboard)navigator.clipboard.writeText(txt.value).then(()=>toast('✅ Copy!')).catch(()=>{document.execCommand('copy');toast('✅ Copy!')});else{document.execCommand('copy');toast('✅ Copy!')}}catch(e){toast('❌ Gagal')}};$('expDl').onclick=()=>{const blob=new Blob([code],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='htd_save_'+Date.now()+'.txt';a.click();URL.revokeObjectURL(url);toast('💾 OK')};$('expClose').onclick=()=>{$('ov').style.display='none'}}
-function importSave(){$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📥 Import</h2><textarea id="impText" placeholder="Paste kode..." style="width:100%;height:120px;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#0ff;font-family:monospace;font-size:10px;resize:vertical;outline:none;margin-bottom:8px"></textarea><input type="file" id="impFile" accept=".txt" style="display:none"><button id="impPick" class="y" style="width:100%;margin-bottom:6px">📁 File .txt</button><button id="impGo" class="g" style="width:100%;margin-bottom:6px">▶ Import</button><button id="impClose" style="width:100%">Tutup</button><div id="impMsg" style="font-size:11px;margin-top:8px;min-height:16px"></div>`;$('impPick').onclick=()=>$('impFile').click();$('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('impText').value=ev.target.result.trim();$('impMsg').innerHTML='<span style="color:#2ecc71">✅ Loaded</span>'};r.readAsText(f)};$('impGo').onclick=()=>{const code=$('impText').value.trim().replace(/\s+/g,'');const msg=$('impMsg');if(!code){msg.innerHTML='<span style="color:#e74c3c">❌ Kosong!</span>';return}try{const json=decodeURIComponent(escape(atob(code)));const data=JSON.parse(json);if(!data.inv||!Array.isArray(data.inv))throw new Error();if(!confirm('⚠️ Data DIGANTI. Lanjut?'))return;Object.assign(S,data);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();msg.innerHTML='<span style="color:#2ecc71">✅ OK! Reload...</span>';setTimeout(()=>location.reload(),900)}catch(err){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>'}};$('impClose').onclick=()=>{$('ov').style.display='none'}}
+function exportSave(){const data={user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{}};const json=JSON.stringify(data);const code=btoa(unescape(encodeURIComponent(json)));const chunks=code.match(/.{1,80}/g).join('\n');$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📤 Export</h2><div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:8px;padding:10px;text-align:left;max-height:40vh;overflow-y:auto;margin-bottom:8px"><textarea id="expText" readonly style="width:100%;background:transparent;border:none;color:#0ff;font-family:monospace;font-size:10px;resize:none;outline:none" rows="8">${chunks}</textarea></div><div style="font-size:10px;color:#666;margin-bottom:8px">Size: ${(json.length/1024).toFixed(2)} KB</div><button id="expCopy" class="g" style="width:100%;margin-bottom:6px">📋 Copy</button><button id="expDl" class="y" style="width:100%;margin-bottom:6px">💾 Download .txt</button><button id="expClose" style="width:100%">Tutup</button>`;$('expCopy').onclick=()=>{const txt=$('expText');txt.select();txt.setSelectionRange(0,999999);try{if(navigator.clipboard)navigator.clipboard.writeText(txt.value).then(()=>toast('✅ Copy!')).catch(()=>{document.execCommand('copy');toast('✅ Copy!')});else{document.execCommand('copy');toast('✅ Copy!')}}catch(e){toast('❌ Gagal')}};$('expDl').onclick=()=>{const blob=new Blob([code],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='htd_save_'+Date.now()+'.txt';a.click();URL.revokeObjectURL(url);toast('💾 OK')};$('expClose').onclick=()=>{$('ov').style.display='none'}}
+function importSave(){$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📥 Import</h2><textarea id="impText" placeholder="Paste kode..." style="width:100%;height:120px;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#0ff;font-family:monospace;font-size:10px;resize:vertical;outline:none;margin-bottom:8px"></textarea><input type="file" id="impFile" accept=".txt" style="display:none"><button id="impPick" class="y" style="width:100%;margin-bottom:6px">📁 File .txt</button><button id="impGo" class="g" style="width:100%;margin-bottom:6px">▶ Import</button><button id="impClose" style="width:100%">Tutup</button><div id="impMsg" style="font-size:11px;margin-top:8px;min-height:16px"></div>`;$('impPick').onclick=()=>$('impFile').click();$('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('impText').value=ev.target.result.trim();$('impMsg').innerHTML='<span style="color:#2ecc71">✅ Loaded</span>'};r.readAsText(f)};$('impGo').onclick=()=>{const code=$('impText').value.trim().replace(/\s+/g,'');const msg=$('impMsg');if(!code){msg.innerHTML='<span style="color:#e74c3c">❌ Kosong!</span>';return}try{const json=decodeURIComponent(escape(atob(code)));const data=JSON.parse(json);if(!data.inv||!Array.isArray(data.inv))throw new Error();if(!confirm('⚠️ Data DIGANTI. Lanjut?'))return;Object.assign(S,data);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};if(S.nickname === undefined) S.nickname = null;S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();msg.innerHTML='<span style="color:#2ecc71">✅ OK! Reload...</span>';setTimeout(()=>location.reload(),900)}catch(err){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>'}};$('impClose').onclick=()=>{$('ov').style.display='none'}}
 
 function card(u,fn){
   const d=DEF[u.id],r=R[u.rar],s=stats(u),tr=s.trait,e=document.createElement('div');
@@ -594,7 +610,7 @@ $('trb').onclick=traitMenu;
 $('rdb').onclick=redeemMenu;
 $('profileBtn').onclick=()=>{
     const lvl = Math.floor((S.stats.gamesPlayed * 1.5) + (S.stats.gamesWon * 3)) + 1;
-    $('profName').textContent = S.user || 'Guest';
+    $('profName').textContent = S.nickname || (S.user ? S.user.split('@')[0] : 'Guest');
     $('profLvl').textContent = `Lv. ${lvl}`;
     
     let uHTML = '';
@@ -624,6 +640,67 @@ $('profileBtn').onclick=()=>{
     $('profileModal').style.display = 'flex';
 };
 $('closeProfile').onclick = () => { $('profileModal').style.display = 'none'; };
+$('editNameBtn').onclick = () => {
+    const currentName = S.nickname || (S.user ? S.user.split('@')[0] : 'Guest');
+    const newName = prompt("Masukkan nama baru (maks 15 karakter):", currentName);
+    if (newName && newName.trim() !== '') {
+        S.nickname = newName.trim().substring(0, 15);
+        save();
+        $('profName').textContent = S.nickname;
+        toast('✅ Nama berhasil diubah!');
+    }
+};
+
+// --- LEADERBOARD LOGIC ---
+$('leaderboardBtn').onclick = () => {
+    if (!fbDb || !isOnline) return toast('❌ Harus login online untuk melihat Leaderboard!');
+    $('leaderboardModal').style.display = 'flex';
+    fetchLeaderboard('gems');
+};
+$('closeLeaderboard').onclick = () => { $('leaderboardModal').style.display = 'none'; };
+
+$('tabGems').onclick = () => {
+    $('tabGems').className = 'g'; $('tabGems').style.background = 'linear-gradient(#2ecc71,#27ae60)';
+    $('tabInf').className = ''; $('tabInf').style.background = 'linear-gradient(#3498db,#2980b9)';
+    fetchLeaderboard('gems');
+};
+$('tabInf').onclick = () => {
+    $('tabInf').className = 'g'; $('tabInf').style.background = 'linear-gradient(#2ecc71,#27ae60)';
+    $('tabGems').className = ''; $('tabGems').style.background = 'linear-gradient(#3498db,#2980b9)';
+    fetchLeaderboard('best');
+};
+
+async function fetchLeaderboard(type) {
+    $('lbContent').innerHTML = '<div style="text-align:center;color:#888;padding:20px">Memuat data...</div>';
+    try {
+        const snapshot = await fbDb.collection('users').orderBy(type, 'desc').limit(10).get();
+        let html = '';
+        let rank = 1;
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const username = data.nickname || (data.user ? data.user.split('@')[0] : 'Guest');
+            const score = type === 'gems' ? (data.gems || 0) : (data.best || 0);
+            const icon = type === 'gems' ? '💎' : '♾️';
+            
+            let medal = '';
+            if (rank === 1) medal = '🥇 ';
+            else if (rank === 2) medal = '🥈 ';
+            else if (rank === 3) medal = '🥉 ';
+            else medal = `#${rank} `;
+
+            html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #2a3a6a;">
+                <div style="font-weight:bold;color:#fff;">${medal} ${username}</div>
+                <div style="color:#f1c40f;">${score.toLocaleString()} ${icon}</div>
+            </div>`;
+            rank++;
+        });
+        if (rank === 1) html = '<div style="text-align:center;color:#888;padding:20px">Belum ada data.</div>';
+        $('lbContent').innerHTML = html;
+    } catch (e) {
+        console.error(e);
+        $('lbContent').innerHTML = '<div style="text-align:center;color:#e74c3c;padding:20px">Gagal memuat data. Pastikan Firebase aktif & aturan Firestore mengizinkan baca (read).</div>';
+    }
+}
 $('set').onclick=()=>pmenu(false);
 $('rst').onclick=()=>{if(confirm('⚠️ Hapus semua progress?')){localStorage.removeItem('td2');location.reload()}};
 $('expBtn').onclick=exportSave;
