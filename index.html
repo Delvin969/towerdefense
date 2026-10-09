@@ -88,7 +88,7 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 
 <div id="login" class="sc"><h1 style="margin-top:40px">⚔️ HERO TOWER DEFENSE ⚔️</h1><div class="pn" style="max-width:420px;margin:30px auto;text-align:center"><div style="font-size:60px;margin-bottom:10px">🎮</div><h3 style="font-size:18px">Login dengan Google</h3><p style="color:#888;font-size:12px;margin-bottom:14px">Progress otomatis tersimpan di cloud</p><button id="googleLoginBtn" class="g" style="width:100%;padding:14px;font-size:16px">🔐 Login Google</button><div id="loginMsg" style="font-size:12px;margin-top:8px;min-height:16px"></div><div style="margin-top:14px;padding-top:14px;border-top:1px solid #2a3a6a"><div style="font-size:11px;color:#888;margin-bottom:6px">Atau main offline:</div><button id="offlineBtn" style="width:100%;padding:10px;font-size:13px;background:linear-gradient(#555,#333)">▶ Main Offline</button></div></div></div>
 
-<div id="menu" class="sc"><div class="top-bar"><div><button id="profileBtn" class="y" style="margin:0;padding:6px 14px;font-size:12px">👤 PROFILE</button><button id="leaderboardBtn" class="y" style="margin:0 0 0 5px;padding:6px 14px;font-size:12px">🏆 LEADERBOARD</button><button id="rdb" class="y" style="margin:0 0 0 5px;padding:6px 14px;font-size:12px">🎁 REDEEM</button></div><div style="font-size:12px;text-align:right"><div>👤 <b id="mu" style="color:#66ccff">Guest</b></div><div><span id="cloudBadge" class="cloud-badge cloud-off">⚪ Offline</span></div></div></div>
+<div id="menu" class="sc"><div class="top-bar"><div><button id="profileBtn" class="y" style="margin:0;padding:6px 10px;font-size:11px">👤 PROFILE</button><button id="leaderboardBtn" class="y" style="margin:0 0 0 3px;padding:6px 10px;font-size:11px">🏆 RANK</button><button id="indexBtn" class="y" style="margin:0 0 0 3px;padding:6px 10px;font-size:11px">📖 INDEX</button><button id="rdb" class="y" style="margin:0 0 0 3px;padding:6px 10px;font-size:11px">🎁 REDEEM</button></div><div style="font-size:11px;text-align:right"><div>👤 <b id="mu" style="color:#66ccff">Guest</b></div><div><span id="cloudBadge" class="cloud-badge cloud-off">⚪ Offline</span></div></div></div>
 <h1>⚔️ HERO TOWER DEFENSE ⚔️</h1>
 <div class="bar">💎 <b id="mg"></b> 🎲 <b id="mr"></b> 🪙 <b id="mc"></b> <span id="mt"></span></div>
 <div class="main-panel">
@@ -119,32 +119,37 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
         <div style="font-size:12px;color:#aaa;margin-bottom:5px">Equipped Units</div>
         <div id="profUnits" style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px"></div>
       </div>
-      <div style="background:#0a0e27;border-radius:8px;padding:10px;font-size:12px" id="profStats">
-        <!-- Stats akan diisi oleh JS -->
-      </div>
+      <div style="background:#0a0e27;border-radius:8px;padding:10px;font-size:12px" id="profStats"></div>
     </div>
   </div>
 </div>
 <div id="leaderboardModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:11;align-items:center;justify-content:center;padding:10px">
-  <div style="background:#151a3a;border:3px solid #f1c40f;border-radius:12px;padding:15px;width:min(400px,95vw);max-height:80vh;display:flex;flex-direction:column;position:relative">
+  <div style="background:#151a3a;border:3px solid #f1c40f;border-radius:12px;padding:15px;width:min(420px,95vw);max-height:85vh;display:flex;flex-direction:column;position:relative">
     <button id="closeLeaderboard" class="r" style="position:absolute;top:10px;right:10px;padding:5px 10px;min-height:auto;margin:0">✕</button>
     <h2 style="margin-bottom:10px;color:#f1c40f;text-align:center">🏆 LEADERBOARD</h2>
-    
-    <div style="display:flex;gap:5px;margin-bottom:10px">
+    <div style="display:flex;gap:5px;margin-bottom:5px">
       <button id="tabGems" class="g" style="flex:1;margin:0;padding:6px">💎 Top Gems</button>
       <button id="tabInf" style="flex:1;margin:0;padding:6px;background:linear-gradient(#3498db,#2980b9)">♾️ Top Infinite</button>
     </div>
-    
-    <div id="lbContent" style="flex:1;overflow-y:auto;background:#0a0e27;border-radius:8px;padding:10px;font-size:13px">
-      <!-- Content akan diisi JS -->
+    <div style="display:flex;gap:5px;margin-bottom:10px">
+      <input id="searchPlayerInput" type="text" placeholder="Cari nama player..." style="flex:1;padding:8px;border-radius:6px;border:1px solid #2a3a6a;background:#0a0e27;color:#fff;font-size:12px;outline:none">
+      <button id="searchPlayerBtn" class="y" style="margin:0;padding:8px 12px;font-size:12px">🔍 Cari</button>
     </div>
+    <div id="lbContent" style="flex:1;overflow-y:auto;background:#0a0e27;border-radius:8px;padding:10px;font-size:13px"></div>
+  </div>
+</div>
+<div id="indexModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:12;align-items:center;justify-content:center;padding:10px">
+  <div style="background:#151a3a;border:3px solid #9b59b6;border-radius:12px;padding:15px;width:min(600px,95vw);max-height:90vh;display:flex;flex-direction:column;position:relative">
+    <button id="closeIndex" class="r" style="position:absolute;top:10px;right:10px;padding:5px 10px;min-height:auto;margin:0">✕</button>
+    <h2 style="margin-bottom:10px;color:#9b59b6;text-align:center">📖 UNIT INDEX</h2>
+    <div id="indexContent" style="flex:1;overflow-y:auto;background:#0a0e27;border-radius:8px;padding:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;"></div>
   </div>
 </div>
 <div class="evo-flash" id="evoFlash"></div>
 <div class="evo-cinema" id="evoCinema"><div class="evo-rays" id="evoRays"></div><div class="evo-icon" id="evoIcon">👁️</div><div class="evo-title" id="evoTitle">EVOLVED</div><div class="evo-sub" id="evoSub"></div></div>
 
 <script>
-const BASE=100,DMG=10,MAXW=20,$=i=>document.getElementById(i);
+const BASE=100,DMG=10,MAXW=20,RANGE_NERF=0.45,$=i=>document.getElementById(i);
 const firebaseConfig={apiKey:"AIzaSyBFxKd9Gz17Hcwe6lSG3Vmkxt_HaPb-12g",authDomain:"herotowerdefense.firebaseapp.com",projectId:"herotowerdefense",storageBucket:"herotowerdefense.firebasestorage.app",messagingSenderId:"579288425283",appId:"1:579288425283:web:aac6d8d34dd20ea68d05f6",measurementId:"G-Z5EG2LLS1Y"};
 let fbAuth=null,fbDb=null,currentUser=null,cloudSaveTimer=null,isOnline=false;
 
@@ -166,7 +171,6 @@ primordial:[['void_primordial','Void Primordial','🕳️',450,300,.3,'chain'],[
 eternal:[['eternal_dragon','Eternal Dragon','🐲',800,350,.25,'chain'],['eternal_angel','Eternal Angel','👼',750,380,.28,'aoe'],['eternal_demon','Eternal Demon','😈',900,320,.25,'crit']],
 exotic:[['exotic_nidhogg','Nidhogg','🐉',1500,420,.2,'chain'],['exotic_metatron','Metatron','👁️',1400,450,.22,'aoe'],['exotic_lucifer','Lucifer','🦇',1700,400,.2,'crit']]};
 const DEF={};for(const r in POOL)for(const a of POOL[r])DEF[a[0]]={id:a[0],name:a[1],icon:a[2],dmg:a[3],rng:a[4],cd:a[5],skill:a[6],rar:r};
-const ULT={chain:{n:'☄️ VOID STORM',c:'#cc66ff',m:4},aoe:{n:'🔥 SUPERNOVA',c:'#ff8800',m:5},crit:{n:'⚔️ ARMAGEDDON',c:'#ff2255',m:6},slow:{n:'⏰ TIME STOP',c:'#66ccff',m:2}};
 const ULT_CD=60;
 const ULT_DEF={chain:{n:'☄️ VOID STORM',c:'#cc66ff',t:'storm'},aoe:{n:'🌟 SUPERNOVA',c:'#ff8800',t:'nova'},crit:{n:'⚔️ SCYTHE SWEEP',c:'#ff2255',t:'scythe'},slow:{n:'⏰ TIME FREEZE',c:'#66ccff',t:'freeze'}};
 function inTriangle(px,py,cx,cy,ang,len,spread){const dx=px-cx,dy=py-cy,dist=Math.hypot(dx,dy);if(dist>len)return false;let diff=Math.atan2(dy,dx)-ang;while(diff>Math.PI)diff-=2*Math.PI;while(diff<-Math.PI)diff+=2*Math.PI;return Math.abs(diff)<=spread}
@@ -240,7 +244,6 @@ const CD_ROLE_MULT={dps:1.0,sniper:1.15,aoe:1.4,chain:1.25,crit:1.05,cc:0.85,eco
 const ECO_K={common:1.0,rare:1.2,epic:1.6,legendary:2.2,mythic:3.0,td:4.0,secret:5.0,transcendent:7.0,primordial:10.0,eternal:15.0,exotic:25.0};
 
 const TRAITS={vigor:{n:'Vigor',i:'💪',c:'#e74c3c',rar:'common',chance:26,tiers:[{dmg:5},{dmg:10},{dmg:15}],f:t=>`+${t.dmg}% DMG`},swift:{n:'Swift',i:'💨',c:'#66ccff',rar:'common',chance:26,tiers:[{cd:-5},{cd:-7.5},{cd:-12.5}],f:t=>`${t.cd}% Cooldown`},range:{n:'Range',i:'🎯',c:'#2ecc71',rar:'common',chance:26,tiers:[{rng:5},{rng:10},{rng:15}],f:t=>`+${t.rng}% Range`},marksman:{n:'Marksman',i:'🏹',c:'#f39c12',rar:'legendary',chance:6.5,tiers:[{rng:30}],f:t=>`+${t.rng}% Range`},blitz:{n:'Blitz',i:'⚡',c:'#f39c12',rar:'legendary',chance:1.85,tiers:[{cd:-20}],f:t=>`${t.cd}% Cooldown`},solar:{n:'Solar',i:'☀️',c:'#ffd84a',rar:'mythic',chance:0.5,tiers:[{dmg:10,cd:-5,rng:25}],f:t=>`+${t.dmg}% DMG · ${t.cd}% CD · +${t.rng}% RNG`},deadeye:{n:'Deadeye',i:'🎯',c:'#ff66cc',rar:'mythic',chance:0.375,tiers:[{dmg:15,cd:-10}],f:t=>`+${t.dmg}% DMG · ${t.cd}% CD`},ethereal:{n:'Ethereal',i:'👻',c:'#aa66ff',rar:'mythic',chance:0.175,tiers:[{dmg:20,cd:-20,rng:5}],f:t=>`+${t.dmg}% DMG · ${t.cd}% CD · +${t.rng}% RNG`},monarch:{n:'Monarch',i:'👑',c:'#ff00ff',rar:'mythic',chance:0.1,tiers:[{dmg:300,cd:-10,rng:5}],f:t=>`+${t.dmg}% DMG · ${t.cd}% CD · +${t.rng}% RNG · ⚠️ Max 1`,special:'monarch'}};
-const RAR_COLOR_TRAIT={common:'#b0b0b0',legendary:'#f39c12',mythic:'#e74c3c'};
 function mkTrait(id){const t=TRAITS[id];if(!t)return null;const ti=Math.floor(Math.random()*t.tiers.length);return{id,tier:ti}}
 function rollTrait(){const r=Math.random()*100;if(r<0.1)return mkTrait('monarch');if(r<0.275)return mkTrait('ethereal');if(r<0.65)return mkTrait('deadeye');if(r<1.15)return mkTrait('solar');if(r<3.0)return mkTrait('blitz');if(r<9.5)return mkTrait('marksman');const c=Math.random()*3;if(c<1)return mkTrait('vigor');if(c<2)return mkTrait('swift');return mkTrait('range')}
 const rndTrait=()=>rollTrait();
@@ -267,13 +270,12 @@ try{firebase.initializeApp(firebaseConfig);fbAuth=firebase.auth();fbDb=firebase.
 
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400)}
 function show(n){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));$(n).classList.add('on')}
-function stats(u){const d=DEF[u.id],r=R[u.rar],tr=getTrait(u);const cdMul=CD_ROLE_MULT[role(d)]||1;const dmgPerLv=(u.rar==='mythic'||u.rar==='td'||u.rar==='secret'||u.rar==='transcendent'||u.rar==='primordial'||u.rar==='eternal'||u.rar==='exotic')?.25:.18;let dmg=d.dmg*r.d*(1+(u.lv-1)*dmgPerLv);let rng=d.rng*r.r*(1+(u.lv-1)*.06);let cd=d.cd*cdMul/(r.s*(1+(u.lv-1)*.04));if(tr){if(tr.dmg)dmg*=1+tr.dmg/100;if(tr.cd)cd*=1+tr.cd/100;if(tr.rng)rng*=1+tr.rng/100}return{dmg:Math.floor(dmg),rng:Math.floor(rng),cd,skill:d.skill,trait:tr}}
+function stats(u){const d=DEF[u.id],r=R[u.rar],tr=getTrait(u);const cdMul=CD_ROLE_MULT[role(d)]||1;const dmgPerLv=(u.rar==='mythic'||u.rar==='td'||u.rar==='secret'||u.rar==='transcendent'||u.rar==='primordial'||u.rar==='eternal'||u.rar==='exotic')?.25:.18;let dmg=d.dmg*r.d*(1+(u.lv-1)*dmgPerLv);let rng=d.rng*r.r*(1+(u.lv-1)*.02)*RANGE_NERF;let cd=d.cd*cdMul/(r.s*(1+(u.lv-1)*.04));if(tr){if(tr.dmg)dmg*=1+tr.dmg/100;if(tr.cd)cd*=1+tr.cd/100;if(tr.rng)rng*=1+tr.rng/100}return{dmg:Math.floor(dmg),rng:Math.floor(rng),cd,skill:d.skill,trait:tr}}
 const upCost=u=>Math.floor(COST[u.rar]*1.15*R[u.rar].k*Math.pow(1.35,u.lv-1));
 const SKM={single:1,slow:1.1,crit:1.15,aoe:1.25,chain:1.3,economy:1.4,support:1.2};
 const placeCost=u=>Math.round(COST[u.rar]*SKM[DEF[u.id].skill]/5)*5;
 function maxDep(u){const tr=getTrait(u);if(tr&&tr.special==='monarch')return 1;return Math.min(RLIM[role(DEF[u.id])],MAXD[u.rar])}
 const isHi=u=>u.rar==='mythic'||u.rar==='td'||u.rar==='secret'||u.rar==='transcendent'||u.rar==='primordial'||u.rar==='eternal'||u.rar==='exotic';
-function STAT_HINT(id){const d=DEF[id],r=R[d.rar];return `DMG ${Math.floor(d.dmg*r.d)} · RNG ${Math.floor(d.rng*r.r)}`}
 function togglePanel(id){const p=$(id);if(p)p.classList.toggle('collapsed')}
 const RAR_TRIGGER=['mythic','td','secret','transcendent','primordial','eternal','exotic'];
 const RAR_ORDER=['common','rare','epic','legendary','mythic','td','secret','transcendent','primordial','eternal','exotic'];
@@ -326,21 +328,17 @@ function renderStage(){
     mk('⚔️ Legend',S.mode==='l',()=>{S.mode='l';S.stage=null;renderStage()});
     mk('♾️ Infinite',S.mode==='i',()=>{S.mode='i';S.stage={k:'inf',n:'♾️ Infinite',diff:1,boss:false,mat:null,drop:0,wp:'inf'};renderStage()});
     m.appendChild(document.createElement('br'));
-    
     const a=$('acts');a.innerHTML='';
     if(S.mode==='i'){
         a.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:14px;color:#f1c40f;font-size:13px;line-height:1.7;background:#0a0e27;border-radius:8px;border:2px solid #f1c40f">♾️ <b>Infinite</b><br>👑 Boss tiap 10 wave<br>💎 +100 tiap 15 wave<br>🏆 Rekor: <b>Wave ${S.best||0}</b></div>`;
         $('sel').innerHTML=S.stage?`Dipilih: <b>♾️ Infinite</b>`:'Belum dipilih.';
         return;
     }
-    
     const L=S.mode==='l',list=L?REALMS:MAPS;
     list.forEach((mp,i)=>mk(mp.n,i===(L?S.ri:S.mi),()=>{if(L)S.ri=i;else S.mi=i;renderStage()}));
-    
     (L?REALMS[S.ri].d:MAPS[S.mi].d).forEach((df,j)=>{
         const dv=L?df[0]:df,k=(L?'L'+S.ri:S.mi)+'_'+j,c=S.clr[k]||0,e=document.createElement('div');
         e.className='card';
-        
         let dropInfo = '';
         if (L) {
             const mat = REALMS[S.ri].m;
@@ -348,9 +346,7 @@ function renderStage(){
                 dropInfo = `<br><span style="color:#ff00ff;font-size:9px;font-weight:bold">🌟 ${DEF[SECRET_DROPS[mat]].name} (0.85%)</span>`;
             }
         }
-        
         e.innerHTML=`<b style="color:#fff;font-size:11px">${L?'Lv '+(j+1):'Act '+(j+1)+(j===6?' 👑':'')}</b><div style="font-size:9px;color:#aaa">x${dv}<br>${L?MATS[REALMS[S.ri].m][1]+' x'+df[1]:''}${dropInfo}<br>${c?'✅'+c+'x':'baru'}</div>`;
-        
         if(S.stage&&S.stage.k===k)e.style.borderColor='#f1c40f';
         e.onclick=()=>{
             const nm=L?`${REALMS[S.ri].n} - Lv ${j+1}`:`${MAPS[S.mi].n} - Act ${j+1}${j===6?' (BOSS)':''}`;
@@ -359,7 +355,6 @@ function renderStage(){
         };
         a.appendChild(e);
     });
-    
     if (S.stage && L) {
         const mat = REALMS[S.ri].m;
         let extraInfo = `<br><span style="color:#aaa;font-size:11px">Material drop: ${MATS[mat][1]} ${MATS[mat][0]}</span>`;
@@ -443,10 +438,7 @@ function hand(){
         e.style.borderColor=G.sel===u.iid?'#f1c40f':r.c;
         e.innerHTML=`<span>${d.icon}</span><div><b style="color:#fff;font-size:10px">${d.name}</b><div style="color:${ro[1]};font-size:8px">${ro[0]}</div>${trHTML}<div style="color:#f1c40f;font-size:9px">🪙${placeCost(u)}</div></div><i>${m-c}/${m}</i>`;
         e.onclick=()=>{
-            if(full){
-                toast('Batas '+m+' penuh!');
-                return;
-            }
+            if(full){toast('Batas '+m+' penuh!');return}
             G.sel=G.sel===u.iid?null:u.iid;
             G.selP=null;
             [...h.children].forEach(c=>c.classList.remove('sel'));
@@ -459,7 +451,6 @@ function hand(){
 function info(){try{const u=G.pl.find(x=>x.pid===G.selP);if(!u){pop.style.display='none';return}const i=u.i,st=stats(i),mx=MAXL[i.rar]||10,c=upCost(i),d=DEF[i.id],rc=RECIPES[i.id],ro=ROLE[role(d)]||['-','#fff'];let ev='';const tr=st.trait;const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';const traitHTML=tr?`<div class="row"><span>🎲</span><b style="color:${tr.c}">${tr.i} ${tr.n}${tl}</b></div>`:`<div class="row"><span>🎲</span><b style="color:#666">—</b></div>`;const es=EVO_SKILL[i.id];const skillName=es?`${es.icon} ${es.name}`:st.skill;const ultName=es?es.ult:(ULT_DEF[st.skill]?ULT_DEF[st.skill].n:'ULT');const ec=(st.skill==='economy')?Math.floor((80+i.lv*35)*(ECO_K[i.rar]||1)):0;if(rc){let can=true;ev=`<div style="margin-top:4px;color:#aaa;font-size:10px">🧬 → ${DEF[rc.r].name}</div>`;for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;ev+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}const gc=rc.cost||0,hasG=S.gems>=gc;if(!hasG)can=false;ev+=`<div class="mr" style="border-color:${hasG?'#2ecc71':'#e74c3c'}"><span>💎</span><span>${S.gems}/${gc}</span></div><button id="ev" class="y" ${can?'':'disabled'}>Evolve</button>`}
     const buffedDmg = u.buff > 0 ? Math.floor(st.dmg * (1 + u.buff)) : st.dmg;
     const buffText = u.buff > 0 ? ` <span style="color:#00ffcc;font-size:9px">(+${Math.floor(u.buff*100)}%)</span>` : '';
-    
     pop.innerHTML=`<b>${d.icon} ${d.name}</b> <span style="color:${ro[1]};font-size:11px">${ro[0]}</span><div class="row"><span>Lv</span><b>${i.lv}/${mx}</b></div><div class="row"><span>DMG</span><b>${buffedDmg}${buffText}</b></div><div class="row"><span>RNG</span><b>${st.rng}</b></div>${traitHTML}<div class="row"><span>Skill</span><b>${skillName}</b></div>${ec?`<div class="row"><span>🪙/Wave</span><b>+${ec}</b></div>`:''}${st.skill==='support'?`<div class="row"><span>✨ Buff Aura</span><b style="color:#00ffcc">+${Math.floor((0.25+(i.lv*0.03))*100)}% DMG</b></div>`:''}<div class="row"><span>Max</span><b>${cnt(i)}/${maxDep(i)}</b></div>${isHi(i)?`<div class="row"><span>Ult</span><b>${i.lv>=5?ultName:'Lv5'}</b></div>`:''}${isHi(i)&&i.lv>=5?`<button id="ult" style="width:100%;margin-top:4px;background:linear-gradient(180deg,#ff2266,#aa0033)" ${u.ultCd>0?'disabled':''}>${u.ultCd>0?'⏳'+Math.ceil(u.ultCd)+'s':'⚡'+ultName}</button>`:''}<button id="up" ${i.lv>=mx||S.coins<c?'disabled':''}>${i.lv>=mx?'🏆 MAX':'⬆ '+c+'🪙'}</button><button id="pk" class="r">Angkat</button>${ev}`;
     const rc2=cv.getBoundingClientRect(),wr=$('cw').getBoundingClientRect(),k=rc2.width/900,px=rc2.left-wr.left+u.x*k,py=rc2.top-wr.top+u.y*k;pop.style.display='block';if(window.innerWidth<=640){pop.style.left='50%';pop.style.transform='translateX(-50%)';pop.style.top='auto';pop.style.bottom='10px';pop.style.width='min(280px,90vw)'}else{pop.style.transform='';pop.style.bottom='';pop.style.width='180px';const pw=pop.offsetWidth||180,ph=pop.offsetHeight||200;let lx=px+26;if(lx+pw>wr.width-4)lx=px-pw-26;pop.style.left=Math.max(4,lx)+'px';pop.style.top=Math.max(4,Math.min(wr.height-ph-4,py-ph/2))+'px'}const ultEl=$('ult');if(ultEl)ultEl.onclick=()=>{if(u.ultCd>0||i.lv<5)return;fireUltimate(u,st);save();setTimeout(()=>info(),100)};const upEl=$('up');if(upEl)upEl.onclick=()=>{if(i.lv>=mx||S.coins<c)return;S.coins-=c;i.lv++;parts(u.x,u.y,'#f1c40f',14,90,.8);if(isHi(i)&&i.lv===5){const col=R[i.rar].c;ring(u.x,u.y,90,col,.9,6);nova(u.x,u.y,70,col,.6);parts(u.x,u.y,col,40,220,1.2);flash(col,.3)}toast('⬆️ Lv'+i.lv);save();ui()};const pkEl=$('pk');if(pkEl)pkEl.onclick=()=>{S.coins+=Math.floor(placeCost(u.i)/2);G.pl=G.pl.filter(x=>x!==u);G.selP=null;pop.style.display='none';ui()};const eb=$('ev');if(eb)eb.onclick=()=>{if(!rc)return;for(const k in rc.m)if((S.mats[k]||0)<rc.m[k])return toast('❌ Bahan kurang!');const gc=rc.cost||0;if(S.gems<gc)return toast('❌ Butuh '+gc+'💎!');for(const k in rc.m)S.mats[k]-=rc.m[k];S.gems-=gc;S.stats.gemsSpent += gc;const oldN=DEF[i.id].name;ring(u.x,u.y,120,EVO_SKILL[rc.r].color,.9,7);nova(u.x,u.y,150,EVO_SKILL[rc.r].color,.8);parts(u.x,u.y,EVO_SKILL[rc.r].color,60,320,1.3);i.id=rc.r;u.i.id=rc.r;if(rc.r.startsWith('exotic_')){i.rar='exotic';u.i.rar='exotic'}else if(rc.r.endsWith('_primordial')){i.rar='primordial';u.i.rar='primordial'}else if(rc.r.endsWith('_god')){i.rar='transcendent';u.i.rar='transcendent'}else{i.rar='td';u.i.rar='td'}i.lv=1;u.i.lv=1;const es2=EVO_SKILL[i.id];save();pop.style.display='none';G.paused=true;playEvoCinematic(oldN,DEF[i.id].name,DEF[i.id].icon,es2.color,es2.icon+' '+es2.name,es2.desc,es2.ult,()=>{if(G){G.paused=false;ui();if(G.pl.includes(u))G.selP=u.pid;info()}toast('🌟 '+oldN+' → '+DEF[i.id].name)})}}catch(e){console.error(e);pop.style.display='none'}}
 function placeUnit(x,y){
@@ -480,14 +471,7 @@ function placeUnit(x,y){
         S.coins-=pc;
         G.pl.push({pid:PID++,i:{...i,trait:i.trait?{...i.trait}:null},x,y,cdT:0,pulse:0,buff:0,ultCd:0,aimAngle:0});
         parts(x,y,R[i.rar].c,15,100,.7);
-        if(isHi(i)){
-            const c=tc({i});
-            ring(x,y,80,c,.7,5);
-            ring(x,y,45,'#fff',.5,3);
-            nova(x,y,60,c,.5);
-            parts(x,y,'#fff',25,200,1);
-            shake(4,.15)
-        }
+        if(isHi(i)){const c=tc({i});ring(x,y,80,c,.7,5);ring(x,y,45,'#fff',.5,3);nova(x,y,60,c,.5);parts(x,y,'#fff',25,200,1);shake(4,.15)}
         if(cnt(i)>=maxDep(i))G.sel=null;
         if(G.cd>0&&G.wave===0&&!G.act){toast('⚔️ Wave 1!');startWave()}
         return ui()
@@ -510,15 +494,12 @@ function sets(back){$('ob').innerHTML=`<h2 style="margin-bottom:8px">⚙️ Sett
 function pmenu(g){if(g&&G&&!G.over)G.paused=true;$('ov').style.display='flex';if(!g)return sets(()=>{$('ov').style.display='none'});const b='style="display:block;width:220px;margin:6px auto"';$('ob').innerHTML=`<h2 style="margin-bottom:10px">⏸ Menu</h2><button id="p1" class="g" ${b}>▶ Lanjut</button><button id="p2" ${b}>⚙️ Settings</button><button id="p3" class="r" ${b}>🏠 Menu</button>`;$('p1').onclick=()=>{$('ov').style.display='none';if(G)G.paused=false};$('p2').onclick=()=>sets(()=>pmenu(true));$('p3').onclick=()=>{sync();G=null;$('ov').style.display='none';pop.style.display='none';show('menu');updMenu();save()}}
 function evMenu(){$('ov').style.display='flex';const list=S.inv.filter(u=>RECIPES[u.id]);let h='<h2 style="margin-bottom:8px">🧬 Evolve</h2><div style="max-height:60vh;overflow-y:auto;width:min(440px,86vw)">';if(!list.length)h+='<p style="color:#888;font-size:13px">Belum ada unit yang bisa di-evolve.</p>';for(const u of list){const rc=RECIPES[u.id];let can=true,rows='';for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;rows+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}const gc=rc.cost||0,hasG=S.gems>=gc;if(!hasG)can=false;rows+=`<div class="mr" style="border-color:${hasG?'#2ecc71':'#e74c3c'}"><span>💎</span><span>${S.gems}/${gc}</span></div>`;const isExotic=rc.r.startsWith('exotic_'),isPrim=rc.r.endsWith('_primordial'),isGod=rc.r.endsWith('_god');const bc=isExotic?'#ff00aa':(isPrim?'#ff0066':(isGod?'#ffd700':R.mythic.c));const lbl=isExotic?'💎 ETERNAL → EXOTIC':(isPrim?'🔥 TRANSCENDENT → PRIMORDIAL':(isGod?'🌟 SECRET → TRANSCENDENT':'MYTHIC → TD'));h+=`<div class="card" style="cursor:default;text-align:left;margin:6px 0;border-color:${bc};${isExotic?'box-shadow:0 0 25px #ff00aa':isPrim?'box-shadow:0 0 20px #ff0066':''}"><div style="font-size:9px;color:${bc};font-weight:bold">${lbl}</div>${DEF[u.id].icon} <b style="color:#fff">${DEF[u.id].name}</b> → ${DEF[rc.r].icon} <b style="color:${bc}">${DEF[rc.r].name}</b>${rows}<button class="y evgo" data-i="${u.iid}" style="width:100%;margin:4px 0 0" ${can?'':'disabled'}>Evolve</button></div>`}$('ob').innerHTML=h+'</div><button id="evx" class="r" style="margin-top:8px">Tutup</button>';$('evx').onclick=()=>{$('ov').style.display='none'};document.querySelectorAll('.evgo').forEach(b=>b.onclick=()=>{const u=S.inv.find(x=>x.iid==b.dataset.i),rc=RECIPES[u.id];if(!rc)return;for(const k in rc.m)if((S.mats[k]||0)<rc.m[k])return toast('❌ Bahan!');const gc=rc.cost||0;if(S.gems<gc)return toast('❌ Butuh '+gc+'💎!');for(const k in rc.m)S.mats[k]-=rc.m[k];S.gems-=gc;S.stats.gemsSpent += gc;const oldName=DEF[u.id].name;u.id=rc.r;if(rc.r.startsWith('exotic_'))u.rar='exotic';else if(rc.r.endsWith('_primordial'))u.rar='primordial';else if(rc.r.endsWith('_god'))u.rar='transcendent';else u.rar='td';u.lv=1;const es=EVO_SKILL[u.id];save();updMenu();const newName=DEF[u.id].name;$('ov').style.display='none';playEvoCinematic(oldName,newName,DEF[u.id].icon,es.color,es.icon+' '+es.name,es.desc,es.ult,()=>{evMenu();toast('🌟 '+newName)})})}
 
-/* ============ TRAIT MANAGER (FIXED) ============ */
+/* ============ TRAIT MANAGER ============ */
 let TM={selected:null,pending:null,old:null};
 function resetTM(){TM.selected=null;TM.pending=null;TM.old=null;}
 function traitMenu(){resetTM();$('ov').style.display='flex';renderTraitMenu();}
 function renderTraitMenu(){
-  if (TM.selected !== null) {
-    renderTraitReroll();
-    return;
-  }
+  if (TM.selected !== null) { renderTraitReroll(); return; }
   let h='';
   h=`<h2 style="margin-bottom:6px">🎲 Trait Manager</h2>
   <div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between">
@@ -541,9 +522,7 @@ function renderTraitMenu(){
   }
   h+=`</div><button id="tmClose" class="r" style="width:100%;margin-top:10px">Tutup</button>`;
   $('ob').innerHTML=h;
-  
   if($('tmClose')) $('tmClose').onclick = () => { $('ov').style.display='none'; resetTM(); };
-  
   document.querySelectorAll('.tm-pick').forEach(b=>{
     b.onclick=()=>{
       TM.selected=+b.dataset.i;
@@ -552,7 +531,6 @@ function renderTraitMenu(){
     };
   });
 }
-
 function renderTraitReroll(){
     const u=S.inv.find(x=>x.iid===TM.selected);
     if(!u)return;
@@ -583,9 +561,7 @@ function renderTraitReroll(){
         <button id="tmCloseReroll" class="r" style="width:100%;background:linear-gradient(#555,#333)">Tutup</button>`;
     }
     $('ob').innerHTML=h;
-    
     if($('tmCloseReroll')) $('tmCloseReroll').onclick = () => { $('ov').style.display='none'; resetTM(); };
-    
     if($('tmDoReroll'))$('tmDoReroll').onclick=()=>{if(S.rr<1)return toast('❌ Token kurang!');S.rr--;TM.pending=rndTrait();save();renderTraitReroll()};
     if($('tmRerollAgain'))$('tmRerollAgain').onclick=()=>{if(S.rr<1)return toast('❌ Token kurang!');S.rr--;TM.pending=rndTrait();save();renderTraitReroll()};
     if($('tmApply'))$('tmApply').onclick=()=>{u.trait=TM.pending;TM.pending=null;save();updMenu();toast('✅ Trait diterapkan!');renderTraitMenu()};
@@ -593,9 +569,7 @@ function renderTraitReroll(){
     if($('tmBack'))$('tmBack').onclick=()=>{resetTM();renderTraitMenu()};
 }
 
-/* ============ END OF SCRIPT ============ */
-
-// Inisialisasi awal
+/* ============ INIT ============ */
 checkLogin();
 $('googleLoginBtn').onclick=()=>{if(!fbAuth)return toast('❌ Firebase error!');const provider=new firebase.auth.GoogleAuthProvider();fbAuth.signInWithPopup(provider).catch(e=>{toast('❌ Login gagal: '+e.message);$('loginMsg').innerHTML='<span style="color:#e74c3c">❌ '+e.message+'</span>'})};
 $('offlineBtn').onclick=()=>{S.user='Guest';save();show('menu');updMenu()};
@@ -608,27 +582,24 @@ $('s10').onclick=()=>summon(10);
 $('evb').onclick=evMenu;
 $('trb').onclick=traitMenu;
 $('rdb').onclick=redeemMenu;
+
 $('profileBtn').onclick=()=>{
     const lvl = Math.floor((S.stats.gamesPlayed * 1.5) + (S.stats.gamesWon * 3)) + 1;
     $('profName').textContent = S.nickname || (S.user ? S.user.split('@')[0] : 'Guest');
     $('profLvl').textContent = `Lv. ${lvl}`;
-    
+    $('editNameBtn').style.display = 'inline-block';
+    window._viewingOtherProfile = false;
     let uHTML = '';
     for(let i=0; i<6; i++){
         const u = S.inv.find(x => x.iid === S.load[i]);
         if(u){
             const r = R[u.rar];
-            uHTML += `<div style="background:#151a3a;border:1px solid ${r.c};border-radius:6px;padding:5px;text-align:center;font-size:10px">
-                <div style="font-size:18px">${DEF[u.id].icon}</div>
-                <b style="color:#fff;font-size:9px">${DEF[u.id].name}</b>
-                <div style="color:${r.c};font-size:8px">Lv ${u.lv}</div>
-            </div>`;
+            uHTML += `<div style="background:#151a3a;border:1px solid ${r.c};border-radius:6px;padding:5px;text-align:center;font-size:10px"><div style="font-size:18px">${DEF[u.id].icon}</div><b style="color:#fff;font-size:9px">${DEF[u.id].name}</b><div style="color:${r.c};font-size:8px">Lv ${u.lv}</div></div>`;
         } else {
             uHTML += `<div style="background:#151a3a;border:1px dashed #2a3a6a;border-radius:6px;padding:5px;text-align:center;font-size:10px;color:#555;display:flex;align-items:center;justify-content:center;height:55px">Empty</div>`;
         }
     }
     $('profUnits').innerHTML = uHTML;
-
     $('profStats').innerHTML = `
         <div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Bosses Killed</span><b>${S.stats.bossesKilled}</b></div>
         <div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Games Played</span><b>${S.stats.gamesPlayed}</b></div>
@@ -639,7 +610,13 @@ $('profileBtn').onclick=()=>{
     `;
     $('profileModal').style.display = 'flex';
 };
-$('closeProfile').onclick = () => { $('profileModal').style.display = 'none'; };
+$('closeProfile').onclick = () => { 
+    $('profileModal').style.display = 'none'; 
+    if (window._viewingOtherProfile) {
+        window._viewingOtherProfile = false;
+        $('leaderboardModal').style.display = 'flex';
+    }
+};
 $('editNameBtn').onclick = () => {
     const currentName = S.nickname || (S.user ? S.user.split('@')[0] : 'Guest');
     const newName = prompt("Masukkan nama baru (maks 15 karakter):", currentName);
@@ -651,7 +628,7 @@ $('editNameBtn').onclick = () => {
     }
 };
 
-// --- LEADERBOARD LOGIC ---
+/* ============ LEADERBOARD LOGIC ============ */
 $('leaderboardBtn').onclick = () => {
     if (!fbDb || !isOnline) return toast('❌ Harus login online untuk melihat Leaderboard!');
     $('leaderboardModal').style.display = 'flex';
@@ -681,14 +658,8 @@ async function fetchLeaderboard(type) {
             const username = data.nickname || (data.user ? data.user.split('@')[0] : 'Guest');
             const score = type === 'gems' ? (data.gems || 0) : (data.best || 0);
             const icon = type === 'gems' ? '💎' : '♾️';
-            
-            let medal = '';
-            if (rank === 1) medal = '🥇 ';
-            else if (rank === 2) medal = '🥈 ';
-            else if (rank === 3) medal = '🥉 ';
-            else medal = `#${rank} `;
-
-            html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #2a3a6a;">
+            let medal = rank === 1 ? '🥇 ' : rank === 2 ? '🥈 ' : rank === 3 ? '🥉 ' : `#${rank} `;
+            html += `<div class="lb-player" data-uid="${doc.id}" style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #2a3a6a;cursor:pointer;transition:.15s" onmouseover="this.style.background='#1a2050'" onmouseout="this.style.background='transparent'">
                 <div style="font-weight:bold;color:#fff;">${medal} ${username}</div>
                 <div style="color:#f1c40f;">${score.toLocaleString()} ${icon}</div>
             </div>`;
@@ -696,11 +667,135 @@ async function fetchLeaderboard(type) {
         });
         if (rank === 1) html = '<div style="text-align:center;color:#888;padding:20px">Belum ada data.</div>';
         $('lbContent').innerHTML = html;
+        document.querySelectorAll('.lb-player').forEach(el => {
+            el.onclick = () => viewPlayerProfile(el.dataset.uid);
+        });
     } catch (e) {
         console.error(e);
         $('lbContent').innerHTML = '<div style="text-align:center;color:#e74c3c;padding:20px">Gagal memuat data. Pastikan Firebase aktif & aturan Firestore mengizinkan baca (read).</div>';
     }
 }
+
+async function viewPlayerProfile(uid) {
+    try {
+        const doc = await fbDb.collection('users').doc(uid).get();
+        if (!doc.exists) return toast('❌ Profil tidak ditemukan');
+        const data = doc.data();
+        const pstats = data.stats || {bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};
+        const lvl = Math.floor((pstats.gamesPlayed * 1.5) + (pstats.gamesWon * 3)) + 1;
+        $('profName').textContent = data.nickname || (data.user ? data.user.split('@')[0] : 'Guest');
+        $('profLvl').textContent = `Lv. ${lvl}`;
+        $('editNameBtn').style.display = 'none';
+        window._viewingOtherProfile = true;
+        const inv = data.inv || [];
+        const load = data.load || [];
+        let uHTML = '';
+        for (let i = 0; i < 6; i++) {
+            const u = inv.find(x => x.iid === load[i]);
+            if (u) {
+                const r = R[u.rar];
+                uHTML += `<div style="background:#151a3a;border:1px solid ${r.c};border-radius:6px;padding:5px;text-align:center;font-size:10px"><div style="font-size:18px">${DEF[u.id].icon}</div><b style="color:#fff;font-size:9px">${DEF[u.id].name}</b><div style="color:${r.c};font-size:8px">Lv ${u.lv}</div></div>`;
+            } else {
+                uHTML += `<div style="background:#151a3a;border:1px dashed #2a3a6a;border-radius:6px;padding:5px;text-align:center;font-size:10px;color:#555;display:flex;align-items:center;justify-content:center;height:55px">Empty</div>`;
+            }
+        }
+        $('profUnits').innerHTML = uHTML;
+        $('profStats').innerHTML = `
+            <div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Bosses Killed</span><b>${pstats.bossesKilled}</b></div>
+            <div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Games Played</span><b>${pstats.gamesPlayed}</b></div>
+            <div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Games Won</span><b>${pstats.gamesWon}</b></div>
+            <div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Gems Spent</span><b>${pstats.gemsSpent}</b></div>
+            <div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Highest Inf Round</span><b>${pstats.highestInf}</b></div>
+            <div class="row" style="padding:4px 0"><span>MVPs Gained</span><b>${pstats.mvps}</b></div>
+        `;
+        $('profileModal').style.display = 'flex';
+        $('leaderboardModal').style.display = 'none';
+    } catch(e) {
+        console.error(e);
+        toast('❌ Gagal memuat profil');
+    }
+}
+
+$('searchPlayerBtn').onclick = async () => {
+    const searchName = $('searchPlayerInput').value.trim();
+    if (!searchName) return toast('❌ Masukkan nama player!');
+    if (!fbDb || !isOnline) return toast('❌ Harus login online untuk mencari!');
+    $('lbContent').innerHTML = '<div style="text-align:center;color:#888;padding:20px">Mencari player...</div>';
+    try {
+        const snapshot = await fbDb.collection('users').where('nickname', '>=', searchName).where('nickname', '<=', searchName + '\uf8ff').limit(5).get();
+        let html = '';
+        if (snapshot.empty) {
+            const emailSnapshot = await fbDb.collection('users').where('user', '==', searchName).limit(5).get();
+            if (!emailSnapshot.empty) {
+                emailSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const username = data.nickname || (data.user ? data.user.split('@')[0] : 'Guest');
+                    html += `<div class="lb-player" data-uid="${doc.id}" style="background:#151a3a;border:1px solid #3498db;border-radius:8px;padding:10px;margin-bottom:5px;cursor:pointer;transition:.15s" onmouseover="this.style.background='#1a2050'" onmouseout="this.style.background='#151a3a'">
+                        <div style="font-weight:bold;color:#fff;">👤 ${username}</div>
+                        <div style="font-size:11px;color:#aaa;margin-top:5px;">💎 Gems: ${(data.gems||0).toLocaleString()} <br>♾️ Highest Inf: ${data.best||0} <br>🏆 Games Won: ${data.stats?.gamesWon||0}</div>
+                    </div>`;
+                });
+            } else {
+                html = '<div style="text-align:center;color:#e74c3c;padding:20px">Player tidak ditemukan.</div>';
+            }
+        } else {
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const username = data.nickname || (data.user ? data.user.split('@')[0] : 'Guest');
+                html += `<div class="lb-player" data-uid="${doc.id}" style="background:#151a3a;border:1px solid #3498db;border-radius:8px;padding:10px;margin-bottom:5px;cursor:pointer;transition:.15s" onmouseover="this.style.background='#1a2050'" onmouseout="this.style.background='#151a3a'">
+                    <div style="font-weight:bold;color:#fff;">👤 ${username}</div>
+                    <div style="font-size:11px;color:#aaa;margin-top:5px;">💎 Gems: ${(data.gems||0).toLocaleString()} <br>♾️ Highest Inf: ${data.best||0} <br>🏆 Games Won: ${data.stats?.gamesWon||0}</div>
+                </div>`;
+            });
+        }
+        $('lbContent').innerHTML = html;
+        document.querySelectorAll('.lb-player').forEach(el => {
+            el.onclick = () => viewPlayerProfile(el.dataset.uid);
+        });
+    } catch (e) {
+        console.error(e);
+        $('lbContent').innerHTML = '<div style="text-align:center;color:#e74c3c;padding:20px">Gagal mencari data.</div>';
+    }
+};
+$('searchPlayerInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') $('searchPlayerBtn').click();
+});
+
+/* ============ INDEX LOGIC ============ */
+$('indexBtn').onclick = () => {
+    $('indexModal').style.display = 'flex';
+    renderIndex();
+};
+$('closeIndex').onclick = () => { $('indexModal').style.display = 'none'; };
+
+function renderIndex() {
+    let html = '';
+    const rarities = Object.keys(R).sort((a,b) => ORD.indexOf(a) - ORD.indexOf(b));
+    for (const rar of rarities) {
+        const pool = POOL[rar] || [];
+        if (pool.length === 0) continue;
+        html += `<div style="grid-column:1/-1; color:${R[rar].c}; font-weight:bold; font-size:14px; margin-top:10px; border-bottom:1px solid #2a3a6a; padding-bottom:4px;">${R[rar].n}</div>`;
+        for (const arr of pool) {
+            const u = DEF[arr[0]];
+            if (!u) continue;
+            const owned = S.inv.some(x => x.id === u.id);
+            const opacity = owned ? '1' : '0.4';
+            const filter = owned ? 'none' : 'grayscale(80%)';
+            const borderColor = owned ? R[rar].c : '#2a3a6a';
+            const skillName = EVO_SKILL[u.id] ? EVO_SKILL[u.id].name : u.skill;
+            const tag = owned ? '<div style="color:#2ecc71;font-size:8px;font-weight:bold;">✅ OWNED</div>' : '<div style="color:#e74c3c;font-size:8px;">🔒 LOCKED</div>';
+            html += `<div style="background:#151a3a;border:1px solid ${borderColor};border-radius:6px;padding:5px;text-align:center;opacity:${opacity};filter:${filter};transition:0.3s;cursor:default;" title="${u.name}\nDMG: ${u.dmg} | RNG: ${u.rng}\nSkill: ${skillName}">
+                <div style="font-size:20px">${u.icon}</div>
+                <b style="color:#fff;font-size:10px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.name}</b>
+                <div style="color:${R[rar].c};font-size:8px">${R[rar].n}</div>
+                <div style="font-size:8px;color:#aaa;margin-top:2px;">DMG ${u.dmg} · RNG ${u.rng}</div>
+                ${tag}
+            </div>`;
+        }
+    }
+    $('indexContent').innerHTML = html;
+}
+
 $('set').onclick=()=>pmenu(false);
 $('rst').onclick=()=>{if(confirm('⚠️ Hapus semua progress?')){localStorage.removeItem('td2');location.reload()}};
 $('expBtn').onclick=exportSave;
@@ -710,7 +805,6 @@ $('fsBtn').onclick=()=>{if(!document.fullscreenElement)document.documentElement.
 $('rotateSkip').onclick=()=>$('rotatePrompt').classList.remove('on');
 $('rotateForce').onclick=()=>{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(()=>{});$('rotatePrompt').classList.remove('on')};
 
-// Game Loop
 let lastT=performance.now();
 let gameSpeed = 1; 
 function loop(t){
@@ -731,16 +825,13 @@ function draw(){if(!G)return;ctx.clearRect(0,0,900,550);ctx.fillStyle='#111';ctx
   for(const u of G.pl){const d=DEF[u.i.id],r=R[u.i.rar],c=tc(u),hi=isHi(u.i);
     if(hi)aura(u,c);
     sigil(u,c);
-    
     if (DEF[u.i.id].skill === 'support') {
         const st = stats(u.i);
         const pulse = 1 + Math.sin(performance.now() / 300) * 0.05;
-        
         ctx.fillStyle = 'rgba(0, 255, 204, 0.08)';
         ctx.beginPath();
         ctx.arc(u.x, u.y, st.rng * 1.5 * pulse, 0, 6.283);
         ctx.fill();
-        
         ctx.strokeStyle = `rgba(0, 255, 204, ${0.4 + Math.sin(performance.now() / 200) * 0.2})`;
         ctx.lineWidth = 3;
         ctx.setLineDash([10, 10]);
@@ -749,16 +840,13 @@ function draw(){if(!G)return;ctx.clearRect(0,0,900,550);ctx.fillStyle='#111';ctx
         ctx.stroke();
         ctx.setLineDash([]);
     }
-
     ctx.font='24px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(d.icon,u.x,u.y);
-    
     if (u.buff > 0 && !isHi(u.i)) {
         ctx.fillStyle = '#00ffcc';
         ctx.font = 'bold 12px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText('+' + Math.floor(u.buff * 100) + '%', u.x, u.y - 25);
     }
-    
     if(G.selP===u.pid){const st=stats(u.i);ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=2;ctx.setLineDash([5,5]);ctx.beginPath();ctx.arc(u.x,u.y,st.rng,0,6.283);ctx.stroke();ctx.setLineDash([])}
   }
   for(const f of G.fx){const a=f.l/(f.m||1);ctx.globalAlpha=a;
