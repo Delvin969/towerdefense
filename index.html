@@ -367,7 +367,18 @@ eternal_dragon:{r:'exotic_nidhogg',m:{cosmic_essence:200,eternal_shard:150,void_
 eternal_angel:{r:'exotic_metatron',m:{cosmic_essence:200,eternal_shard:150,star_fragment:100,void_core:100,death_crystal:100},cost:50000},
 eternal_demon:{r:'exotic_lucifer',m:{cosmic_essence:200,eternal_shard:150,death_crystal:100,void_core:100,star_fragment:100},cost:50000}};
 const MATS={void_shard:['Void Shard','🔷'],celestial_tear:['Celestial Tear','💧'],phantom_essence:['Phantom Essence','🌀'],void_core:['Void Core','⚫'],star_fragment:['Star Fragment','⭐'],death_crystal:['Death Crystal','💎'],cosmic_essence:['Cosmic Essence','🌠'],eternal_shard:['Eternal Shard','🔮']};
-const REALMS=[{n:'🕳️ Void Realm',m:'void_shard',d:[[3,1],[4.5,1],[6.5,2]]},{n:'✨ Celestial Realm',m:'celestial_tear',d:[[3.2,1],[4.8,1],[7,2]]},{n:'👻 Phantom Realm',m:'phantom_essence',d:[[3.5,1],[5,1],[7.5,2]]},{n:'⚫ Void Core',m:'void_core',d:[[5.5,1],[7.5,1],[10,2]]},{n:'⭐ Star Realm',m:'star_fragment',d:[[5.8,1],[7.8,1],[10.5,2]]},{n:'💀 Death Realm',m:'death_crystal',d:[[6,1],[8,1],[11,2]]},{n:'🌠 Celestial Void',m:'cosmic_essence',d:[[13,1],[16,1],[20,1]]},{n:'🔮 Eternal Abyss',m:'eternal_shard',d:[[14,1],[18,1],[23,1]]}];
+// ═══════════════════════════════════════════════════════════════
+// LEGEND STAGE — 3 ACT dengan MATERIAL SCALING (1 → 2 → 3)
+// ═══════════════════════════════════════════════════════════════
+const REALMS=[
+{n:'🕳️ Void Realm',m:'void_shard',d:[[3,1],[5,2],[8,3]]},
+{n:'✨ Celestial Realm',m:'celestial_tear',d:[[3.2,1],[5.2,2],[8.5,3]]},
+{n:'👻 Phantom Realm',m:'phantom_essence',d:[[3.5,1],[5.5,2],[9,3]]},
+{n:'⚫ Void Core',m:'void_core',d:[[5.5,1],[8,2],[12,3]]},
+{n:'⭐ Star Realm',m:'star_fragment',d:[[5.8,1],[8.5,2],[12.5,3]]},
+{n:'💀 Death Realm',m:'death_crystal',d:[[6,1],[9,2],[13,3]]},
+{n:'🌠 Celestial Void',m:'cosmic_essence',d:[[13,1],[18,2],[24,3]]},
+{n:'🔮 Eternal Abyss',m:'eternal_shard',d:[[14,1],[20,2],[27,3]]}];
 const RLIM={dps:5,sniper:3,aoe:3,chain:3,crit:3,cc:3,economy:2,supporter:2,summoner:2};
 const ROLE={dps:['⚔️ DPS','#e74c3c'],sniper:['🎯 Sniper','#2ecc71'],aoe:['💣 AOE','#f39c12'],chain:['⛓️ Chain','#9b59b6'],crit:['⚡ Crit','#f1c40f'],cc:['❄️ CC','#66ccff'],economy:['💰 Eco','#f1c40f'],supporter:['✨ Supporter','#00ffcc'],summoner:['👥 Summoner','#8e44ad']};
 const role=d=>d.skill==='single'?(d.rng>=110?'sniper':'dps'):d.skill==='slow'?'cc':d.skill.startsWith('support')?'supporter':d.skill==='summon'?'summoner':d.skill;
@@ -479,11 +490,11 @@ function renderStage(){
                 dropInfo = `<br><span style="color:#ff00ff;font-size:9px;font-weight:bold">🌟 ${DEF[SECRET_DROPS[mat]].name} (0.85%)</span>`;
             }
         }
-        e.innerHTML=`<b style="color:#fff;font-size:11px">${L?'Lv '+(j+1):'Act '+(j+1)+(j===6?' 👑':'')}</b><div style="font-size:9px;color:#aaa">x${dv}<br>${L?MATS[REALMS[S.ri].m][1]+' x'+df[1]:''}${dropInfo}<br>${c?'✅'+c+'x':'baru'}</div>`;
+        e.innerHTML=`<b style="color:#fff;font-size:11px">${L?'Lv '+(j+1)+(j===2?' 👑':''):'Act '+(j+1)+(j===6?' 👑':'')}</b><div style="font-size:9px;color:#aaa">x${dv}<br>${L?MATS[REALMS[S.ri].m][1]+' x'+df[1]:''}${dropInfo}<br>${c?'✅'+c+'x':'baru'}</div>`;
         if(S.stage&&S.stage.k===k)e.style.borderColor='#f1c40f';
         e.onclick=()=>{
-            const nm=L?`${REALMS[S.ri].n} - Lv ${j+1}`:`${MAPS[S.mi].n} - Act ${j+1}${j===6?' (BOSS)':''}`;
-            S.stage={k,n:nm,diff:dv,boss:!L&&j===6,mat:L?REALMS[S.ri].m:null,drop:L?df[1]:0,wp:L?REALMS[S.ri].m:MAP_WP[S.mi]};
+            const nm=L?`${REALMS[S.ri].n} - Lv ${j+1}${j===2?' (BOSS)':''}`:`${MAPS[S.mi].n} - Act ${j+1}${j===6?' (BOSS)':''}`;
+            S.stage={k,n:nm,diff:dv,boss:(!L&&j===6)||(L&&j===2),mat:L?REALMS[S.ri].m:null,drop:L?df[1]:0,wp:L?REALMS[S.ri].m:MAP_WP[S.mi]};
             renderStage();
         };
         a.appendChild(e);
