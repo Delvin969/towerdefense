@@ -39,8 +39,6 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 .hc>span{font-size:16px}.hc i{position:absolute;top:1px;right:3px;font-style:normal;color:#f1c40f}.hc.dim{opacity:.4}.hc.sel{background:#1a2050}
 .tg{display:flex;justify-content:space-between;align-items:center;gap:20px;background:#0a0e27;padding:10px;border-radius:8px;margin:8px 0;text-align:left;font-size:14px}
 .tg small{color:#888}.tg input{width:22px;height:22px}
-@keyframes glow{from{box-shadow:0 0 10px #ff00ff}to{box-shadow:0 0 30px #ff00ff,0 0 50px #ff00ff}}
-@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
 @keyframes evoZoom{0%{transform:scale(.3);opacity:0}30%{transform:scale(1.15);opacity:1}60%{transform:scale(.95)}100%{transform:scale(1);opacity:1}}
 @keyframes evoSlide{0%{transform:translateY(40px);opacity:0}100%{transform:translateY(0);opacity:1}}
 @keyframes evoGlow{0%,100%{text-shadow:0 0 20px currentColor,0 0 40px currentColor}50%{text-shadow:0 0 40px currentColor,0 0 80px currentColor,0 0 120px currentColor}}
@@ -283,6 +281,21 @@ const TOKEN_DROP_MATS=['void_core','star_fragment','death_crystal','cosmic_essen
 const ET={normal:{hp:30,sp:55,rw:25,c:'#e74c3c',r:10},fast:{hp:20,sp:95,rw:20,c:'#f1c40f',r:8},tank:{hp:100,sp:35,rw:45,c:'#9b59b6',r:14},flying:{hp:40,sp:80,rw:30,c:'#1abc9c',r:9},boss:{hp:500,sp:30,rw:400,c:'#c0392b',r:22}};
 const WPS={forest:[{x:0,y:275},{x:220,y:275},{x:220,y:90},{x:520,y:90},{x:520,y:460},{x:900,y:460}],desert:[{x:0,y:100},{x:150,y:100},{x:150,y:400},{x:400,y:400},{x:400,y:150},{x:650,y:150},{x:650,y:450},{x:900,y:450}],volcano:[{x:0,y:450},{x:250,y:450},{x:250,y:250},{x:500,y:250},{x:500,y:450},{x:750,y:450},{x:750,y:150},{x:900,y:150}],legend:[{x:0,y:275},{x:220,y:275},{x:220,y:90},{x:520,y:90},{x:520,y:460},{x:900,y:460}],inf:[{x:0,y:460},{x:150,y:460},{x:150,y:120},{x:350,y:120},{x:350,y:420},{x:550,y:420},{x:550,y:100},{x:750,y:100},{x:750,y:400},{x:900,y:400}],cosmos:[{x:0,y:275},{x:150,y:275},{x:150,y:80},{x:320,y:80},{x:320,y:470},{x:480,y:470},{x:480,y:180},{x:640,y:180},{x:640,y:490},{x:780,y:490},{x:780,y:200},{x:900,y:200}]};
 const MAP_WP=['forest','desert','volcano','cosmos'];
+const THEMES={
+forest:{bg:['#0a2818','#0d3a20'],path:['#3a2a1a','#2a1f10'],decos:'trees',decoColor:'#1a5a2a',decoHighlight:'#2a8a3a',particles:{c:'#88ff88',n:20}},
+desert:{bg:['#3a2810','#4a3518'],path:['#6a5030','#5a4020'],decos:'cactus',decoColor:'#2a5a20',decoHighlight:'#3a7a30',particles:{c:'#ffcc66',n:25}},
+volcano:{bg:['#2a0a0a','#3a1010'],path:['#1a0808','#0a0404'],decos:'lava',decoColor:'#ff3300',decoHighlight:'#ffaa00',particles:{c:'#ff5500',n:30}},
+cosmos:{bg:['#0a0a2a','#15103a'],path:['#2a1a5a','#1a1040'],decos:'stars',decoColor:'#ffffff',decoHighlight:'#aaccff',particles:{c:'#ffaaff',n:35}},
+legend:{bg:['#1a0a2a','#2a153a'],path:['#3a1a5a','#2a1040'],decos:'runes',decoColor:'#ffd700',decoHighlight:'#ffffaa',particles:{c:'#ffdd88',n:25}},
+inf:{bg:['#0a0e27','#150a2a'],path:['#1a153a','#0a0a1a'],decos:'portals',decoColor:'#ff00ff',decoHighlight:'#00ffff',particles:{c:'#aa00ff',n:30}}
+};
+function generateDeco(themeKey){
+    const theme=THEMES[themeKey]||THEMES.forest;
+    const N=theme.decos==='stars'?60:theme.decos==='trees'?25:20;
+    const decos=[];
+    for(let i=0;i<N;i++){decos.push({x:Math.random()*900,y:Math.random()*550,size:0.5+Math.random()*1.5,phase:Math.random()*6.28,type:Math.floor(Math.random()*3)});}
+    return decos;
+}
 const MAPS=[{n:'🌲 Forest',d:[.7,.85,1,1.2,1.4,1.65,2]},{n:'🏜️ Desert',d:[2.2,2.5,2.8,3.1,3.5,3.9,4.5]},{n:'🌋 Volcano',d:[5,5.5,6,6.5,7.2,8,9]},{n:'🌌 Cosmos',d:[12,13.5,15,17,19,22,26]}];
 const RECIPES={
 void_reaper:{r:'void_emperor',m:{void_shard:25,void_core:10,phantom_essence:8},cost:500},
@@ -329,7 +342,7 @@ const role=d=>d.skill==='single'?(d.rng>=110?'sniper':'dps'):d.skill==='slow'?'c
 const CD_ROLE_MULT={dps:1.0,sniper:1.15,aoe:1.4,chain:1.25,crit:1.05,cc:0.85,economy:1.25,supporter:1.2,summon:0.9};
 const ECO_K={common:1.0,rare:1.2,epic:1.6,legendary:2.2,mythic:3.0,td:4.0,secret:5.0,transcendent:7.0,primordial:10.0,eternal:15.0,exotic:25.0};
 
-const TRAITS={vigor:{n:'Vigor',i:'💪',c:'#e74c3c',rar:'common',chance:26,tiers:[{dmg:5},{dmg:10},{dmg:15}],f:t=>`+${t.dmg}% DMG`},swift:{n:'Swift',i:'💨',c:'#66ccff',rar:'common',chance:26,tiers:[{cd:-5},{cd:-7.5},{cd:-12.5}],f:t=>`${t.cd}% Cooldown`},range:{n:'Range',i:'🎯',c:'#2ecc71',rar:'common',chance:26,tiers:[{rng:5},{rng:10},{rng:15}],f:t=>`+${t.rng}% Range`},marksman:{n:'Marksman',i:'🏹',c:'#f39c12',rar:'legendary',chance:6.5,tiers:[{rng:30}],f:t=>`+${t.rng}% Range`},blitz:{n:'Blitz',i:'⚡',c:'#f39c12',rar:'legendary',chance:1.85,tiers:[{cd:-20}],f:t=>`${t.cd}% Cooldown`},solar:{n:'Solar',i:'☀️',c:'#ffd84a',rar:'mythic',chance:0.5,tiers:[{dmg:10,cd:-5,rng:25}],f:t=>`+${t.dmg}% DMG · ${t.cd}% CD · +${t.rng}% RNG`},deadeye:{n:'Deadeye',i:'🎯',c:'#ff66cc',rar:'mythic',chance:0.375,tiers:[{dmg:15,cd:-10}],f:t=>`+${t.dmg}% DMG · ${t.cd}% CD`},ethereal:{n:'Ethereal',i:'👻',c:'#aa66ff',rar:'mythic',chance:0.175,tiers:[{dmg:20,cd:-20,rng:5}],f:t=>`+${t.dmg}% DMG · ${t.cd}% CD · +${t.rng}% RNG`},monarch:{n:'Monarch',i:'👑',c:'#ff00ff',rar:'mythic',chance:0.1,tiers:[{dmg:300,cd:-10,rng:5}],f:t=>`+${t.dmg}% DMG · ${t.cd}% CD · +${t.rng}% RNG · ⚠️ Max 1/tower (bisa di banyak unit)`,special:'monarch'}
+const TRAITS={vigor:{n:'Vigor',i:'💪',c:'#e74c3c',rar:'common',chance:26,tiers:[{dmg:5},{dmg:10},{dmg:15}],f:t=>`+${t.dmg}% DMG`},swift:{n:'Swift',i:'💨',c:'#66ccff',rar:'common',chance:26,tiers:[{cd:-5},{cd:-7.5},{cd:-12.5}],f:t=>`${t.cd}% Cooldown`},range:{n:'Range',i:'🎯',c:'#2ecc71',rar:'common',chance:26,tiers:[{rng:5},{rng:10},{rng:15}],f:t=>`+${t.rng}% Range`},marksman:{n:'Marksman',i:'🏹',c:'#f39c12',rar:'legendary',chance:6.5,tiers:[{rng:30}],f:t=>`+${t.rng}% Range`},blitz:{n:'Blitz',i:'⚡',c:'#f39c12',rar:'legendary',chance:1.85,tiers:[{cd:-20}],f:t=>`${t.cd}% Cooldown`},solar:{n:'Solar',i:'☀️',c:'#ffd84a',rar:'mythic',chance:0.5,tiers:[{dmg:10,cd:-5,rng:25}],f:t=>`+${t.dmg}% DMG · ${t.cd}% CD · +${t.rng}% RNG`},deadeye:{n:'Deadeye',i:'🎯',c:'#ff66cc',rar:'mythic',chance:0.375,tiers:[{dmg:15,cd:-10}],f:t=>`+${t.dmg}% DMG · ${t.cd}% CD`},ethereal:{n:'Ethereal',i:'👻',c:'#aa66ff',rar:'mythic',chance:0.175,tiers:[{dmg:20,cd:-20,rng:5}],f:t=>`+${t.dmg}% DMG · ${t.cd}% CD · +${t.rng}% RNG`},monarch:{n:'Monarch',i:'👑',c:'#ff00ff',rar:'mythic',chance:0.1,tiers:[{dmg:300,cd:-10,rng:5}],f:t=>`+${t.dmg}% DMG · ${t.cd}% CD · +${t.rng}% RNG · ⚠️ Max 1/tower (bisa di banyak unit)`,special:'monarch'}};
 function mkTrait(id){const t=TRAITS[id];if(!t)return null;const ti=Math.floor(Math.random()*t.tiers.length);return{id,tier:ti}}
 function rollTrait(){const r=Math.random()*100;if(r<0.1)return mkTrait('monarch');if(r<0.275)return mkTrait('ethereal');if(r<0.65)return mkTrait('deadeye');if(r<1.15)return mkTrait('solar');if(r<3.0)return mkTrait('blitz');if(r<9.5)return mkTrait('marksman');const c=Math.random()*3;if(c<1)return mkTrait('vigor');if(c<2)return mkTrait('swift');return mkTrait('range')}
 const rndTrait=()=>rollTrait();
@@ -368,14 +381,14 @@ function togglePanel(id){const p=$(id);if(p)p.classList.toggle('collapsed')}
 const RAR_TRIGGER=['mythic','td','secret','transcendent','primordial','eternal','exotic'];
 const RAR_ORDER=['common','rare','epic','legendary','mythic','td','secret','transcendent','primordial','eternal','exotic'];
 
-function playSummonCinematic(unit,cb){if(!unit||!RAR_TRIGGER.includes(unit.rar)){if(cb)cb();return}let _done=false;const _cb=()=>{if(_done)return;_done=true;try{if(cb)cb()}catch(e){}};setTimeout(_cb,4500);const d=DEF[unit.id],r=R[unit.rar];const flash=$('evoFlash'),cin=$('evoCinema'),rays=$('evoRays'),ic=$('evoIcon'),tt=$('evoTitle'),sb=$('evoSub');cin.style.color=r.c;rays.style.color=r.c;tt.style.color=r.c;ic.textContent=d.icon;ic.style.color=r.c;tt.textContent='✨ '+r.n.toUpperCase()+' ✨';const isExo=unit.rar==='exotic',isEter=unit.rar==='eternal',isPrim=unit.rar==='primordial',isTr=unit.rar==='transcendent';const extra=isExo?' 💎 MYTHICAL':(isEter?' 🌌 LEGENDARY':(isPrim?' 🔥 ULTRA RARE':(isTr?' ⭐ SUPER RARE':'')));sb.innerHTML=`<div style="font-size:1.4em;font-weight:bold;color:#fff;margin-top:8px">${d.name}</div><div style="font-size:.8em;color:${r.c};margin-top:6px;font-weight:bold">${r.n.toUpperCase()}${extra}</div>`;flash.classList.add('on');cin.classList.add('on');if(S.fx){shake(isExo?40:isEter?35:isPrim?28:isTr?22:15,.7);flash('#fff',.3)}setTimeout(()=>{flash.classList.remove('on');flash.style.background=r.c;flash.classList.add('on')},100);setTimeout(()=>{flash.classList.remove('on')},380);const dur=isExo?3200:isEter?2800:isPrim?2400:isTr?2200:1800;setTimeout(()=>{cin.classList.remove('on');flash.style.background='#fff';setTimeout(_cb,300)},dur)}
+function playSummonCinematic(unit,cb){if(!unit||!RAR_TRIGGER.includes(unit.rar)){if(cb)cb();return}let _done=false;const _skipHandler=()=>_cb();const _cb=()=>{if(_done)return;_done=true;document.removeEventListener('pointerdown',_skipHandler);document.removeEventListener('touchstart',_skipHandler);try{if(cb)cb()}catch(e){}};setTimeout(()=>document.addEventListener('pointerdown',_skipHandler,{once:true}),150);setTimeout(()=>document.addEventListener('touchstart',_skipHandler,{once:true}),150);setTimeout(_cb,4500);const d=DEF[unit.id],r=R[unit.rar];const flash=$('evoFlash'),cin=$('evoCinema'),rays=$('evoRays'),ic=$('evoIcon'),tt=$('evoTitle'),sb=$('evoSub');cin.style.color=r.c;rays.style.color=r.c;tt.style.color=r.c;ic.textContent=d.icon;ic.style.color=r.c;tt.textContent='✨ '+r.n.toUpperCase()+' ✨';const isExo=unit.rar==='exotic',isEter=unit.rar==='eternal',isPrim=unit.rar==='primordial',isTr=unit.rar==='transcendent';const extra=isExo?' 💎 MYTHICAL':(isEter?' 🌌 LEGENDARY':(isPrim?' 🔥 ULTRA RARE':(isTr?' ⭐ SUPER RARE':'')));sb.innerHTML=`<div style="font-size:1.4em;font-weight:bold;color:#fff;margin-top:8px">${d.name}</div><div style="font-size:.8em;color:${r.c};margin-top:6px;font-weight:bold">${r.n.toUpperCase()}${extra}</div>`;flash.classList.add('on');cin.classList.add('on');if(S.fx){shake(isExo?40:isEter?35:isPrim?28:isTr?22:15,.7);flash('#fff',.3)}setTimeout(()=>{flash.classList.remove('on');flash.style.background=r.c;flash.classList.add('on')},100);setTimeout(()=>{flash.classList.remove('on')},380);const dur=isExo?3200:isEter?2800:isPrim?2400:isTr?2200:1800;setTimeout(()=>{cin.classList.remove('on');flash.style.background='#fff';setTimeout(_cb,300)},dur)}
 function checkLogin(){if(!fbAuth){if(S.user){$('mu').textContent=S.user;show('menu');updMenu()}else{show('login')}return}fbAuth.onAuthStateChanged(async(user)=>{if(user){currentUser=user;isOnline=true;S.user=user.email;save();$('mu').textContent=user.email;$('cloudBadge').className='cloud-badge cloud-on';$('cloudBadge').textContent='☁️ Cloud aktif';$('loginMsg').innerHTML='<span style="color:#2ecc71">✅ '+user.email+'</span>';await cloudLoad();startCloudAutoSave();show('menu');updMenu();toast('☁️ Login: '+user.email)}else{currentUser=null;isOnline=false;if(cloudSaveTimer)clearInterval(cloudSaveTimer);$('cloudBadge').className='cloud-badge cloud-off';$('cloudBadge').textContent='⚪ Offline';if(S.user&&S.user!=='Guest'){show('menu');updMenu()}else{show('login')}}})}
 
 function showRarityPool(rar){const r=R[rar],pool=POOL[rar]||[];$('ov').style.display='flex';let h=`<h2 style="color:${r.c};margin-bottom:4px">${r.n}</h2>`;if(r.p>0)h+=`<p style="color:#888;font-size:12px;margin-bottom:10px">Chance: ${(r.p*100).toFixed(2)}%</p>`;else h+=`<p style="color:#888;font-size:12px;margin-bottom:10px">Hanya Legend/Evolve</p>`;h+=`<div style="display:grid;gap:6px;text-align:left;max-height:50vh;overflow-y:auto">`;pool.forEach(arr=>{const u=DEF[arr[0]];if(!u)return;const es=EVO_SKILL[arr[0]];const skillName=es?`${es.icon} ${es.name}`:u.skill;const isExo=arr[0].startsWith('exotic_'),isGod=arr[0].endsWith('_god'),isPrim=arr[0].endsWith('_primordial'),isEter=arr[0].startsWith('eternal_')&&!isExo;const isEvoable=!!RECIPES[arr[0]];const tag=isExo?' <span style="color:#ff00aa;font-size:10px">💎 EXOTIC</span>':(isEter?' <span style="color:#00ffaa;font-size:10px">✦ ETERNAL</span>':(isPrim?' <span style="color:#ff0066;font-size:10px">🔥 PRIMORDIAL</span>':(isGod?' <span style="color:#ffd700;font-size:10px">✦ GOD</span>':'')));h+=`<div style="background:#0a0e27;border:1px solid ${r.c};border-radius:6px;padding:8px;display:flex;align-items:center;gap:10px"><span style="font-size:26px">${u.icon}</span><div style="flex:1;min-width:0"><div><b style="color:#fff;font-size:13px">${u.name}</b>${tag}${isEvoable?' 🧬':''}</div><div style="font-size:10px;color:#aaa">DMG ${u.dmg} · RNG ${u.rng} · ${ROLE[role(u)][0]}</div><div style="font-size:10px;color:${r.c}">Skill: ${skillName}</div></div></div>`});$('ob').innerHTML=h+'<button id="rpClose" class="r" style="width:100%;margin-top:10px">Tutup</button>';$('rpClose').onclick=()=>{$('ov').style.display='none'}}
 
 function showEquipModal(iid){const u=S.inv.find(x=>x.iid===iid);if(!u)return;const inLoad=S.load.includes(iid);const d=DEF[u.id],r=R[u.rar],s=stats(u),tr=s.trait;const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';const es=EVO_SKILL[u.id];const skillName=es?`${es.icon} ${es.name}`:s.skill;$('ov').style.display='flex';$('ob').innerHTML=`<div style="font-size:40px">${d.icon}</div><div style="font-size:16px;font-weight:bold;color:#fff;margin-top:4px">${d.name}</div><div style="font-size:11px;color:${r.c}">${r.n} · ${ROLE[role(d)][0]}</div><div class="eq-stats" style="text-align:left"><div class="row"><span>Level</span><b>${u.lv}/${MAXL[u.rar]||10}</b></div><div class="row"><span>DMG</span><b>${s.dmg}</b></div><div class="row"><span>RNG</span><b>${s.rng}</b></div><div class="row"><span>CD</span><b>${s.cd.toFixed(2)}s</b></div><div class="row"><span>Skill</span><b>${skillName}</b></div><div class="row"><span>Trait</span><b style="color:${tr?tr.c:'#666'}">${tr?`${tr.i} ${tr.n}${tl}`:'—'}</b></div></div><button id="eqBtn" class="${inLoad?'r':'g'}" style="width:100%;font-size:16px;padding:12px;margin-top:6px">${inLoad?'✗ UNEQUIP':'✓ EQUIP'}</button><button id="eqTraitBtn" class="y" style="width:100%;margin-top:6px">🎲 Kelola Trait</button><button id="eqClose" style="width:100%;margin-top:6px;padding:8px">Tutup</button>`;$('eqBtn').onclick=()=>{if(inLoad){S.load=S.load.filter(x=>x!==iid);toast('✗ Dikeluarkan')}else{if(S.load.length>=5){toast('❌ Penuh');return}S.load.push(iid);toast('✅ '+d.name)};$('ov').style.display='none';updMenu();save()};$('eqTraitBtn').onclick=()=>{TM.selected=iid;TM.pending=null;TM.old=null;TM.kept=null;$('ov').style.display='flex';renderTraitMenu()};$('eqClose').onclick=()=>{$('ov').style.display='none'}}
 
-function playEvoCinematic(oldName,newName,icon,color,skillName,skillDesc,ult,cb){let _done=false;const _cb=()=>{if(_done)return;_done=true;try{if(cb)cb()}catch(e){}};setTimeout(_cb,4000);const flash=$('evoFlash'),cin=$('evoCinema'),rays=$('evoRays'),ic=$('evoIcon'),tt=$('evoTitle'),sb=$('evoSub');cin.style.color=color;rays.style.color=color;tt.style.color=color;ic.textContent=icon;ic.style.color=color;tt.textContent='✨ EVOLVED ✨';sb.innerHTML=`<div style="font-size:.85em;color:#aaa">${oldName}</div><div style="font-size:1.2em;font-weight:bold;color:#fff">↓</div><div style="font-size:1.1em;font-weight:bold;color:${color}">${newName}</div><div style="margin-top:12px;font-size:.9em;font-weight:bold;color:${color}">${skillName}</div><div style="font-size:.75em;color:#bbb">${skillDesc}</div><div style="margin-top:10px;font-size:.85em;color:#f1c40f">Ult: ${ult}</div>`;flash.classList.add('on');cin.classList.add('on');if(S.fx){shake(30,.8);flash('#fff',.4)}setTimeout(()=>{flash.classList.remove('on');flash.style.background=color;flash.classList.add('on')},120);setTimeout(()=>{flash.classList.remove('on')},400);setTimeout(()=>{cin.classList.remove('on');flash.style.background='#fff';setTimeout(_cb,400)},2400)}
+function playEvoCinematic(oldName,newName,icon,color,skillName,skillDesc,ult,cb){let _done=false;const _skipHandler=()=>_cb();const _cb=()=>{if(_done)return;_done=true;document.removeEventListener('pointerdown',_skipHandler);document.removeEventListener('touchstart',_skipHandler);try{if(cb)cb()}catch(e){}};setTimeout(()=>document.addEventListener('pointerdown',_skipHandler,{once:true}),150);setTimeout(()=>document.addEventListener('touchstart',_skipHandler,{once:true}),150);setTimeout(_cb,4000);const flash=$('evoFlash'),cin=$('evoCinema'),rays=$('evoRays'),ic=$('evoIcon'),tt=$('evoTitle'),sb=$('evoSub');cin.style.color=color;rays.style.color=color;tt.style.color=color;ic.textContent=icon;ic.style.color=color;tt.textContent='✨ EVOLVED ✨';sb.innerHTML=`<div style="font-size:.85em;color:#aaa">${oldName}</div><div style="font-size:1.2em;font-weight:bold;color:#fff">↓</div><div style="font-size:1.1em;font-weight:bold;color:${color}">${newName}</div><div style="margin-top:12px;font-size:.9em;font-weight:bold;color:${color}">${skillName}</div><div style="font-size:.75em;color:#bbb">${skillDesc}</div><div style="margin-top:10px;font-size:.85em;color:#f1c40f">Ult: ${ult}</div>`;flash.classList.add('on');cin.classList.add('on');if(S.fx){shake(30,.8);flash('#fff',.4)}setTimeout(()=>{flash.classList.remove('on');flash.style.background=color;flash.classList.add('on')},120);setTimeout(()=>{flash.classList.remove('on')},400);setTimeout(()=>{cin.classList.remove('on');flash.style.background='#fff';setTimeout(_cb,400)},2400)}
 
 function redeemMenu(){$('ov').style.display='flex';let h=`<h2 style="margin-bottom:6px">🎁 Redeem</h2><div style="display:flex;gap:6px;margin:8px 0"><input id="rdi" type="text" placeholder="Kode..." style="flex:1;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#fff;font-size:14px;font-weight:bold;text-transform:uppercase;outline:none"><button id="rdo" class="g" style="margin:0;padding:10px 16px">Redeem</button></div><div id="rdm" style="font-size:12px;min-height:18px;margin-bottom:8px"></div><div style="border-top:1px solid #2a3a6a;padding-top:8px">`;for(const code in REDEEM_CODES){const c=REDEEM_CODES[code],used=S.usedCodes[code];h+=`<div style="display:flex;justify-content:space-between;align-items:center;background:#0a0e27;border:1px solid ${used?'#333':'#2a3a6a'};border-radius:6px;padding:6px 10px;margin:4px 0;font-size:12px"><div><b style="color:${used?'#666':'#f1c40f'};font-family:monospace">${code}</b><div style="color:#888;font-size:10px">${c.desc}</div></div><span style="color:${used?'#e74c3c':'#2ecc71'};font-size:11px">${used?'✓':'OK'}</span></div>`}$('ob').innerHTML=h+`</div><button id="rdx" class="r" style="margin-top:10px;width:100%">Tutup</button>`;$('rdx').onclick=()=>{$('ov').style.display='none';updMenu()};const doRedeem=()=>{const raw=$('rdi').value.trim().toUpperCase(),msg=$('rdm');if(!raw){msg.innerHTML='<span style="color:#e74c3c">❌ Isi kode!</span>';return}if(!REDEEM_CODES[raw]){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>';return}if(S.usedCodes[raw]){msg.innerHTML='<span style="color:#f39c12">⚠️ Sudah dipakai</span>';return}const r=REDEEM_CODES[raw];S.usedCodes[raw]=Date.now();let lines=[];if(r.gems){S.gems+=r.gems;lines.push(`+${r.gems}💎`)}if(r.rr){S.rr=(S.rr||0)+r.rr;lines.push(`+${r.rr}🎲`)}save();msg.innerHTML=`<span style="color:#2ecc71">✅ ${lines.join(' ')}</span>`;$('rdi').value='';setTimeout(()=>redeemMenu(),700)};$('rdo').onclick=doRedeem;$('rdi').addEventListener('keydown',e=>{if(e.key==='Enter')doRedeem()});setTimeout(()=>$('rdi').focus(),100)}
 
@@ -479,7 +492,7 @@ function sigil(u,c){const t=performance.now()/1000,hi=u.i.rar==='td'||u.i.rar===
 function aura(u,c){const t=performance.now()/1000,n=3+(u.i.lv>=5?2:0)+(u.i.rar==='td'?2:0)+(u.i.rar==='secret'?3:0)+(u.i.rar==='transcendent'?4:0)+(u.i.rar==='primordial'?5:0)+(u.i.rar==='eternal'?6:0)+(u.i.rar==='exotic'?8:0)+Math.floor(u.i.lv/5);ctx.save();ctx.globalCompositeOperation='lighter';const g=ctx.createRadialGradient(u.x,u.y,4,u.x,u.y,44);g.addColorStop(0,c+'66');g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(u.x,u.y,44,0,6.283);ctx.fill();for(let i=0;i<n;i++){const dir=i%2?-1:1,an=t*(1.6+(i%2)*.8)*dir+i*6.283/n,Rr=30+(i%2)*6;ctx.fillStyle=i%2?'#fff':c;ctx.shadowColor=c;ctx.shadowBlur=12;ctx.beginPath();ctx.arc(u.x+Math.cos(an)*Rr,u.y+Math.sin(an)*Rr*.8,3,0,6.283);ctx.fill()}ctx.restore()}
 function fxSkill(u,k,t){const c=tc(u),hi=isHi(u.i),es=EVO_SKILL[u.i.id];trail(u,t,c);beam(u,t,c,hi?7:5);parts(t.x,t.y,'#fff',hi?10:6,170,.4);if(hi)shake(3,.1);if(k==='single'||k==='economy'||k.startsWith('support')){ring(t.x,t.y,34,c,.4,3)}else if(k==='slow'){ring(t.x,t.y,46,'#66ccff',.6,4);ring(t.x,t.y,28,'#fff',.4,2);parts(t.x,t.y,'#aee6ff',14,120,.8)}else if(k==='aoe'){nova(t.x,t.y,70+(hi?30:0),'#ff8800',.45);ring(t.x,t.y,90,'#fc0',.55,5);parts(t.x,t.y,'#fa0',20,220,.8);if(es&&u.i.id==='exotic_metatron'){nova(t.x,t.y,500,'#ff00aa',1.2);ring(t.x,t.y,600,'#fff',1.5,12);parts(t.x,t.y,'#ff00aa',120,500,2);shake(30,.9)}}else if(k==='crit'){slash(t.x,t.y,hi?'#f0a':'#f22');if(es&&u.i.id==='exotic_lucifer'){for(let i=0;i<10;i++){slash(t.x,t.y,'#ff00aa');slash(t.x,t.y,'#fff')}ring(t.x,t.y,150,'#ff00aa',1,10);parts(t.x,t.y,'#ff00aa',80,400,1.8);shake(30,.9)}}else if(k==='chain'){nova(t.x,t.y,30,'#c6f',.3);if(es&&u.i.id==='exotic_nidhogg'){nova(t.x,t.y,300,'#ff00aa',1.3);ring(t.x,t.y,350,'#fff',1.6,12);parts(t.x,t.y,'#ff00aa',120,500,2);shake(30,.9)}}ring(u.x,u.y,hi?34:28,c,.3,3)}
 
-function startStage(){if(!S.stage){toast('❌ Pilih stage!');return}if(!S.load.length){toast('❌ Loadout kosong!');return}S.coins=200;S.stats.gamesPlayed++;S.autoUpg=false;updateAutoUpgBtn();G={pl:[],en:[],mn:[],fx:[],par:[],bm:[],wave:0,lives:BASE,act:false,q:[],qt:0,hp:1,over:false,paused:false,cd:15,sel:null,selP:null,lastUltTower:null,shake:0,sk:0,flash:0,fc:'#fff',we:0,skipped:false,inf:S.mode==='i',wp:WPS[S.stage.wp]||WPS.forest};$('sk').style.display='none';pop.style.display='none';$('ov').style.display='none';$('ultShortcutBar').style.display='none';show('game');updateUltShortcut();ui()}
+function startStage(){if(!S.stage){toast('❌ Pilih stage!');return}if(!S.load.length){toast('❌ Loadout kosong!');return}S.coins=200;S.stats.gamesPlayed++;S.autoUpg=false;updateAutoUpgBtn();const wpKey=S.stage.wp||'forest';const themeData=THEMES[wpKey]||THEMES.forest;G={pl:[],en:[],mn:[],fx:[],par:[],bm:[],wave:0,lives:BASE,act:false,q:[],qt:0,hp:1,over:false,paused:false,cd:15,sel:null,selP:null,lastUltTower:null,shake:0,sk:0,flash:0,fc:'#fff',we:0,skipped:false,inf:S.mode==='i',wp:WPS[wpKey]||WPS.forest,theme:themeData,wpKey:wpKey,decos:generateDeco(wpKey)};$('sk').style.display='none';pop.style.display='none';$('ov').style.display='none';$('ultShortcutBar').style.display='none';show('game');updateUltShortcut();ui()}
 function startWave(){if(G.act||G.over)return;if(!G.inf&&G.wave>=MAXW)return;G.cd=0;G.nx=0;G.wave++;G.act=true;G.qt=0;G.q=[];G.we=0;G.skipped=false;$('sk').style.display='none';const w=G.wave;const isBoss=G.inf?(w%10===0):(w===MAXW);if(isBoss){if(G.inf){const cnt=Math.min(12,5+Math.floor(w/5));for(let i=0;i<cnt;i++)G.q.push('normal');G.q.push('boss');const ex=Math.floor(w/10);for(let i=0;i<Math.min(6,ex);i++)G.q.push('tank');for(let i=0;i<Math.min(8,ex);i++)G.q.push('flying');toast('⚠️ BOSS '+w+'!')}else{for(let i=0;i<6;i++)G.q.push('normal');G.q.push('boss');if(S.stage.boss)for(let i=0;i<4;i++)G.q.push('tank');toast('⚠️ BOSS!')}flash('#e74c3c',.5)}else{let n;if(G.inf)n=Math.min(40,3+Math.floor(w*1.3));else n=(w<=5?3:5)+Math.floor(w*.8);for(let i=0;i<n;i++){const r=Math.random();let t='normal';if(G.inf){if(w>=3&&r<.35)t='fast';else if(w>=5&&r>=.35&&r<.55)t='tank';else if(w>=8&&r>=.55&&r<.75)t='flying'}else{if(w>=3&&r<.3)t='fast';else if(w>=5&&r>=.3&&r<.5)t='tank';else if(w>=8&&r>=.5&&r<.65)t='flying'}G.q.push(t)}}const hpRate=G.inf?0.18:0.1;G.hp=S.stage.diff*(1+(w-1)*hpRate);ui()}
 function spawn(t){const d=ET[t],m=t==='boss'&&S.stage.boss?1.5:1;G.en.push({x:G.wp[0].x,y:G.wp[0].y,hp:d.hp*G.hp*m,mx:d.hp*G.hp*m,sp:d.sp,rw:d.rw,c:d.c,r:d.r,t,wi:1,sl:0,sf:1,hf:0,dead:false})}
 function hit(e,d){if(e.dead)return false;e.hp-=d;e.hf=.15;if(e.hp<=0){e.dead=true;if(e.t==='boss')S.stats.bossesKilled++;S.coins+=e.rw;ftext(e.x,e.y-15,'+'+e.rw,'#f1c40f',.7);parts(e.x,e.y,e.c,8,120,.6);return true}return false}
@@ -490,12 +503,7 @@ function fire(u,st,t){const i=u.i,hi=isHi(i),tier=hi?Math.floor(i.lv/3):0,es=EVO
         const maxMn = 3 + Math.floor(i.lv/3) + bonusMax;
         const myMn = G.mn.filter(m => m.src === u.pid && !m.dead);
         if(myMn.length < maxMn){
-            G.mn.push({
-                x: u.x + (Math.random()-.5)*40, y: u.y + (Math.random()-.5)*40,
-                hp: 60 + i.lv*8, mx: 60 + i.lv*8,
-                dmg: Math.floor(st.dmg * 0.6), spd: 160, lt: 10,
-                c: tc(u), src: u.pid, cdT: 0.4, icon: '🗡️', dead: false
-            });
+            G.mn.push({x: u.x + (Math.random()-.5)*40, y: u.y + (Math.random()-.5)*40,hp: 60 + i.lv*8, mx: 60 + i.lv*8,dmg: Math.floor(st.dmg * 0.6), spd: 160, lt: 10,c: tc(u), src: u.pid, cdT: 0.4, icon: '🗡️', dead: false});
             ring(u.x, u.y, 40, tc(u), .4, 3);
             parts(u.x, u.y, tc(u), 8, 100, .4);
         } else {
@@ -522,6 +530,14 @@ function update(dt){
                 }
             }
         }
+    }
+    // Ambient particles per tema
+    if(S.fx && G.theme && Math.random() < dt * (G.theme.particles?.n || 0) / 10){
+        const pc = G.theme.particles?.c || '#88ff88';
+        if(G.wpKey === 'volcano' || G.wpKey === 'inf'){G.par.push({ x: Math.random() * 900, y: 550, vx: (Math.random()-.5)*20, vy: -30 - Math.random()*40, l: 3, m: 3, c: pc, z: 2 });}
+        else if(G.wpKey === 'cosmos' || G.wpKey === 'legend'){G.par.push({ x: Math.random() * 900, y: -10, vx: (Math.random()-.5)*20, vy: 20 + Math.random()*30, l: 4, m: 4, c: pc, z: 1 });}
+        else if(G.wpKey === 'desert'){G.par.push({ x: -10, y: Math.random() * 550, vx: 60 + Math.random()*40, vy: (Math.random()-.5)*10, l: 3, m: 3, c: pc, z: 1 });}
+        else{G.par.push({ x: Math.random() * 900, y: -10, vx: (Math.random()-.5)*30, vy: 30 + Math.random()*20, l: 3, m: 3, c: pc, z: 1 });}
     }
     if(G.shake>0)G.shake-=dt;if(G.flash>0)G.flash-=dt;if(G.dim>0)G.dim-=dt;if(G.cd>0){G.cd-=dt;if(G.cd<=0){G.cd=0;startWave()}}if(G.nx>0){G.nx-=dt;if(G.nx<=0){G.nx=0;startWave()}}if(G.act){G.we+=dt;if(!G.skipped&&G.we>=30){if(S.auto){while(G.q.length)spawn(G.q.shift());G.skipped=true;toast('⏩ Skip!')}else $('sk').style.display='inline-block'}if(G.q.length){G.qt+=dt;const iv=G.inf?(G.wave%10===0?.4:.35):(G.wave===MAXW?.4:.35);if(G.qt>=iv){G.qt=0;spawn(G.q.shift())}}}for(const e of G.en){if(e.dead)continue;if(e.sl>0){e.sl-=dt;if(e.sl<=0)e.sf=1}if(e.hf>0)e.hf-=dt;const t=G.wp[e.wi];if(!t){e.dead=true;const boss=e.t==='boss';if(boss){if(G.inf){const dmg=DMG*10;G.lives=Math.max(0,G.lives-dmg);shake(15,.4);flash('#f00',.5);ftext(850,420,'💀 BOSS -'+dmg,'#f33',1.2)}else{G.lives=0;shake(22,.6);flash('#f00',.6);ftext(850,420,'💀 BOSS!','#f33',1.2)}}else{G.lives=Math.max(0,G.lives-DMG);shake(8,.3);flash('#f00',.2);ftext(850,420,'-'+DMG,'#f33',1.2)}if(G.lives<=0){G.over=true;defeat(boss);return}continue}const dx=t.x-e.x,dy=t.y-e.y,d=Math.hypot(dx,dy),mv=e.sp*e.sf*dt;if(d<=mv){e.x=t.x;e.y=t.y;e.wi++}else{e.x+=dx/d*mv;e.y+=dy/d*mv}}for(const u of G.pl){const st=stats(u.i);u.cdT-=dt;if(S.fx&&isHi(u.i)&&Math.random()<dt*8)G.par.push({x:u.x+(Math.random()-.5)*30,y:u.y+12,vx:(Math.random()-.5)*10,vy:-40-Math.random()*30,l:1,m:1,c:tc(u),z:2.5});u.pulse+=dt;if(u.ultCd>0)u.ultCd=Math.max(0,u.ultCd-dt);if(u.cdT<=0){const effRng = st.rng * (1 + (u.buffRng||0));let t=null,md=1e9;for(const e of G.en){if(e.dead)continue;const d=Math.hypot(u.x-e.x,u.y-e.y);if(d<=effRng&&d<md){md=d;t=e}}if(t){u.aimAngle=Math.atan2(t.y-u.y,t.x-u.x);fire(u,st,t);u.cdT=st.cd/(1+(u.buffSpd||0))}}}
     if(S.autoUpg){for(const u of G.pl){const i=u.i;const mx=MAXL[i.rar]||10;if(i.lv>=mx)continue;const c=upCost(i);if(S.coins>=c){S.coins-=c;i.lv++;parts(u.x,u.y,'#f1c40f',8,70,.5);if(isHi(i)&&i.lv===5){const col=R[i.rar].c;ring(u.x,u.y,90,col,.9,6);nova(u.x,u.y,70,col,.6);parts(u.x,u.y,col,40,220,1.2);flash(col,.3)}}}}
@@ -591,11 +607,7 @@ function updateUltShortcut(){
         };
     });
 }
-setInterval(() => {
-    if(G && !G.paused && !G.over && $('game').classList.contains('on')){
-        updateUltShortcut();
-    }
-}, 250);
+setInterval(() => {if(G && !G.paused && !G.over && $('game').classList.contains('on')){updateUltShortcut();}}, 250);
 
 $('speedBtn').onclick = () => {gameSpeed = gameSpeed === 1 ? 2 : 1;$('speedBtn').textContent = gameSpeed === 1 ? '▶ x1' : '⏩ x2';$('speedBtn').style.background = gameSpeed === 1 ? 'linear-gradient(#3498db,#2980b9)' : 'linear-gradient(#e74c3c,#c0392b)';};
 $('sk').onclick=()=>{while(G.q.length)spawn(G.q.shift());G.skipped=true;$('sk').style.display='none'};
@@ -610,9 +622,7 @@ function renderTraitMenu(){
   if (TM.selected !== null) { renderTraitReroll(); return; }
   let h='';
   h=`<h2 style="margin-bottom:6px">🎲 Trait Manager</h2>
-  <div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between">
-    <span style="color:#aaa">🎲 Token</span><b style="color:#f1c40f">${S.rr||0}</b>
-  </div>
+  <div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between"><span style="color:#aaa">🎲 Token</span><b style="color:#f1c40f">${S.rr||0}</b></div>
   <p style="color:#888;font-size:11px;margin-bottom:8px">Klik unit → Reroll trait-nya</p>
   <div style="max-height:50vh;overflow-y:auto;width:min(460px,88vw)">`;
   if(!S.inv.length)h+='<p style="color:#888;text-align:center">Belum ada unit.</p>';
@@ -650,6 +660,7 @@ function renderTraitFilter(){
     let h = `<h2 style="margin-bottom:6px">🎯 Filter Trait</h2>
     <div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between"><span style="color:#aaa">🎲 Token</span><b style="color:#f1c40f">${S.rr||0}</b></div>
     <button id="tfAutoBtn" class="${TM.autoSkip?'g':'y'}" style="width:100%;margin-bottom:8px">${TM.autoSkip?'🎯 Auto ON - Hasil Skip otomatis di-reroll':'🎯 Auto OFF - Klik untuk aktifkan'}</button>
+    <div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:11px;display:flex;justify-content:space-between"><span style="color:#aaa">👑 Unit dengan Monarch</span><b style="color:#ff00ff">${S.inv.filter(u => u.trait && u.trait.id === 'monarch').length} unit</b></div>
     <p style="color:#888;font-size:11px;margin-bottom:8px;line-height:1.4">Tandai trait <b style="color:#e74c3c">SKIP</b> untuk hindari. Saat Auto ON, jika hasil reroll dapat trait Skip, otomatis reroll lagi pakai 1 token.</p>
     <div style="max-height:45vh;overflow-y:auto;width:min(440px,88vw)">`;
     const rarOrder = {common:0, legendary:1, mythic:2};
@@ -666,7 +677,7 @@ function renderTraitList(){
     let h = `<h2 style="margin-bottom:6px">📖 Daftar Trait</h2><p style="color:#888;font-size:11px;margin-bottom:8px">Semua trait yang bisa didapat dari reroll.</p><div style="max-height:60vh;overflow-y:auto;width:min(440px,88vw)">`;
     const rarOrder = {common:0, legendary:1, mythic:2};
     const sorted = Object.keys(TRAITS).sort((a,b) => rarOrder[TRAITS[a].rar] - rarOrder[TRAITS[b].rar]);
-    for(const id of sorted){const t = TRAITS[id];const rarColor = t.rar === 'common' ? '#b0b0b0' : t.rar === 'legendary' ? '#f39c12' : '#e74c3c';h += `<div style="background:#0a0e27;border:2px solid ${t.c};border-radius:8px;padding:10px;margin:6px 0"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><b style="color:${t.c};font-size:14px">${t.i} ${t.n}</b><span style="color:${rarColor};font-size:10px;font-weight:bold;text-transform:uppercase">${t.rar}</span></div><div style="font-size:10px;color:#aaa;margin-bottom:6px">Peluang: <b style="color:#f1c40f">${t.chance}%</b>${t.special==='monarch'?' · ⚠️ Max 1':''}</div><div style="border-top:1px solid #2a3a6a;padding-top:6px">`;t.tiers.forEach((tier, i) => {const tierName = t.tiers.length > 1 ? ['Tier I','Tier II','Tier III'][i] : 'Efek';h += `<div style="display:flex;justify-content:space-between;font-size:11px;padding:2px 0"><span style="color:#888">${tierName}</span><b style="color:#fff">${t.f(tier)}</b></div>`;});h += `</div></div>`;}
+    for(const id of sorted){const t = TRAITS[id];const rarColor = t.rar === 'common' ? '#b0b0b0' : t.rar === 'legendary' ? '#f39c12' : '#e74c3c';h += `<div style="background:#0a0e27;border:2px solid ${t.c};border-radius:8px;padding:10px;margin:6px 0"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><b style="color:${t.c};font-size:14px">${t.i} ${t.n}</b><span style="color:${rarColor};font-size:10px;font-weight:bold;text-transform:uppercase">${t.rar}</span></div><div style="font-size:10px;color:#aaa;margin-bottom:6px">Peluang: <b style="color:#f1c40f">${t.chance}%</b>${t.special==='monarch'?' · ⚠️ Max 1/tower':''}</div><div style="border-top:1px solid #2a3a6a;padding-top:6px">`;t.tiers.forEach((tier, i) => {const tierName = t.tiers.length > 1 ? ['Tier I','Tier II','Tier III'][i] : 'Efek';h += `<div style="display:flex;justify-content:space-between;font-size:11px;padding:2px 0"><span style="color:#888">${tierName}</span><b style="color:#fff">${t.f(tier)}</b></div>`;});h += `</div></div>`;}
     h += `</div><button id="tlBack" class="r" style="width:100%;margin-top:10px">← Kembali</button>`;
     $('ob').innerHTML = h;
     $('tlBack').onclick = () => { renderTraitReroll(); };
@@ -761,12 +772,7 @@ $('searchPlayerBtn').onclick = async () => {
 $('searchPlayerInput').addEventListener('keydown', (e) => {if (e.key === 'Enter') $('searchPlayerBtn').click();});
 
 window._idxRoleFilter = 'all';
-$('indexBtn').onclick = () => {
-    $('indexModal').style.display = 'flex';
-    window._idxRoleFilter = 'all';
-    document.querySelectorAll('.idxF').forEach(x => x.style.background = x.dataset.role === 'all' ? 'linear-gradient(#2ecc71,#27ae60)' : 'linear-gradient(#555,#333)');
-    renderIndex();
-};
+$('indexBtn').onclick = () => {$('indexModal').style.display = 'flex';window._idxRoleFilter = 'all';document.querySelectorAll('.idxF').forEach(x => x.style.background = x.dataset.role === 'all' ? 'linear-gradient(#2ecc71,#27ae60)' : 'linear-gradient(#555,#333)');renderIndex();};
 $('closeIndex').onclick = () => { $('indexModal').style.display = 'none'; };
 document.querySelectorAll('.idxF').forEach(b => {b.onclick = () => {window._idxRoleFilter = b.dataset.role;document.querySelectorAll('.idxF').forEach(x => x.style.background = 'linear-gradient(#555,#333)');b.style.background = 'linear-gradient(#2ecc71,#27ae60)';renderIndex();};});
 function renderIndex(){
@@ -821,9 +827,50 @@ function loop(t){
     draw();
     requestAnimationFrame(loop);
 }
-function draw(){if(!G)return;ctx.clearRect(0,0,900,550);ctx.fillStyle='#111';ctx.fillRect(0,0,900,550);
-  ctx.strokeStyle='#2a3a6a';ctx.lineWidth=40;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();G.wp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
-  ctx.strokeStyle='#1a2050';ctx.lineWidth=36;ctx.beginPath();G.wp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
+function draw(){
+  if(!G)return;
+  ctx.clearRect(0,0,900,550);
+  const theme = G.theme || THEMES.forest;
+  const grd = ctx.createLinearGradient(0, 0, 0, 550);
+  grd.addColorStop(0, theme.bg[0]);
+  grd.addColorStop(1, theme.bg[1]);
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, 900, 550);
+  const t = performance.now() / 1000;
+  const decoType = theme.decos;
+  for(const d of G.decos){
+    if(decoType === 'trees'){
+      ctx.fillStyle = theme.decoColor;ctx.beginPath();ctx.moveTo(d.x, d.y - 20 * d.size);ctx.lineTo(d.x - 12 * d.size, d.y + 10 * d.size);ctx.lineTo(d.x + 12 * d.size, d.y + 10 * d.size);ctx.closePath();ctx.fill();
+      ctx.fillStyle = '#1a3a1a';ctx.fillRect(d.x - 3 * d.size, d.y + 8 * d.size, 6 * d.size, 8 * d.size);
+      ctx.fillStyle = theme.decoHighlight;ctx.globalAlpha = 0.3;ctx.beginPath();ctx.moveTo(d.x - 2 * d.size, d.y - 15 * d.size);ctx.lineTo(d.x - 7 * d.size, d.y + 5 * d.size);ctx.lineTo(d.x + 2 * d.size, d.y + 5 * d.size);ctx.closePath();ctx.fill();ctx.globalAlpha = 1;
+    } else if(decoType === 'cactus'){
+      ctx.fillStyle = theme.decoColor;ctx.fillRect(d.x - 4 * d.size, d.y - 15 * d.size, 8 * d.size, 30 * d.size);ctx.fillRect(d.x - 12 * d.size, d.y - 5 * d.size, 8 * d.size, 5 * d.size);ctx.fillRect(d.x + 4 * d.size, d.y - 10 * d.size, 8 * d.size, 5 * d.size);
+    } else if(decoType === 'lava'){
+      const pulse = 0.7 + Math.sin(t * 2 + d.phase) * 0.3;
+      ctx.fillStyle = theme.decoColor;ctx.globalAlpha = pulse * 0.6;ctx.beginPath();ctx.arc(d.x, d.y, 8 * d.size, 0, 6.283);ctx.fill();
+      ctx.fillStyle = theme.decoHighlight;ctx.globalAlpha = pulse;ctx.beginPath();ctx.arc(d.x, d.y, 4 * d.size, 0, 6.283);ctx.fill();ctx.globalAlpha = 1;
+    } else if(decoType === 'stars'){
+      const twinkle = 0.5 + Math.sin(t * 3 + d.phase) * 0.5;
+      ctx.fillStyle = theme.decoColor;ctx.globalAlpha = twinkle;
+      if(d.type === 0){ctx.beginPath();ctx.arc(d.x, d.y, 1 + d.size, 0, 6.283);ctx.fill();}
+      else if(d.type === 1){ctx.fillRect(d.x - 3 * d.size, d.y - 0.5, 6 * d.size, 1);ctx.fillRect(d.x - 0.5, d.y - 3 * d.size, 1, 6 * d.size);}
+      else{ctx.beginPath();ctx.arc(d.x, d.y, 2 + d.size * 1.5, 0, 6.283);ctx.fill();ctx.fillStyle = theme.decoHighlight;ctx.beginPath();ctx.arc(d.x, d.y, 1 + d.size, 0, 6.283);ctx.fill();}
+      ctx.globalAlpha = 1;
+    } else if(decoType === 'runes'){
+      const glow = 0.6 + Math.sin(t * 1.5 + d.phase) * 0.4;
+      ctx.strokeStyle = theme.decoColor;ctx.globalAlpha = glow;ctx.lineWidth = 1.5;ctx.beginPath();ctx.arc(d.x, d.y, 6 * d.size, 0, 6.283);ctx.stroke();ctx.beginPath();ctx.moveTo(d.x - 3 * d.size, d.y);ctx.lineTo(d.x + 3 * d.size, d.y);ctx.moveTo(d.x, d.y - 3 * d.size);ctx.lineTo(d.x, d.y + 3 * d.size);ctx.stroke();ctx.globalAlpha = 1;
+    } else if(decoType === 'portals'){
+      const spin = t * 0.5 + d.phase;
+      ctx.save();ctx.translate(d.x, d.y);ctx.rotate(spin);
+      ctx.strokeStyle = theme.decoColor;ctx.globalAlpha = 0.5;ctx.lineWidth = 2;ctx.beginPath();ctx.arc(0, 0, 8 * d.size, 0, 6.283);ctx.stroke();
+      ctx.strokeStyle = theme.decoHighlight;ctx.beginPath();ctx.arc(0, 0, 5 * d.size, 0, 6.283);ctx.stroke();
+      ctx.restore();ctx.globalAlpha = 1;
+    }
+  }
+  ctx.strokeStyle = 'rgba(0,0,0,0.4)';ctx.lineWidth = 44;ctx.lineCap = 'round';ctx.lineJoin = 'round';ctx.beginPath();G.wp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
+  ctx.strokeStyle = theme.path[0];ctx.lineWidth = 38;ctx.beginPath();G.wp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
+  ctx.strokeStyle = theme.path[1];ctx.lineWidth = 30;ctx.beginPath();G.wp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';ctx.lineWidth = 2;ctx.setLineDash([8, 12]);ctx.lineDashOffset = -t * 30;ctx.beginPath();G.wp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();ctx.setLineDash([]);
   for(const e of G.en){if(e.dead)continue;ctx.fillStyle=e.hf>0?'#fff':e.c;ctx.shadowColor=e.c;ctx.shadowBlur=10;ctx.beginPath();ctx.arc(e.x,e.y,e.r,0,6.283);ctx.fill();ctx.shadowBlur=0;
     const hpPct=e.hp/e.mx;ctx.fillStyle='#333';ctx.fillRect(e.x-20,e.y-e.r-10,40,4);ctx.fillStyle=hpPct>.5?'#2ecc71':hpPct>.25?'#f1c40f':'#e74c3c';ctx.fillRect(e.x-20,e.y-e.r-10,40*hpPct,4);
     if(e.sl>0){ctx.strokeStyle='#66ccff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,e.r+3,0,6.283);ctx.stroke()}
