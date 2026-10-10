@@ -274,6 +274,7 @@ if(S.music===undefined)S.music='none';
 if(typeof S.musicVol!=='number')S.musicVol=0.12;
 if(S.customMusicUrl===undefined)S.customMusicUrl='';
 if(S.customMusicName===undefined)S.customMusicName='';
+  if(S.customMusicId===undefined)S.customMusicId='';
 if(!Array.isArray(S.inv))S.inv=[];
 (function(){S.inv=S.inv.filter(u=>{if(!u||!u.id)return false;if(!DEF[u.id])return false;if(!u.rar||!R[u.rar])u.rar=DEF[u.id].rar;if(!R[u.rar])return false;if(typeof u.lv!=='number'||u.lv<1)u.lv=1;if(typeof u.iid!=='number')u.iid=S.nid++;if(u.trait&&(typeof u.trait==='string'||!TRAITS[u.trait.id]))u.trait=null;return true})})();
 S.load = (Array.isArray(S.load) ? S.load : []).filter(i=>S.inv.some(u=>u.iid===i));
