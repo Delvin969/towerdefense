@@ -117,11 +117,12 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 .play-btn-big::before{content:'';position:absolute;inset:0;background:linear-gradient(45deg,transparent 30%,rgba(255,255,255,.3) 50%,transparent 70%);transform:translateX(-100%);transition:.6s}
 .play-btn-big:hover::before{transform:translateX(100%)}
 .play-btn-big:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 8px 24px rgba(46,204,113,.5)}
-.tab-nav{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:600px;margin:10px auto}
-.tab-nav button{margin:0;padding:10px 4px;font-size:11px;border-radius:10px;background:linear-gradient(135deg,#151a3a,#0a0e27);border:2px solid #2a3a6a;transition:.2s;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.tab-nav{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:600px;margin:10px auto}
+.tab-nav button{margin:0;padding:10px 4px;font-size:11px;border-radius:10px;background:linear-gradient(135deg,#151a3a,#0a0e27);border:2px solid #2a3a6a;transition:.2s;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative}
 .tab-nav button:hover{border-color:#3498db;background:linear-gradient(135deg,#1a2050,#0a0e27);transform:translateY(-2px)}
 .tab-nav button .tb-icon{font-size:20px}
 .tab-nav button .tb-lbl{font-size:9px;letter-spacing:1px;font-weight:bold}
+.bp-badge{position:absolute;top:-4px;right:-4px;background:#e74c3c;color:#fff;font-size:9px;font-weight:bold;padding:1px 5px;border-radius:8px;border:1px solid #fff}
 .lobby-footer{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;max-width:600px;margin:10px auto}
 .lobby-footer button{font-size:11px;padding:8px 14px;background:linear-gradient(135deg,#2a3a6a,#1a2550);border:1px solid #3a4a7a;min-height:36px}
 .lobby-footer button:hover{border-color:#3498db;filter:brightness(1.2)}
@@ -154,6 +155,7 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
     <button id="profileBtn"><span class="tb-icon">👤</span><span class="tb-lbl">PROFILE</span></button>
     <button id="leaderboardBtn"><span class="tb-icon">🏆</span><span class="tb-lbl">RANK</span></button>
     <button id="indexBtn"><span class="tb-icon">📖</span><span class="tb-lbl">INDEX</span></button>
+    <button id="backpackBtn"><span class="tb-icon">🎒</span><span class="tb-lbl">BACKPACK</span><span id="bpBadge" class="bp-badge" style="display:none">0</span></button>
     <button id="rdb"><span class="tb-icon">🎁</span><span class="tb-lbl">REDEEM</span></button>
   </div>
   <div class="main-panel" style="margin-top:10px">
@@ -178,6 +180,7 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 <div id="profileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:10;align-items:center;justify-content:center;padding:10px"><div style="background:#151a3a;border:3px solid #3498db;border-radius:12px;padding:15px;width:min(500px,95vw);max-height:90vh;overflow-y:auto;position:relative"><button id="closeProfile" class="r" style="position:absolute;top:10px;right:10px;padding:5px 10px;min-height:auto;margin:0">✕</button><div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;border-bottom:2px solid #2a3a6a;padding-bottom:10px"><div style="width:60px;height:60px;background:#0a0e27;border:2px solid #f1c40f;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px">👤</div><div><div style="display:flex;align-items:center;gap:8px"><div style="font-size:18px;font-weight:bold;color:#fff" id="profName">Player</div><button id="editNameBtn" class="y" style="padding:2px 8px;min-height:auto;font-size:10px;margin:0">✏️ Edit</button></div><div style="font-size:14px;color:#f1c40f" id="profLvl">Lv. 1</div></div></div><div style="display:grid;grid-template-columns:1fr 1.5fr;gap:10px"><div><div style="font-size:12px;color:#aaa;margin-bottom:5px">Equipped Units</div><div id="profUnits" style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px"></div></div><div style="background:#0a0e27;border-radius:8px;padding:10px;font-size:12px" id="profStats"></div></div></div></div>
 <div id="leaderboardModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:11;align-items:center;justify-content:center;padding:10px"><div style="background:#151a3a;border:3px solid #f1c40f;border-radius:12px;padding:15px;width:min(500px,95vw);max-height:90vh;display:flex;flex-direction:column;position:relative"><button id="closeLeaderboard" class="r" style="position:absolute;top:10px;right:10px;padding:5px 10px;min-height:auto;margin:0">✕</button><h2 style="margin-bottom:8px;color:#f1c40f;text-align:center;font-size:16px">🏆 LEADERBOARD</h2><div style="display:flex;gap:4px;margin-bottom:5px"><button class="lbTab" data-type="gems" style="flex:1;margin:0;padding:6px 4px;font-size:10px;background:linear-gradient(#2ecc71,#27ae60)">💎 Gems</button><button class="lbTab" data-type="gemsSpent" style="flex:1;margin:0;padding:6px 4px;font-size:10px;background:linear-gradient(#555,#333)">💸 Spender</button><button class="lbTab" data-type="best" style="flex:1;margin:0;padding:6px 4px;font-size:10px;background:linear-gradient(#555,#333)">🌊 Wave</button></div><div id="lbPeriodBar" style="display:none;gap:4px;margin-bottom:8px"><button class="lbP" data-period="all" style="flex:1;margin:0;padding:5px 3px;font-size:9px;background:linear-gradient(#2ecc71,#27ae60)">♾️ All</button><button class="lbP" data-period="week" style="flex:1;margin:0;padding:5px 3px;font-size:9px;background:linear-gradient(#555,#333)">📅 Minggu</button><button class="lbP" data-period="day" style="flex:1;margin:0;padding:5px 3px;font-size:9px;background:linear-gradient(#555,#333)">📆 Hari</button></div><div id="lbRewardInfo" style="font-size:10px;color:#aaa;margin-bottom:8px;text-align:center;line-height:1.5;min-height:14px;padding:4px;border-radius:6px;background:rgba(0,0,0,.3)"></div><div style="display:flex;gap:5px;margin-bottom:10px"><input id="searchPlayerInput" type="text" placeholder="Cari nama player..." style="flex:1;padding:8px;border-radius:6px;border:1px solid #2a3a6a;background:#0a0e27;color:#fff;font-size:12px;outline:none"><button id="searchPlayerBtn" class="y" style="margin:0;padding:8px 12px;font-size:12px">🔍</button></div><div id="lbContent" style="flex:1;overflow-y:auto;background:#0a0e27;border-radius:8px;padding:10px;font-size:13px"></div></div></div>
 <div id="indexModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:12;align-items:center;justify-content:center;padding:10px"><div style="background:#151a3a;border:3px solid #9b59b6;border-radius:12px;padding:15px;width:min(600px,95vw);max-height:90vh;display:flex;flex-direction:column;position:relative"><button id="closeIndex" class="r" style="position:absolute;top:10px;right:10px;padding:5px 10px;min-height:auto;margin:0">✕</button><h2 style="margin-bottom:10px;color:#9b59b6;text-align:center">📖 UNIT INDEX</h2><div id="indexFilterBar" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;justify-content:center"><button class="idxF" data-role="all" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#2ecc71,#27ae60)">All</button><button class="idxF" data-role="dps" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">⚔️ DPS</button><button class="idxF" data-role="sniper" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">🎯 Snipe</button><button class="idxF" data-role="aoe" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">💣 AOE</button><button class="idxF" data-role="chain" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">⛓️ Chain</button><button class="idxF" data-role="crit" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">⚡ Crit</button><button class="idxF" data-role="cc" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">❄️ CC</button><button class="idxF" data-role="economy" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">💰 Eco</button><button class="idxF" data-role="supporter" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">✨ Supp</button><button class="idxF" data-role="summoner" style="padding:4px 9px;font-size:10px;min-height:auto;margin:0;background:linear-gradient(#555,#333)">👥 Summon</button></div><div id="indexContent" style="flex:1;overflow-y:auto;background:#0a0e27;border-radius:8px;padding:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;"></div></div></div>
+<div id="backpackModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:13;align-items:center;justify-content:center;padding:10px"><div style="background:#151a3a;border:3px solid #f1c40f;border-radius:12px;padding:15px;width:min(560px,95vw);max-height:90vh;display:flex;flex-direction:column;position:relative"><button id="closeBackpack" class="r" style="position:absolute;top:10px;right:10px;padding:5px 10px;min-height:auto;margin:0">✕</button><h2 style="margin-bottom:10px;color:#f1c40f;text-align:center">🎒 BACKPACK — MATERIALS</h2><div id="backpackContent" style="flex:1;overflow-y:auto;background:#0a0e27;border-radius:8px;padding:10px"></div></div></div>
 <div class="summonStage" id="summonStage"><div class="ssShock" id="ssShock"></div><div class="ssCore" id="ssCore"></div><div class="ssFlash" id="ssFlash"></div></div>
 <div class="evo-flash" id="evoFlash"></div>
 <div class="evo-cinema" id="evoCinema"><div class="evo-rays" id="evoRays"></div><div class="evo-icon" id="evoIcon">👁️</div><div class="evo-title" id="evoTitle">EVOLVED</div><div class="evo-sub" id="evoSub"></div></div>
@@ -464,6 +467,7 @@ function updMenu(){
     _rates.querySelectorAll('span').forEach(el=>{el.onclick=()=>showRarityPool(el.dataset.rar)});
   }
   updLobbyStats();
+  if(typeof updateBackpackBadge === 'function') updateBackpackBadge();
 }
 function renderStage(){
     const m=$('maps');m.innerHTML='';
@@ -598,7 +602,7 @@ function fireUltimate(u,st){const i=u.i,es=EVO_SKILL[i.id],def=ULT_DEF[st.skill]
 function update(dt){if(!G||G.paused||G.over)return;
     for (const u of G.pl) { u.buff = 0; u.buffRng = 0; u.buffSpd = 0; }
     for (const supp of G.pl) {const suppDef = DEF[supp.i.id];if (suppDef.skill.startsWith('support')) {const suppStats = stats(supp.i);const buffAmount = 0.25 + (supp.i.lv * 0.03);const buffRange = suppStats.rng * 1.5;for (const target of G.pl) {if (target.pid !== supp.pid && Math.hypot(target.x - supp.x, target.y - supp.y) <= buffRange) {if (suppDef.skill === 'support') target.buff = Math.max(target.buff, buffAmount);else if (suppDef.skill === 'support_range') target.buffRng = Math.max(target.buffRng, buffAmount);else if (suppDef.skill === 'support_spd') target.buffSpd = Math.max(target.buffSpd, buffAmount);}}}}
-    if(S.fx && G.theme && Math.random() < dt * (G.theme.particles?.n || 0) / 10){const pc = G.theme.particles?.c || '#88ff88';const UP_KEYS = ['volcano','inf','void_shard','void_core','death_crystal','eternal_shard','hell','abyssal_pearl','solar_flare','divine_crown'];const DOWN_KEYS = ['cosmos','legend','star_fragment','cosmic_essence','celestial_tear','island'];if(UP_KEYS.includes(G.wpKey)){G.par.push({ x: Math.random() * 900, y: 550, vx: (Math.random()-.5)*20, vy: -30 - Math.random()*40, l: 3, m: 3, c: pc, z: 2 });}else if(DOWN_KEYS.includes(G.wpKey)){G.par.push({ x: Math.random() * 900, y: -10, vx: (Math.random()-.5)*20, vy: 20 + Math.random()*30, l: 4, m: 4, c: pc, z: 1 });}else if(G.wpKey === 'desert'){G.par.push({ x: -10, y: Math.random() * 550, vx: 60 + Math.random()*40, vy: (Math.random()-.5)*10, l: 3, m: 3, c: pc, z: 1 });}else if(G.wpKey === 'phantom_essence'){G.par.push({ x: Math.random() * 900, y: Math.random() * 550, vx: (Math.random()-.5)*30, vy: (Math.random()-.5)*30, l: 4, m: 4, c: pc, z: 1 });}else{G.par.push({ x: Math.random() * 900, y: -10, vx: (Math.random()-.5)*30, vy: 30 + Math.random()*20, l: 3, m: 3, c: pc, z: 1 });}}
+    if(S.fx && G.theme && Math.random() < dt * (G.theme.particles?.n || 0) / 10){const pc = G.theme.particles?.c || '#88ff88';const UP_KEYS = ['volcano','inf','void_shard','void_core','death_crystal','eternal_shard','hell','abyssal_pearl','solar_flare','divine_crown'];const DOWN_KEYS = ['cosmos','legend','star_fragment','cosmic_essence','celestial_tear','island'];if (UP_KEYS.includes(G.wpKey)){G.par.push({ x: Math.random() * 900, y: 550, vx: (Math.random()-.5)*20, vy: -30 - Math.random()*40, l: 3, m: 3, c: pc, z: 2 });}else if(DOWN_KEYS.includes(G.wpKey)){G.par.push({ x: Math.random() * 900, y: -10, vx: (Math.random()-.5)*20, vy: 20 + Math.random()*30, l: 4, m: 4, c: pc, z: 1 });}else if(G.wpKey === 'desert'){G.par.push({ x: -10, y: Math.random() * 550, vx: 60 + Math.random()*40, vy: (Math.random()-.5)*10, l: 3, m: 3, c: pc, z: 1 });}else if(G.wpKey === 'phantom_essence'){G.par.push({ x: Math.random() * 900, y: Math.random() * 550, vx: (Math.random()-.5)*30, vy: (Math.random()-.5)*30, l: 4, m: 4, c: pc, z: 1 });}else{G.par.push({ x: Math.random() * 900, y: -10, vx: (Math.random()-.5)*30, vy: 30 + Math.random()*20, l: 3, m: 3, c: pc, z: 1 });}}
     if(G.shake>0)G.shake-=dt;if(G.flash>0)G.flash-=dt;if(G.dim>0)G.dim-=dt;if(G.cd>0){G.cd-=dt;if(G.cd<=0){G.cd=0;startWave()}}if(G.nx>0){G.nx-=dt;if(G.nx<=0){G.nx=0;startWave()}}if(G.act){G.we+=dt;if(!G.skipped&&G.we>=30){if(S.auto){while(G.q.length)spawn(G.q.shift());G.skipped=true;toast('⏩ Skip!')}else $('sk').style.display='inline-block'}if(G.q.length){G.qt+=dt;const iv=G.inf?(G.wave%10===0?.4:.35):(G.wave===MAXW?.4:.35);if(G.qt>=iv){G.qt=0;spawn(G.q.shift())}}}for(const e of G.en){if(e.dead)continue;if(e.sl>0){e.sl-=dt;if(e.sl<=0)e.sf=1}if(e.hf>0)e.hf-=dt;const t=G.wp[e.wi];if(!t){e.dead=true;const boss=e.t==='boss';if(boss){if(G.inf){const dmg=DMG*10;G.lives=Math.max(0,G.lives-dmg);flash('#f00',.5);ftext(850,420,'💀 BOSS -'+dmg,'#f33',1.2)}else{G.lives=0;flash('#f00',.6);ftext(850,420,'💀 BOSS!','#f33',1.2)}}else{G.lives=Math.max(0,G.lives-DMG);flash('#f00',.2);ftext(850,420,'-'+DMG,'#f33',1.2)}if(G.lives<=0){G.over=true;defeat(boss);return}continue}const dx=t.x-e.x,dy=t.y-e.y,d=Math.hypot(dx,dy),mv=e.sp*e.sf*dt;if(d<=mv){e.x=t.x;e.y=t.y;e.wi++}else{e.x+=dx/d*mv;e.y+=dy/d*mv}}for(const u of G.pl){const st=stats(u.i);u.cdT-=dt;if(S.fx&&isHi(u.i)){const _rate=u.i.rar==='exotic'?18:u.i.rar==='eternal'?15:u.i.rar==='primordial'?13:u.i.rar==='transcendent'?11:u.i.rar==='secret'?14:8;if(Math.random()<dt*_rate){const _ang=Math.random()*6.283;const _rad=30+Math.random()*20;G.par.push({x:u.x+Math.cos(_ang)*_rad,y:u.y+Math.sin(_ang)*_rad*0.6,vx:(Math.random()-.5)*15,vy:-30-Math.random()*40,l:1.3,m:1.3,c:tc(u),z:2.5})}}u.pulse+=dt;if(u.ultCd>0)u.ultCd=Math.max(0,u.ultCd-dt);if(u.cdT<=0){const effRng = st.rng * (1 + (u.buffRng||0));let t=null,md=1e9;for(const e of G.en){if(e.dead)continue;const d=Math.hypot(u.x-e.x,u.y-e.y);if(d<=effRng&&d<md){md=d;t=e}}if(t){u.aimAngle=Math.atan2(t.y-u.y,t.x-u.x);fire(u,st,t);u.cdT=st.cd/(1+(u.buffSpd||0))}}}
     if(S.autoUpg){for(const u of G.pl){const i=u.i;const mx=MAXL[i.rar]||10;if(i.lv>=mx)continue;const c=upCost(i);if(S.coins>=c){S.coins-=c;i.lv++;parts(u.x,u.y,'#f1c40f',8,70,.5);if(isHi(i)&&i.lv===5){const col=R[i.rar].c;ring(u.x,u.y,90,col,.9,6);nova(u.x,u.y,70,col,.6);parts(u.x,u.y,col,40,220,1.2);flash(col,.3)}}}}
     for(const m of G.mn){if(m.dead)continue;m.lt-=dt;if(m.lt<=0){m.dead=true;continue}m.cdT-=dt;let mt=null,md=1e9;for(const e of G.en){if(e.dead)continue;const d=Math.hypot(m.x-e.x,m.y-e.y);if(d<md){md=d;mt=e}}if(mt){if(md>20){const dx=mt.x-m.x,dy=mt.y-m.y,dd=Math.hypot(dx,dy)||1;m.x+=dx/dd*m.spd*dt;m.y+=dy/dd*m.spd*dt}else if(m.cdT<=0){hit(mt,m.dmg);m.cdT=0.4;parts(mt.x,mt.y,m.c,3,60,.3)}}}
@@ -663,6 +667,82 @@ function applyAutoSkip(){if(!TM.autoSkip || !TM.pending) return;const filt = S.t
 function renderTraitFilter(){let h = `<h2 style="margin-bottom:6px">🎯 Filter Trait</h2><div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between"><span style="color:#aaa">🎲 Token</span><b style="color:#f1c40f">${S.rr||0}</b></div><button id="tfAutoBtn" class="${TM.autoSkip?'g':'y'}" style="width:100%;margin-bottom:8px">${TM.autoSkip?'🎯 Auto ON':'🎯 Auto OFF'}</button><p style="color:#888;font-size:11px;margin-bottom:8px">Tandai SKIP untuk hindari</p><div style="max-height:45vh;overflow-y:auto;width:min(440px,88vw)">`;const rarOrder = {common:0, legendary:1, mythic:2};const sorted = Object.keys(TRAITS).sort((a,b) => rarOrder[TRAITS[a].rar] - rarOrder[TRAITS[b].rar]);for(const id of sorted){const t = TRAITS[id];const st = (S.traitFilter && S.traitFilter[id]) || 'neutral';h += `<div style="background:#0a0e27;border:1px solid ${t.c};border-radius:6px;padding:8px;margin:4px 0"><b style="color:${t.c};font-size:13px">${t.i} ${t.n}</b> <span style="color:#888;font-size:10px">(${t.rar}, ${t.chance}%)</span><div style="display:flex;gap:4px;margin-top:6px"><button class="tf-set" data-id="${id}" data-state="keep" style="flex:1;padding:4px;font-size:10px;background:${st==='keep'?'#2ecc71':'#333'}">⭐ KEEP</button><button class="tf-set" data-id="${id}" data-state="neutral" style="flex:1;padding:4px;font-size:10px;background:${st==='neutral'?'#f39c12':'#333'}">⚪ NEUTRAL</button><button class="tf-set" data-id="${id}" data-state="skip" style="flex:1;padding:4px;font-size:10px;background:${st==='skip'?'#e74c3c':'#333'}">❌ SKIP</button></div></div>`}h += `</div><button id="tfBack" style="width:100%;margin-top:8px">← Kembali</button>`;$('ob').innerHTML = h;$('tfAutoBtn').onclick = () => { TM.autoSkip = !TM.autoSkip; renderTraitFilter(); };document.querySelectorAll('.tf-set').forEach(b => {b.onclick = () => {const id = b.dataset.id, state = b.dataset.state;if(!S.traitFilter) S.traitFilter = {};if(state === 'neutral') delete S.traitFilter[id];else S.traitFilter[id] = state;save();renderTraitFilter();};});$('tfBack').onclick = () => { renderTraitReroll(); };}
 function renderTraitList(){let h = `<h2 style="margin-bottom:6px">📖 Daftar Trait</h2><div style="max-height:60vh;overflow-y:auto;width:min(440px,88vw)">`;const rarOrder = {common:0, legendary:1, mythic:2};const sorted = Object.keys(TRAITS).sort((a,b) => rarOrder[TRAITS[a].rar] - rarOrder[TRAITS[b].rar]);for(const id of sorted){const t = TRAITS[id];h += `<div style="background:#0a0e27;border:2px solid ${t.c};border-radius:8px;padding:10px;margin:6px 0"><b style="color:${t.c};font-size:14px">${t.i} ${t.n}</b> <span style="color:#888;font-size:10px">${t.rar} · ${t.chance}%</span><div style="margin-top:6px">`;t.tiers.forEach((tier, i) => {h += `<div style="font-size:11px;padding:2px 0"><b style="color:#fff">${t.f(tier)}</b></div>`;});h += `</div></div>`;}h += `</div><button id="tlBack" class="r" style="width:100%;margin-top:10px">← Kembali</button>`;$('ob').innerHTML = h;$('tlBack').onclick = () => { renderTraitReroll(); };}
 
+/* ═══════ BACKPACK — MATERIALS VIEW ═══════ */
+function getMaterialDropFrom(matKey){
+  for(const r of REALMS){ if(r.m === matKey) return r.n; }
+  return null;
+}
+function renderBackpack(){
+  const mats = S.mats || {};
+  const matUsage = {};
+  for(const [fromId, recipe] of Object.entries(RECIPES)){
+    for(const [mat, need] of Object.entries(recipe.m)){
+      if(!matUsage[mat]) matUsage[mat] = [];
+      matUsage[mat].push({from:fromId, to:recipe.r, need, cost:recipe.cost||0});
+    }
+  }
+  const groups = [
+    {name:'🌱 Basic Materials', color:'#66ccff', keys:['void_shard','celestial_tear','phantom_essence']},
+    {name:'⭐ Advanced Materials', color:'#9b59b6', keys:['void_core','star_fragment','death_crystal']},
+    {name:'🌌 Cosmic Materials', color:'#ff00ff', keys:['cosmic_essence','eternal_shard']},
+    {name:'👑 Divine Materials', color:'#ffd700', keys:['abyssal_pearl','solar_flare','divine_crown']}
+  ];
+  const totalMats = Object.values(mats).reduce((a,b)=>a+(+b||0),0);
+  let html = `<div style="text-align:center;color:#aaa;font-size:12px;margin-bottom:10px">Total material dimiliki: <b style="color:#f1c40f">${totalMats}</b> · Unit: <b style="color:#66ccff">${S.inv.length}</b></div>`;
+
+  for(const g of groups){
+    html += `<div style="color:${g.color};font-weight:bold;font-size:13px;margin:12px 0 6px;border-bottom:1px solid #2a3a6a;padding-bottom:4px;letter-spacing:1px">${g.name}</div>`;
+    for(const key of g.keys){
+      const mat = MATS[key]; if(!mat) continue;
+      const count = mats[key] || 0;
+      const usages = matUsage[key] || [];
+      const dropFrom = getMaterialDropFrom(key);
+      html += `<div style="background:#151a3a;border:2px solid ${count>0?'#f1c40f':'#2a3a6a'};border-radius:8px;padding:10px;margin-bottom:8px">`;
+      html += `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="font-size:15px;font-weight:bold;color:#fff">${mat[1]} ${mat[0]}</div>
+        <div style="font-size:16px;font-weight:bold;color:${count>0?'#2ecc71':'#666'}">x${count}</div>
+      </div>`;
+      if(dropFrom){
+        html += `<div style="font-size:10px;color:#888;margin-bottom:6px">📍 Drop dari: <b style="color:#f1c40f">${dropFrom}</b></div>`;
+      }
+      if(usages.length > 0){
+        const byTarget = {};
+        for(const u of usages){
+          if(!byTarget[u.to]) byTarget[u.to] = {need:u.need, from:[], cost:u.cost};
+          byTarget[u.to].from.push(u.from);
+        }
+        html += `<div style="font-size:11px;color:#aaa;margin-bottom:4px">🧬 Dibutuhkan untuk evolve:</div>`;
+        for(const [toId, info] of Object.entries(byTarget)){
+          const target = DEF[toId]; if(!target) continue;
+          const targetR = R[target.rar] || R.common;
+          const enough = count >= info.need;
+          const canCraft = Math.floor(count / info.need);
+          html += `<div style="display:flex;justify-content:space-between;align-items:center;background:#0a0e27;border-left:3px solid ${enough?'#2ecc71':'#e74c3c'};border-radius:4px;padding:5px 8px;margin:3px 0;font-size:11px">
+            <div style="flex:1;min-width:0">
+              <div style="color:${targetR.c};font-weight:bold">${target.icon} ${target.name} <span style="color:#888;font-size:9px">(${targetR.n})</span></div>
+              <div style="color:#666;font-size:10px">dari: ${info.from.map(f=>DEF[f]?DEF[f].icon+' '+DEF[f].name:f).join(', ')}</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;margin-left:6px">
+              <div style="color:${enough?'#2ecc71':'#e74c3c'};font-weight:bold">${count}/${info.need}</div>
+              <div style="color:#f1c40f;font-size:10px">💎${info.cost}${canCraft>1?` · bisa x${canCraft}`:''}</div>
+            </div>
+          </div>`;
+        }
+      } else {
+        html += `<div style="font-size:11px;color:#666;text-align:center;padding:4px">Tidak dipakai di recipe manapun</div>`;
+      }
+      html += `</div>`;
+    }
+  }
+  $('backpackContent').innerHTML = html;
+}
+function updateBackpackBadge(){
+  const badge = $('bpBadge'); if(!badge) return;
+  const total = Object.values(S.mats||{}).reduce((a,b)=>a+(+b||0),0);
+  if(total > 0){ badge.textContent = total > 99 ? '99+' : total; badge.style.display = 'inline-block'; }
+  else badge.style.display = 'none';
+}
+
 checkLogin();
 $('googleLoginBtn').onclick=()=>{if(!fbAuth)return toast('❌ Firebase error!');const provider=new firebase.auth.GoogleAuthProvider();fbAuth.signInWithPopup(provider).catch(e=>{toast('❌ Login gagal: '+e.message);$('loginMsg').innerHTML='<span style="color:#e74c3c">❌ '+e.message+'</span>'})};
 $('offlineBtn').onclick=()=>{S.user='Guest';save();show('menu');updMenu();updLobbyStats()};
@@ -675,6 +755,8 @@ $('s10').onclick=()=>summon(10);
 $('evb').onclick=evMenu;
 $('trb').onclick=traitMenu;
 $('rdb').onclick=redeemMenu;
+$('backpackBtn').onclick=()=>{renderBackpack();$('backpackModal').style.display='flex'};
+$('closeBackpack').onclick=()=>{$('backpackModal').style.display='none'};
 
 $('profileBtn').onclick=()=>{const lvl = Math.floor((S.stats.gamesPlayed * 1.5) + (S.stats.gamesWon * 3)) + 1;$('profName').textContent = S.nickname || (S.user ? S.user.split('@')[0] : 'Guest');$('profLvl').textContent = `Lv. ${lvl}`;$('editNameBtn').style.display = 'inline-block';window._viewingOtherProfile = false;let uHTML = '';for(let i=0; i<6; i++){const u = S.inv.find(x => x.iid === S.load[i]);if(u&&DEF[u.id]){const r = R[u.rar]||R.common;uHTML += `<div style="background:#151a3a;border:1px solid ${r.c};border-radius:6px;padding:5px;text-align:center;font-size:10px"><div style="font-size:18px">${DEF[u.id].icon}</div><b style="color:#fff;font-size:9px">${DEF[u.id].name}</b><div style="color:${r.c};font-size:8px">Lv ${u.lv}</div></div>`}else{uHTML += `<div style="background:#151a3a;border:1px dashed #2a3a6a;border-radius:6px;padding:5px;text-align:center;font-size:10px;color:#555;display:flex;align-items:center;justify-content:center;height:55px">Empty</div>`}}$('profUnits').innerHTML = uHTML;$('profStats').innerHTML = `<div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Bosses Killed</span><b>${S.stats.bossesKilled}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Games Played</span><b>${S.stats.gamesPlayed}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Games Won</span><b>${S.stats.gamesWon}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Gems Spent</span><b>${S.stats.gemsSpent}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Highest Inf Round</span><b>${S.stats.highestInf}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>MVPs Gained</span><b>${S.stats.mvps}</b></div><div class="row" style="padding:4px 0;color:#66ccff"><span>⏱️ Time Played</span><b style="color:#66ccff">${fmtPlayTime(S.playTime)}</b></div>`;$('profileModal').style.display = 'flex';};
 $('closeProfile').onclick = () => { $('profileModal').style.display = 'none'; if (window._viewingOtherProfile) { window._viewingOtherProfile = false; $('leaderboardModal').style.display = 'flex'; } };
@@ -700,7 +782,151 @@ window._idxRoleFilter = 'all';
 $('indexBtn').onclick = () => {$('indexModal').style.display = 'flex';window._idxRoleFilter = 'all';document.querySelectorAll('.idxF').forEach(x => x.style.background = x.dataset.role === 'all' ? 'linear-gradient(#2ecc71,#27ae60)' : 'linear-gradient(#555,#333)');renderIndex();};
 $('closeIndex').onclick = () => { $('indexModal').style.display = 'none'; };
 document.querySelectorAll('.idxF').forEach(b => {b.onclick = () => {window._idxRoleFilter = b.dataset.role;document.querySelectorAll('.idxF').forEach(x => x.style.background = 'linear-gradient(#555,#333)');b.style.background = 'linear-gradient(#2ecc71,#27ae60)';renderIndex();};});
-function renderIndex(){const roleFilter = window._idxRoleFilter || 'all';let html = '';const rarities = Object.keys(R).sort((a,b) => ORD.indexOf(a) - ORD.indexOf(b));for (const rar of rarities) {const pool = POOL[rar] || [];if (pool.length === 0) continue;const filteredPool = pool.filter(arr => {const u = DEF[arr[0]];if(!u) return false;if(roleFilter === 'all') return true;return role(u) === roleFilter;});if(filteredPool.length === 0) continue;html += `<div style="grid-column:1/-1; color:${R[rar].c}; font-weight:bold; font-size:14px; margin-top:10px; border-bottom:1px solid #2a3a6a; padding-bottom:4px;">${R[rar].n}</div>`;for (const arr of filteredPool) {const u = DEF[arr[0]];if (!u) continue;const owned = S.inv.some(x => x.id === u.id);const opacity = owned ? '1' : '0.4';const filter = owned ? 'none' : 'grayscale(80%)';const borderColor = owned ? R[rar].c : '#2a3a6a';const skillName = EVO_SKILL[u.id] ? EVO_SKILL[u.id].name : u.skill;const ro = ROLE[role(u)] || ['-','#fff'];const tag = owned ? '<div style="color:#2ecc71;font-size:8px;">✅ OWNED</div>' : '<div style="color:#e74c3c;font-size:8px;">🔒 LOCKED</div>';html += `<div style="background:#151a3a;border:1px solid ${borderColor};border-radius:6px;padding:5px;text-align:center;opacity:${opacity};filter:${filter};" title="${u.name}\nDMG: ${u.dmg} | RNG: ${u.rng}\nSkill: ${skillName}"><div style="font-size:20px">${u.icon}</div><b style="color:#fff;font-size:10px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.name}</b><div style="color:${R[rar].c};font-size:8px">${R[rar].n}</div><div style="color:${ro[1]};font-size:8px;font-weight:bold">${ro[0]}</div><div style="font-size:8px;color:#aaa;">DMG ${u.dmg} · RNG ${u.rng}</div>${tag}</div>`;}}if(!html) html = '<div style="grid-column:1/-1;text-align:center;color:#888;padding:20px">Tidak ada unit.</div>';$('indexContent').innerHTML = html;}
+function renderIndex(){
+  const roleFilter = window._idxRoleFilter || 'all';
+  let html = '';
+  const rarities = Object.keys(R).sort((a,b) => ORD.indexOf(a) - ORD.indexOf(b));
+  for (const rar of rarities) {
+    const pool = POOL[rar] || []; if (pool.length === 0) continue;
+    const filteredPool = pool.filter(arr => {
+      const u = DEF[arr[0]]; if(!u) return false;
+      if(roleFilter === 'all') return true;
+      return role(u) === roleFilter;
+    });
+    if (filteredPool.length === 0) continue;
+    html += `<div style="grid-column:1/-1; color:${R[rar].c}; font-weight:bold; font-size:14px; margin-top:10px; border-bottom:1px solid #2a3a6a; padding-bottom:4px;">${R[rar].n}</div>`;
+    for (const arr of filteredPool) {
+      const u = DEF[arr[0]]; if (!u) continue;
+      const owned = S.inv.some(x => x.id === u.id);
+      const opacity = owned ? '1' : '0.4';
+      const filter = owned ? 'none' : 'grayscale(80%)';
+      const borderColor = owned ? R[rar].c : '#2a3a6a';
+      const ro = ROLE[role(u)] || ['-','#fff'];
+      const hasEvo = !!RECIPES[u.id];
+      const canBeEvolved = Object.values(RECIPES).some(rc => rc.r === u.id);
+      const evoTag = hasEvo ? '<div style="color:#2ecc71;font-size:8px;">🧬 EVO</div>' : (canBeEvolved ? '<div style="color:#9b59b6;font-size:8px;">⬅️ TARGET</div>' : '');
+      const tag = owned ? '<div style="color:#2ecc71;font-size:8px;">✅ OWNED</div>' : '<div style="color:#e74c3c;font-size:8px;">🔒 LOCKED</div>';
+      html += `<div class="idx-card" data-id="${u.id}" style="cursor:pointer;background:#151a3a;border:1px solid ${borderColor};border-radius:6px;padding:5px;text-align:center;opacity:${opacity};filter:${filter};transition:.15s;">
+        <div style="font-size:20px">${u.icon}</div>
+        <b style="color:#fff;font-size:10px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.name}</b>
+        <div style="color:${R[rar].c};font-size:8px">${R[rar].n}</div>
+        <div style="color:${ro[1]};font-size:8px;font-weight:bold">${ro[0]}</div>
+        <div style="font-size:8px;color:#aaa;">DMG ${u.dmg} · RNG ${u.rng}</div>
+        ${evoTag}${tag}
+      </div>`;
+    }
+  }
+  if(!html) html = '<div style="grid-column:1/-1;text-align:center;color:#888;padding:20px">Tidak ada unit.</div>';
+  $('indexContent').innerHTML = html;
+  document.querySelectorAll('.idx-card').forEach(el => {
+    el.onclick = () => showIndexDetail(el.dataset.id);
+    el.onmouseenter = () => { el.style.transform = 'translateY(-2px)'; el.style.borderColor = '#f1c40f'; };
+    el.onmouseleave = () => { el.style.transform = ''; el.style.borderColor = ''; };
+  });
+}
+
+function showIndexDetail(unitId){
+  const u = DEF[unitId]; if(!u) return;
+  const r = R[u.rar] || R.common;
+  const ro = ROLE[role(u)] || ['-','#fff'];
+  const es = EVO_SKILL[unitId];
+  const skillName = es ? `${es.icon} ${es.name}` : u.skill;
+  const ownedCount = S.inv.filter(x => x.id === unitId).length;
+
+  let html = `<div style="text-align:center"><div style="font-size:44px">${u.icon}</div>
+    <h2 style="margin:4px 0;color:${r.c};font-size:18px">${u.name}</h2>
+    <div style="font-size:11px;color:${r.c};font-weight:bold">${r.n} · ${ro[0]}</div></div>
+    <div class="eq-stats" style="text-align:left;margin-top:10px">
+      <div class="row"><span>Base DMG</span><b>${u.dmg}</b></div>
+      <div class="row"><span>Base RNG</span><b>${u.rng}</b></div>
+      <div class="row"><span>Base CD</span><b>${u.cd}s</b></div>
+      <div class="row"><span>Skill</span><b>${skillName}</b></div>
+      ${es ? `<div class="row"><span>Desc</span><b style="color:${es.color}">${es.desc}</b></div><div class="row"><span>Ultimate</span><b style="color:${es.color}">${es.ult}</b></div>` : ''}
+      <div class="row"><span>Dimiliki</span><b style="color:${ownedCount>0?'#2ecc71':'#e74c3c'}">${ownedCount>0?'✅ x'+ownedCount:'🔒 Belum punya'}</b></div>
+    </div>`;
+
+  const evolveFrom = [];
+  for(const [fromId, recipe] of Object.entries(RECIPES)){
+    if(recipe.r === unitId) evolveFrom.push({from:fromId, recipe});
+  }
+  const evolveTo = RECIPES[unitId];
+
+  let start = unitId, guard = 0;
+  while(guard++ < 12){
+    let prev = null;
+    for(const [fromId, recipe] of Object.entries(RECIPES)){
+      if(recipe.r === start){ prev = fromId; break; }
+    }
+    if(!prev) break;
+    start = prev;
+  }
+  const fullChain = [start];
+  let cur = start; guard = 0;
+  while(RECIPES[cur] && guard++ < 12){
+    cur = RECIPES[cur].r;
+    if(fullChain.includes(cur)) break;
+    fullChain.push(cur);
+  }
+  if(fullChain.length > 1){
+    html += `<div style="margin-top:10px;background:#0a0e27;border:2px solid #f1c40f;border-radius:8px;padding:10px">
+      <div style="color:#f1c40f;font-weight:bold;font-size:13px;margin-bottom:6px">🔗 Evolve Chain</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:11px">`;
+    for(let i = 0; i < fullChain.length; i++){
+      const id = fullChain[i]; const unit = DEF[id]; if(!unit) continue;
+      const ur = R[unit.rar] || R.common;
+      const isCurrent = id === unitId;
+      const owned = S.inv.some(x => x.id === id);
+      html += `<span style="background:${isCurrent?'rgba(241,196,15,.3)':'rgba(0,0,0,.4)'};border:1px solid ${ur.c};border-radius:4px;padding:2px 6px;${owned?'':'opacity:.55'}">${unit.icon} ${unit.name}</span>`;
+      if(i < fullChain.length - 1) html += `<span style="color:#f1c40f;font-weight:bold">→</span>`;
+    }
+    html += `</div></div>`;
+  }
+
+  if(evolveFrom.length > 0){
+    html += `<div style="margin-top:10px;background:#0a0e27;border:2px solid #9b59b6;border-radius:8px;padding:10px">
+      <div style="color:#9b59b6;font-weight:bold;font-size:13px;margin-bottom:6px">⬅️ Evolve Dari</div>`;
+    for(const {from, recipe} of evolveFrom){
+      const fromUnit = DEF[from]; if(!fromUnit) continue;
+      const fromR = R[fromUnit.rar] || R.common;
+      html += `<div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px dashed #2a3a6a">
+        <div style="color:${fromR.c};font-weight:bold;font-size:12px">${fromUnit.icon} ${fromUnit.name} <span style="color:#888;font-size:10px">(${fromR.n})</span></div>
+        <div style="font-size:11px;margin-top:4px">`;
+      for(const [mat, need] of Object.entries(recipe.m)){
+        const have = S.mats[mat] || 0, ok = have >= need;
+        html += `<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[mat][1]} ${MATS[mat][0]}</span><span>${have}/${need}</span></div>`;
+      }
+      html += `<div class="mr" style="border-color:${S.gems>=recipe.cost?'#2ecc71':'#e74c3c'}"><span>💎 Cost</span><span>${S.gems}/${recipe.cost||0}</span></div>`;
+      html += `</div></div>`;
+    }
+    html += `</div>`;
+  }
+
+  if(evolveTo){
+    const toUnit = DEF[evolveTo.r];
+    if(toUnit){
+      const toR = R[toUnit.rar] || R.common;
+      html += `<div style="margin-top:10px;background:#0a0e27;border:2px solid #2ecc71;border-radius:8px;padding:10px">
+        <div style="color:#2ecc71;font-weight:bold;font-size:13px;margin-bottom:6px">➡️ Evolve Ke</div>
+        <div style="color:${toR.c};font-weight:bold;font-size:12px">${toUnit.icon} ${toUnit.name} <span style="color:#888;font-size:10px">(${toR.n})</span></div>
+        <div style="font-size:11px;margin-top:4px">`;
+      for(const [mat, need] of Object.entries(evolveTo.m)){
+        const have = S.mats[mat] || 0, ok = have >= need;
+        html += `<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[mat][1]} ${MATS[mat][0]}</span><span>${have}/${need}</span></div>`;
+      }
+      html += `<div class="mr" style="border-color:${S.gems>=evolveTo.cost?'#2ecc71':'#e74c3c'}"><span>💎 Cost</span><span>${S.gems}/${evolveTo.cost||0}</span></div>`;
+      html += `</div></div>`;
+    }
+  }
+
+  if(evolveFrom.length === 0 && !evolveTo){
+    html += `<div style="margin-top:10px;text-align:center;font-size:11px;color:#666;padding:8px;background:#0a0e27;border-radius:6px">Unit ini tidak termasuk dalam jalur evolve.</div>`;
+  }
+
+  html += `<button id="idxDetailClose" class="r" style="width:100%;margin-top:12px">Tutup</button>`;
+  $('ob').innerHTML = html;
+  $('ov').style.display = 'flex';
+  $('idxDetailClose').onclick = () => { $('ov').style.display = 'none'; };
+}
 
 $('set').onclick=()=>pmenu(false);
 $('rst').onclick=()=>{if(confirm('⚠️ Hapus semua progress?')){localStorage.removeItem('td2');location.reload()}};
