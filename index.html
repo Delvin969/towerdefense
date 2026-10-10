@@ -246,11 +246,11 @@ function resolveTrait(tr){if(!tr)return null;const id=typeof tr==='string'?tr:tr
 function getTrait(u){return resolveTrait(u&&u.trait)}
 
 const REDEEM_CODES={HTD2026:{gems:1000,rr:25,desc:'1000 💎 + 25 🎲'},TDREROLL:{gems:0,rr:100,desc:'100 🎲'},NIAMATD:{gems:1500,rr:0,desc:'1500 💎'},REROLLBOI:{gems:0,rr:250,desc:'250 🎲'}};
-let S={user:null,nickname:null,gems:500,coins:0,rr:0,inv:[],load:[],clr:{},nid:1,mi:0,ri:0,mode:'c',mats:{},auto:false,fx:true,sound:true,autoUpg:false,traitFilter:{},stage:null,best:0,usedCodes:{},stats:{bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0},gemsSpentWeek:0,gemsSpentToday:0,bestWeek:0,bestToday:0,weekKey:'',dayKey:'',claimedRewards:{},playTime:0,myLbRanks:{}},G=null;
+let S={user:null,nickname:null,gems:500,coins:0,rr:0,inv:[],load:[],clr:{},nid:1,mi:0,ri:0,mode:'c',mats:{},auto:false,fx:true,sound:true,autoUpg:false,traitFilter:{},stage:null,best:0,usedCodes:{},stats:{bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0},gemsSpentWeek:0,gemsSpentToday:0,bestWeek:0,bestToday:0,weekKey:'',dayKey:'',claimedRewards:{},playTime:0,myLbRanks:{},music:'none',musicVol:0.12,customMusicUrl:'',customMusicName:''},G=null;
 const cv=$('cv'),ctx=cv.getContext('2d');
 let soundEnabled=true;
 
-function save(){try{localStorage.setItem('td2',JSON.stringify({user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,sound:S.sound,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},gemsSpentWeek:S.gemsSpentWeek||0,gemsSpentToday:S.gemsSpentToday||0,bestWeek:S.bestWeek||0,bestToday:S.bestToday||0,weekKey:S.weekKey||'',dayKey:S.dayKey||'',claimedRewards:S.claimedRewards||{},playTime:S.playTime||0,myLbRanks:S.myLbRanks||{}}))}catch(e){}if(isOnline){clearTimeout(window._csTimer);window._csTimer=setTimeout(cloudSave,2000)}}
+function save(){try{localStorage.setItem('td2',JSON.stringify({user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,sound:S.sound,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},gemsSpentWeek:S.gemsSpentWeek||0,gemsSpentToday:S.gemsSpentToday||0,bestWeek:S.bestWeek||0,bestToday:S.bestToday||0,weekKey:S.weekKey||'',dayKey:S.dayKey||'',claimedRewards:S.claimedRewards||{},playTime:S.playTime||0,myLbRanks:S.myLbRanks||{},music:S.music||'none',musicVol:S.musicVol||0.12,customMusicUrl:S.customMusicUrl||'',customMusicName:S.customMusicName||''}))}catch(e){}if(isOnline){clearTimeout(window._csTimer);window._csTimer=setTimeout(cloudSave,2000)}}
 try{const d=JSON.parse(localStorage.getItem('td2'));if(d)Object.assign(S,d)}catch(e){}
 if(!S.usedCodes)S.usedCodes={};
 if(typeof S.rr!=='number')S.rr=0;
@@ -270,6 +270,10 @@ if(!S.claimedRewards)S.claimedRewards={};
 if(!S.myLbRanks)S.myLbRanks={};
 if(typeof S.playTime!=='number')S.playTime=0;
 if(typeof S.nid!=='number')S.nid=1;
+if(S.music===undefined)S.music='none';
+if(typeof S.musicVol!=='number')S.musicVol=0.12;
+if(S.customMusicUrl===undefined)S.customMusicUrl='';
+if(S.customMusicName===undefined)S.customMusicName='';
 if(!Array.isArray(S.inv))S.inv=[];
 (function(){S.inv=S.inv.filter(u=>{if(!u||!u.id)return false;if(!DEF[u.id])return false;if(!u.rar||!R[u.rar])u.rar=DEF[u.id].rar;if(!R[u.rar])return false;if(typeof u.lv!=='number'||u.lv<1)u.lv=1;if(typeof u.iid!=='number')u.iid=S.nid++;if(u.trait&&(typeof u.trait==='string'||!TRAITS[u.trait.id]))u.trait=null;return true})})();
 S.load = (Array.isArray(S.load) ? S.load : []).filter(i=>S.inv.some(u=>u.iid===i));
@@ -279,7 +283,10 @@ let _playTimerId=null;
 function startPlayTimer(){if(_playTimerId)return;_playTimerId=setInterval(()=>{if(G && !G.paused && !G.over && $('game').classList.contains('on')){S.playTime=(S.playTime||0)+1;if(S.playTime%30===0)save()}},1000)}
 function stopPlayTimer(){if(_playTimerId){clearInterval(_playTimerId);_playTimerId=null}}
 function fmtPlayTime(sec){sec=Math.floor(sec||0);if(sec<60)return sec+'s';const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;if(h>0)return `${h}j ${m}m ${s}s`;if(m>0)return `${m}m ${s}s`;return `${s}s`}
-document.addEventListener('visibilitychange',()=>{if(document.hidden)stopPlayTimer();else if(G && $('game').classList.contains('on'))startPlayTimer()});
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){stopPlayTimer();Music.stop();}
+  else{if(G && $('game').classList.contains('on'))startPlayTimer();if(S.music&&S.music!=='none')Music.play(S.music);}
+});
 window.addEventListener('beforeunload',()=>{save()});
 
 function getISOWeek(d){const dt=new Date(d.getTime());dt.setHours(0,0,0,0);dt.setDate(dt.getDate()+3-(dt.getDay()+6)%7);const w1=new Date(dt.getFullYear(),0,4);return dt.getFullYear()+'-W'+String(1+Math.round(((dt-w1)/86400000-3+(w1.getDay()+6)%7)/7)).padStart(2,'0')}
@@ -298,19 +305,200 @@ function getTimeUntilReset(period){const now=new Date();const target=period==='w
 checkPeriodReset();
 setInterval(()=>{const dk=getDayKey(),wk=getISOWeek(new Date());if(S.dayKey!==dk||S.weekKey!==wk){checkPeriodReset();save();if($('menu').classList.contains('on'))updMenu()}},60000);
 
-async function cloudSave(){if(!isOnline||!currentUser)return;try{const data={user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,sound:S.sound,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},gemsSpentWeek:S.gemsSpentWeek||0,gemsSpentToday:S.gemsSpentToday||0,bestWeek:S.bestWeek||0,bestToday:S.bestToday||0,weekKey:S.weekKey||'',dayKey:S.dayKey||'',claimedRewards:S.claimedRewards||{},playTime:S.playTime||0,myLbRanks:S.myLbRanks||{},updatedAt:Date.now()};await fbDb.collection('users').doc(currentUser.uid).set(data)}catch(e){console.warn(e)}}
-async function cloudLoad(){if(!currentUser)return false;try{const doc=await fbDb.collection('users').doc(currentUser.uid).get();if(!doc.exists)return false;const d=doc.data();if(confirm(`📦 Save cloud!\n\n💎 ${d.gems||0}\n🪙 ${Math.floor(d.coins||0)}\n🎒 ${(d.inv||[]).length} unit\n🏆 Wave ${d.best||0}\n\nLoad CLOUD?`)){Object.assign(S,d);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};if(S.nickname === undefined) S.nickname = null;if(S.autoUpg === undefined) S.autoUpg = false;if(S.sound===undefined)S.sound=true;soundEnabled=S.sound;if(!S.traitFilter) S.traitFilter = {};if(S.gemsSpentWeek===undefined)S.gemsSpentWeek=0;if(S.gemsSpentToday===undefined)S.gemsSpentToday=0;if(S.bestWeek===undefined)S.bestWeek=0;if(S.bestToday===undefined)S.bestToday=0;if(S.weekKey===undefined)S.weekKey='';if(S.dayKey===undefined)S.dayKey='';if(!S.claimedRewards)S.claimedRewards={};if(!S.myLbRanks)S.myLbRanks={};if(typeof S.playTime!=='number')S.playTime=0;if(!Array.isArray(S.inv))S.inv=[];(function(){S.inv=S.inv.filter(u=>{if(!u||!u.id||!DEF[u.id])return false;if(!u.rar||!R[u.rar])u.rar=DEF[u.id].rar;if(!R[u.rar])return false;if(typeof u.lv!=='number'||u.lv<1)u.lv=1;if(typeof u.iid!=='number')u.iid=S.nid++;if(u.trait&&(typeof u.trait==='string'||!TRAITS[u.trait.id]))u.trait=null;return true})})();checkPeriodReset();S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();toast('☁️ Loaded!')}return true}catch(e){return false}}
+async function cloudSave(){if(!isOnline||!currentUser)return;try{const data={user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,sound:S.sound,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},gemsSpentWeek:S.gemsSpentWeek||0,gemsSpentToday:S.gemsSpentToday||0,bestWeek:S.bestWeek||0,bestToday:S.bestToday||0,weekKey:S.weekKey||'',dayKey:S.dayKey||'',claimedRewards:S.claimedRewards||{},playTime:S.playTime||0,myLbRanks:S.myLbRanks||{},music:S.music||'none',musicVol:S.musicVol||0.12,customMusicUrl:S.customMusicUrl||'',customMusicName:S.customMusicName||'',updatedAt:Date.now()};await fbDb.collection('users').doc(currentUser.uid).set(data)}catch(e){console.warn(e)}}
+async function cloudLoad(){if(!currentUser)return false;try{const doc=await fbDb.collection('users').doc(currentUser.uid).get();if(!doc.exists)return false;const d=doc.data();if(confirm(`📦 Save cloud!\n\n💎 ${d.gems||0}\n🪙 ${Math.floor(d.coins||0)}\n🎒 ${(d.inv||[]).length} unit\n🏆 Wave ${d.best||0}\n\nLoad CLOUD?`)){Object.assign(S,d);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};if(S.nickname === undefined) S.nickname = null;if(S.autoUpg === undefined) S.autoUpg = false;if(S.sound===undefined)S.sound=true;soundEnabled=S.sound;if(!S.traitFilter) S.traitFilter = {};if(S.gemsSpentWeek===undefined)S.gemsSpentWeek=0;if(S.gemsSpentToday===undefined)S.gemsSpentToday=0;if(S.bestWeek===undefined)S.bestWeek=0;if(S.bestToday===undefined)S.bestToday=0;if(S.weekKey===undefined)S.weekKey='';if(S.dayKey===undefined)S.dayKey='';if(!S.claimedRewards)S.claimedRewards={};if(!S.myLbRanks)S.myLbRanks={};if(typeof S.playTime!=='number')S.playTime=0;if(S.music===undefined)S.music='none';if(typeof S.musicVol!=='number')S.musicVol=0.12;if(S.customMusicUrl===undefined)S.customMusicUrl='';if(S.customMusicName===undefined)S.customMusicName='';if(!Array.isArray(S.inv))S.inv=[];(function(){S.inv=S.inv.filter(u=>{if(!u||!u.id||!DEF[u.id])return false;if(!u.rar||!R[u.rar])u.rar=DEF[u.id].rar;if(!R[u.rar])return false;if(typeof u.lv!=='number'||u.lv<1)u.lv=1;if(typeof u.iid!=='number')u.iid=S.nid++;if(u.trait&&(typeof u.trait==='string'||!TRAITS[u.trait.id]))u.trait=null;return true})})();checkPeriodReset();S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();toast('☁️ Loaded!')}return true}catch(e){return false}}
 function startCloudAutoSave(){if(cloudSaveTimer)clearInterval(cloudSaveTimer);cloudSaveTimer=setInterval(()=>{if(isOnline)cloudSave()},10000)}
 try{firebase.initializeApp(firebaseConfig);fbAuth=firebase.auth();fbDb=firebase.firestore()}catch(e){console.warn(e)}
 
 let audioCtx=null;
 function initAudio(){if(audioCtx)return;try{audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume()}
-document.addEventListener('pointerdown',()=>initAudio(),{once:true});document.addEventListener('touchstart',()=>initAudio(),{once:true});
 function playTone(f,dur,type='sine',vol=.08,slide=null){if(!soundEnabled||!audioCtx)return;try{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.value=f;if(slide){o.frequency.setValueAtTime(f,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(Math.max(1,slide),audioCtx.currentTime+dur)}g.gain.setValueAtTime(vol,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+dur)}catch(e){}}
 function playNoise(dur,vol=.1,filtFreq=2000){if(!soundEnabled||!audioCtx)return;try{const sz=Math.floor(audioCtx.sampleRate*dur),buf=audioCtx.createBuffer(1,sz,audioCtx.sampleRate),d=buf.getChannelData(0);for(let i=0;i<sz;i++)d[i]=Math.random()*2-1;const s=audioCtx.createBufferSource();s.buffer=buf;const f=audioCtx.createBiquadFilter();f.type='lowpass';f.frequency.value=filtFreq;const g=audioCtx.createGain();g.gain.setValueAtTime(vol,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);s.connect(f);f.connect(g);g.connect(audioCtx.destination);s.start();s.stop(audioCtx.currentTime+dur)}catch(e){}}
 const _sndCD={};
 function throttleSnd(k,fn,cd=90){const n=performance.now();if(_sndCD[k]&&n-_sndCD[k]<cd)return;_sndCD[k]=n;fn()}
 const SFX={shoot:(hi=false,top=false)=>throttleSnd('shoot'+(top?'T':'N'),()=>{if(top){playTone(1400,0.06,'sawtooth',.035,600);playTone(900,0.08,'sine',.03,300)}else if(hi){playTone(800,0.06,'square',.035,400)}else{playTone(500,0.05,'square',.03,250)}},top?50:80),hit:(hi=false,boss=false)=>throttleSnd('hit',()=>{if(boss){playTone(180,0.1,'triangle',.06,60);playNoise(0.08,.04,1200)}else if(hi){playTone(300,0.05,'triangle',.045,100)}else{playTone(200,0.04,'triangle',.035,80)}},70),crit:()=>throttleSnd('crit',()=>{playTone(1400,0.12,'sawtooth',.09,300);setTimeout(()=>playTone(2000,0.08,'square',.06,500),30)},150),aoe:(top=false)=>throttleSnd('aoe',()=>{playNoise(0.22,top?0.15:0.1,top?600:900);playTone(top?100:150,0.28,'sine',top?0.12:0.09,40)},120),chain:()=>throttleSnd('chain',()=>{playTone(600,0.04,'sawtooth',.04,900);setTimeout(()=>playTone(850,0.05,'sawtooth',.04,1200),35);setTimeout(()=>playTone(1100,0.05,'sawtooth',.035,1500),70)},180),slow:()=>throttleSnd('slow',()=>playTone(450,0.2,'sine',.06,180),200),ult:(top=false)=>{playTone(top?60:80,0.7,'sawtooth',.16,25);playNoise(0.55,0.15,1800);setTimeout(()=>playTone(top?1800:1200,0.4,'sine',.12,300),100);setTimeout(()=>playNoise(0.4,0.1,3000),250)},place:(hi=false)=>{if(hi){playTone(200,0.18,'sawtooth',.1,900);playTone(400,0.22,'sine',.09,1400)}else{playTone(400,0.08,'sine',.08,800)}},waveStart:()=>{playTone(300,0.12,'square',.06,500);setTimeout(()=>playTone(500,0.15,'square',.06,800),90)},bossAlert:()=>{playTone(100,0.5,'sawtooth',.16,50);playTone(150,0.5,'square',.11,70);playNoise(0.4,0.08,500)},victory:()=>[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,0.28,'sine',.11),i*120)),defeat:()=>[400,300,200,140].forEach((f,i)=>setTimeout(()=>playTone(f,0.4,'sawtooth',.11,50),i*150)),summon:(rar)=>{const b={common:300,rare:400,epic:500,legendary:700,mythic:900,td:1100,secret:1300,transcendent:1500,primordial:1700,eternal:2000,exotic:2500}[rar]||500;playTone(b,0.5,'sine',.12,b*2);setTimeout(()=>playTone(b*1.5,0.4,'triangle',.1,b*2.5),100);if(rar==='secret'||rar==='transcendent'||rar==='primordial'||rar==='eternal'||rar==='exotic'){setTimeout(()=>playTone(b*2,0.6,'sine',.1,b*3),250);playNoise(0.5,.08,3000)}},evolve:()=>{playTone(200,1.0,'sawtooth',.15,2200);playNoise(0.85,0.1,3500);setTimeout(()=>playTone(1600,0.6,'sine',.11,400),300)}};
+
+/* ═══════ BACKGROUND MUSIC ═══════ */
+const Music={
+  id:'none',vol:0.12,playing:false,
+  masterGain:null,nextNoteTime:0,current16th:0,timerId:null,
+  customEl:null,customBlobUrl:null,idb:null,
+  TRACKS:{
+    none:{n:'🔇 Off'},
+    adventure:{n:'⚔️ Adventure',bpm:140,wave:'square',scale:[0,4,7,12,7,4,2,4],bass:[0,-5,-3,-5],hat:true},
+    battle:{n:'🔥 Battle',bpm:170,wave:'sawtooth',scale:[0,3,5,7,10,12,10,7],bass:[0,-2,0,-2],hat:true},
+    peaceful:{n:'🌿 Peaceful',bpm:85,wave:'sine',scale:[0,4,7,9,12,9,7,4],bass:[0,-5,-3,-7],hat:false},
+    epic:{n:'👑 Epic',bpm:100,wave:'triangle',scale:[0,7,12,15,12,7,0,5],bass:[0,-5,0,-7],hat:true},
+    mystic:{n:'🔮 Mystic',bpm:120,wave:'triangle',scale:[0,3,7,10,14,10,7,3],bass:[0,-2,-4,-7],hat:false},
+    custom:{n:'🎵 Custom'}
+  },
+  ensure(){
+    if(!audioCtx)initAudio();
+    if(!audioCtx)return false;
+    if(!this.masterGain){
+      this.masterGain=audioCtx.createGain();
+      this.masterGain.gain.value=this.vol;
+      this.masterGain.connect(audioCtx.destination);
+    }
+    if(!this.idb){
+      try{
+        const req=indexedDB.open('htd_music',1);
+        req.onupgradeneeded=e=>{const db=e.target.result;if(!db.objectStoreNames.contains('tracks'))db.createObjectStore('tracks')};
+        req.onsuccess=e=>{this.idb=e.target.result};
+      }catch(e){}
+    }
+    return true;
+  },
+  noteFreq(semi,base){return base*Math.pow(2,semi/12)},
+  playNote(freq,time,dur,type,vol){
+    try{
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.type=type;o.frequency.value=freq;
+      g.gain.setValueAtTime(0,time);
+      g.gain.linearRampToValueAtTime(vol,time+0.01);
+      g.gain.exponentialRampToValueAtTime(0.001,time+dur);
+      o.connect(g);g.connect(this.masterGain);
+      o.start(time);o.stop(time+dur);
+    }catch(e){}
+  },
+  playDrum(time,kind){
+    try{
+      if(kind==='kick'){
+        const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+        o.frequency.setValueAtTime(150,time);
+        o.frequency.exponentialRampToValueAtTime(40,time+0.1);
+        g.gain.setValueAtTime(0.22,time);
+        g.gain.exponentialRampToValueAtTime(0.001,time+0.12);
+        o.connect(g);g.connect(this.masterGain);
+        o.start(time);o.stop(time+0.13);
+      }else if(kind==='hat'){
+        const sz=Math.floor(audioCtx.sampleRate*0.05);
+        const buf=audioCtx.createBuffer(1,sz,audioCtx.sampleRate);
+        const d=buf.getChannelData(0);
+        for(let i=0;i<sz;i++)d[i]=Math.random()*2-1;
+        const s=audioCtx.createBufferSource();s.buffer=buf;
+        const f=audioCtx.createBiquadFilter();f.type='highpass';f.frequency.value=6000;
+        const g=audioCtx.createGain();
+        g.gain.setValueAtTime(0.055,time);
+        g.gain.exponentialRampToValueAtTime(0.001,time+0.05);
+        s.connect(f);f.connect(g);g.connect(this.masterGain);
+        s.start(time);s.stop(time+0.06);
+      }
+    }catch(e){}
+  },
+  scheduleNote(step,time,dur,cfg){
+    const base=220;
+    const mel=[0,1,2,3,4,5,4,3,2,3,4,5,6,7,6,5];
+    const idx=mel[step];
+    const semi=cfg.scale[idx%cfg.scale.length];
+    if(step%2===0 || Math.random()<0.65) this.playNote(this.noteFreq(semi,base),time,dur*0.85,cfg.wave,0.07);
+    if(step%4===0){
+      const bIdx=Math.floor(step/4)%cfg.bass.length;
+      this.playNote(this.noteFreq(cfg.bass[bIdx]-12,base),time,dur*3.2,'triangle',0.09);
+    }
+    if(cfg.hat){
+      if(step%4===0) this.playDrum(time,'kick');
+      if(step%2===1) this.playDrum(time,'hat');
+    }
+  },
+  scheduler(){
+    if(!this.playing||!audioCtx)return;
+    const cfg=this.TRACKS[this.id];
+    if(!cfg||!cfg.bpm){this.stop();return;}
+    const beat=60/cfg.bpm/2;
+    while(this.nextNoteTime < audioCtx.currentTime + 0.15){
+      this.scheduleNote(this.current16th,this.nextNoteTime,beat,cfg);
+      this.nextNoteTime += beat;
+      this.current16th = (this.current16th + 1) % 16;
+    }
+    this.timerId = setTimeout(()=>this.scheduler(), 40);
+  },
+  _stopCustom(){
+    if(this.customEl){try{this.customEl.pause();this.customEl.currentTime=0}catch(e){}}
+    if(this.customBlobUrl){try{URL.revokeObjectURL(this.customBlobUrl)}catch(e){};this.customBlobUrl=null;}
+  },
+  async _idbSave(blob){
+    if(!this.idb)await new Promise(r=>setTimeout(r,300));
+    if(!this.idb)return false;
+    return new Promise(res=>{
+      try{
+        const tx=this.idb.transaction('tracks','readwrite');
+        tx.objectStore('tracks').put(blob,'custom');
+        tx.oncomplete=()=>res(true);tx.onerror=()=>res(false);
+      }catch(e){res(false)}
+    });
+  },
+  async _idbLoad(){
+    if(!this.idb)await new Promise(r=>setTimeout(r,300));
+    if(!this.idb)return null;
+    return new Promise(res=>{
+      try{
+        const tx=this.idb.transaction('tracks','readonly');
+        const rq=tx.objectStore('tracks').get('custom');
+        rq.onsuccess=()=>res(rq.result||null);rq.onerror=()=>res(null);
+      }catch(e){res(null)}
+    });
+  },
+  async _idbDelete(){
+    if(!this.idb)return;
+    try{
+      const tx=this.idb.transaction('tracks','readwrite');
+      tx.objectStore('tracks').delete('custom');
+    }catch(e){}
+  },
+  async saveCustomFile(file){
+    if(!file)return false;
+    return await this._idbSave(file);
+  },
+  async playCustom(){
+    this._stopCustom();
+    if(!this.customEl){
+      this.customEl=new Audio();
+      this.customEl.loop=true;
+      this.customEl.volume=1;
+    }
+    let src='';
+    if(S.customMusicUrl&&S.customMusicUrl.trim()){
+      src=S.customMusicUrl.trim();
+    } else {
+      const blob=await this._idbLoad();
+      if(!blob){toast('❌ Belum ada lagu custom! Upload file atau isi URL.');this.playing=false;return;}
+      this.customBlobUrl=URL.createObjectURL(blob);
+      src=this.customBlobUrl;
+    }
+    this.customEl.src=src;
+    this.customEl.volume=this.vol;
+    try{
+      await this.customEl.play();
+      this.playing=true;
+    }catch(e){
+      toast('⚠️ Gagal play: '+e.message);
+      this.playing=false;
+    }
+  },
+  play(id){
+    this.stop();
+    this._stopCustom();
+    this.id=id||'none';
+    if(this.id==='none')return;
+    if(this.id==='custom'){this.playCustom();return;}
+    if(!this.ensure())return;
+    this.playing=true;
+    this.current16th=0;
+    this.nextNoteTime=audioCtx.currentTime+0.05;
+    this.scheduler();
+  },
+  stop(){
+    this.playing=false;
+    if(this.timerId){clearTimeout(this.timerId);this.timerId=null;}
+    if(this.customEl){try{this.customEl.pause();this.customEl.currentTime=0}catch(e){}}
+  },
+  setVolume(v){
+    this.vol=Math.max(0,Math.min(1,v));
+    if(this.masterGain)this.masterGain.gain.value=this.vol;
+    if(this.customEl)this.customEl.volume=this.vol;
+  }
+};
 
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400)}
 function show(n){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));$(n).classList.add('on')}
@@ -382,8 +570,8 @@ function playEvoCinematic(oldName,newName,icon,color,skillName,skillDesc,ult,cb)
 
 function redeemMenu(){$('ov').style.display='flex';let h=`<h2 style="margin-bottom:6px">🎁 Redeem</h2><div style="display:flex;gap:6px;margin:8px 0"><input id="rdi" type="text" placeholder="Kode..." style="flex:1;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#fff;font-size:14px;font-weight:bold;text-transform:uppercase;outline:none"><button id="rdo" class="g" style="margin:0;padding:10px 16px">Redeem</button></div><div id="rdm" style="font-size:12px;min-height:18px;margin-bottom:8px"></div><div style="border-top:1px solid #2a3a6a;padding-top:8px">`;for(const code in REDEEM_CODES){const c=REDEEM_CODES[code],used=S.usedCodes[code];h+=`<div style="display:flex;justify-content:space-between;align-items:center;background:#0a0e27;border:1px solid ${used?'#333':'#2a3a6a'};border-radius:6px;padding:6px 10px;margin:4px 0;font-size:12px"><div><b style="color:${used?'#666':'#f1c40f'};font-family:monospace">${code}</b><div style="color:#888;font-size:10px">${c.desc}</div></div><span style="color:${used?'#e74c3c':'#2ecc71'};font-size:11px">${used?'✓':'OK'}</span></div>`}$('ob').innerHTML=h+`</div><button id="rdx" class="r" style="margin-top:10px;width:100%">Tutup</button>`;$('rdx').onclick=()=>{$('ov').style.display='none';updMenu()};const doRedeem=()=>{const raw=$('rdi').value.trim().toUpperCase(),msg=$('rdm');if(!raw){msg.innerHTML='<span style="color:#e74c3c">❌ Isi kode!</span>';return}if(!REDEEM_CODES[raw]){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>';return}if(S.usedCodes[raw]){msg.innerHTML='<span style="color:#f39c12">⚠️ Sudah dipakai</span>';return}const r=REDEEM_CODES[raw];S.usedCodes[raw]=Date.now();let lines=[];if(r.gems){S.gems+=r.gems;lines.push(`+${r.gems}💎`)}if(r.rr){S.rr=(S.rr||0)+r.rr;lines.push(`+${r.rr}🎲`)}save();msg.innerHTML=`<span style="color:#2ecc71">✅ ${lines.join(' ')}</span>`;$('rdi').value='';setTimeout(()=>redeemMenu(),700)};$('rdo').onclick=doRedeem;$('rdi').addEventListener('keydown',e=>{if(e.key==='Enter')doRedeem()});setTimeout(()=>$('rdi').focus(),100)}
 
-function exportSave(){const data={user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,sound:S.sound,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},gemsSpentWeek:S.gemsSpentWeek||0,gemsSpentToday:S.gemsSpentToday||0,bestWeek:S.bestWeek||0,bestToday:S.bestToday||0,weekKey:S.weekKey||'',dayKey:S.dayKey||'',claimedRewards:S.claimedRewards||{},playTime:S.playTime||0,myLbRanks:S.myLbRanks||{}};const json=JSON.stringify(data);const code=btoa(unescape(encodeURIComponent(json)));const chunks=code.match(/.{1,80}/g).join('\n');$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📤 Export</h2><div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:8px;padding:10px;text-align:left;max-height:40vh;overflow-y:auto;margin-bottom:8px"><textarea id="expText" readonly style="width:100%;background:transparent;border:none;color:#0ff;font-family:monospace;font-size:10px;resize:none;outline:none" rows="8">${chunks}</textarea></div><div style="font-size:10px;color:#666;margin-bottom:8px">Size: ${(json.length/1024).toFixed(2)} KB</div><button id="expCopy" class="g" style="width:100%;margin-bottom:6px">📋 Copy</button><button id="expDl" class="y" style="width:100%;margin-bottom:6px">💾 Download .txt</button><button id="expClose" style="width:100%">Tutup</button>`;$('expCopy').onclick=()=>{const txt=$('expText');txt.select();txt.setSelectionRange(0,999999);try{if(navigator.clipboard)navigator.clipboard.writeText(txt.value).then(()=>toast('✅ Copy!')).catch(()=>{document.execCommand('copy');toast('✅ Copy!')});else{document.execCommand('copy');toast('✅ Copy!')}}catch(e){toast('❌ Gagal')}};$('expDl').onclick=()=>{const blob=new Blob([code],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='htd_save_'+Date.now()+'.txt';a.click();URL.revokeObjectURL(url);toast('💾 OK')};$('expClose').onclick=()=>{$('ov').style.display='none'}}
-function importSave(){$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📥 Import</h2><textarea id="impText" placeholder="Paste kode..." style="width:100%;height:120px;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#0ff;font-family:monospace;font-size:10px;resize:vertical;outline:none;margin-bottom:8px"></textarea><input type="file" id="impFile" accept=".txt" style="display:none"><button id="impPick" class="y" style="width:100%;margin-bottom:6px">📁 File .txt</button><button id="impGo" class="g" style="width:100%;margin-bottom:6px">▶ Import</button><button id="impClose" style="width:100%">Tutup</button><div id="impMsg" style="font-size:11px;margin-top:8px;min-height:16px"></div>`;$('impPick').onclick=()=>$('impFile').click();$('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('impText').value=ev.target.result.trim();$('impMsg').innerHTML='<span style="color:#2ecc71">✅ Loaded</span>'};r.readAsText(f)};$('impGo').onclick=()=>{const code=$('impText').value.trim().replace(/\s+/g,'');const msg=$('impMsg');if(!code){msg.innerHTML='<span style="color:#e74c3c">❌ Kosong!</span>';return}try{const json=decodeURIComponent(escape(atob(code)));const data=JSON.parse(json);if(!data.inv||!Array.isArray(data.inv))throw new Error();if(!confirm('⚠️ Data DIGANTI. Lanjut?'))return;Object.assign(S,data);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};if(S.nickname === undefined) S.nickname = null;if(S.autoUpg === undefined) S.autoUpg = false;if(S.sound===undefined)S.sound=true;soundEnabled=S.sound;if(!S.traitFilter) S.traitFilter = {};if(!S.claimedRewards)S.claimedRewards={};if(!S.myLbRanks)S.myLbRanks={};if(typeof S.playTime!=='number')S.playTime=0;if(S.gemsSpentWeek===undefined)S.gemsSpentWeek=0;if(S.gemsSpentToday===undefined)S.gemsSpentToday=0;if(S.bestWeek===undefined)S.bestWeek=0;if(S.bestToday===undefined)S.bestToday=0;if(S.weekKey===undefined)S.weekKey='';if(S.dayKey===undefined)S.dayKey='';S.inv=S.inv.filter(u=>{if(!u||!u.id||!DEF[u.id])return false;if(!u.rar||!R[u.rar])u.rar=DEF[u.id].rar;if(!R[u.rar])return false;if(typeof u.lv!=='number'||u.lv<1)u.lv=1;if(typeof u.iid!=='number')u.iid=S.nid++;return true});checkPeriodReset();S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();msg.innerHTML='<span style="color:#2ecc71">✅ OK! Reload...</span>';setTimeout(()=>location.reload(),900)}catch(err){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>'}};$('impClose').onclick=()=>{$('ov').style.display='none'}}
+function exportSave(){const data={user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,sound:S.sound,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},gemsSpentWeek:S.gemsSpentWeek||0,gemsSpentToday:S.gemsSpentToday||0,bestWeek:S.bestWeek||0,bestToday:S.bestToday||0,weekKey:S.weekKey||'',dayKey:S.dayKey||'',claimedRewards:S.claimedRewards||{},playTime:S.playTime||0,myLbRanks:S.myLbRanks||{},music:S.music||'none',musicVol:S.musicVol||0.12,customMusicUrl:S.customMusicUrl||'',customMusicName:S.customMusicName||''};const json=JSON.stringify(data);const code=btoa(unescape(encodeURIComponent(json)));const chunks=code.match(/.{1,80}/g).join('\n');$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📤 Export</h2><div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:8px;padding:10px;text-align:left;max-height:40vh;overflow-y:auto;margin-bottom:8px"><textarea id="expText" readonly style="width:100%;background:transparent;border:none;color:#0ff;font-family:monospace;font-size:10px;resize:none;outline:none" rows="8">${chunks}</textarea></div><div style="font-size:10px;color:#666;margin-bottom:8px">Size: ${(json.length/1024).toFixed(2)} KB</div><button id="expCopy" class="g" style="width:100%;margin-bottom:6px">📋 Copy</button><button id="expDl" class="y" style="width:100%;margin-bottom:6px">💾 Download .txt</button><button id="expClose" style="width:100%">Tutup</button>`;$('expCopy').onclick=()=>{const txt=$('expText');txt.select();txt.setSelectionRange(0,999999);try{if(navigator.clipboard)navigator.clipboard.writeText(txt.value).then(()=>toast('✅ Copy!')).catch(()=>{document.execCommand('copy');toast('✅ Copy!')});else{document.execCommand('copy');toast('✅ Copy!')}}catch(e){toast('❌ Gagal')}};$('expDl').onclick=()=>{const blob=new Blob([code],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='htd_save_'+Date.now()+'.txt';a.click();URL.revokeObjectURL(url);toast('💾 OK')};$('expClose').onclick=()=>{$('ov').style.display='none'}}
+function importSave(){$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📥 Import</h2><textarea id="impText" placeholder="Paste kode..." style="width:100%;height:120px;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#0ff;font-family:monospace;font-size:10px;resize:vertical;outline:none;margin-bottom:8px"></textarea><input type="file" id="impFile" accept=".txt" style="display:none"><button id="impPick" class="y" style="width:100%;margin-bottom:6px">📁 File .txt</button><button id="impGo" class="g" style="width:100%;margin-bottom:6px">▶ Import</button><button id="impClose" style="width:100%">Tutup</button><div id="impMsg" style="font-size:11px;margin-top:8px;min-height:16px"></div>`;$('impPick').onclick=()=>$('impFile').click();$('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('impText').value=ev.target.result.trim();$('impMsg').innerHTML='<span style="color:#2ecc71">✅ Loaded</span>'};r.readAsText(f)};$('impGo').onclick=()=>{const code=$('impText').value.trim().replace(/\s+/g,'');const msg=$('impMsg');if(!code){msg.innerHTML='<span style="color:#e74c3c">❌ Kosong!</span>';return}try{const json=decodeURIComponent(escape(atob(code)));const data=JSON.parse(json);if(!data.inv||!Array.isArray(data.inv))throw new Error();if(!confirm('⚠️ Data DIGANTI. Lanjut?'))return;Object.assign(S,data);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};if(S.nickname === undefined) S.nickname = null;if(S.autoUpg === undefined) S.autoUpg = false;if(S.sound===undefined)S.sound=true;soundEnabled=S.sound;if(!S.traitFilter) S.traitFilter = {};if(!S.claimedRewards)S.claimedRewards={};if(!S.myLbRanks)S.myLbRanks={};if(typeof S.playTime!=='number')S.playTime=0;if(S.gemsSpentWeek===undefined)S.gemsSpentWeek=0;if(S.gemsSpentToday===undefined)S.gemsSpentToday=0;if(S.bestWeek===undefined)S.bestWeek=0;if(S.bestToday===undefined)S.bestToday=0;if(S.weekKey===undefined)S.weekKey='';if(S.dayKey===undefined)S.dayKey='';if(S.music===undefined)S.music='none';if(typeof S.musicVol!=='number')S.musicVol=0.12;if(S.customMusicUrl===undefined)S.customMusicUrl='';if(S.customMusicName===undefined)S.customMusicName='';S.inv=S.inv.filter(u=>{if(!u||!u.id||!DEF[u.id])return false;if(!u.rar||!R[u.rar])u.rar=DEF[u.id].rar;if(!R[u.rar])return false;if(typeof u.lv!=='number'||u.lv<1)u.lv=1;if(typeof u.iid!=='number')u.iid=S.nid++;return true});checkPeriodReset();S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();msg.innerHTML='<span style="color:#2ecc71">✅ OK! Reload...</span>';setTimeout(()=>location.reload(),900)}catch(err){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>'}};$('impClose').onclick=()=>{$('ov').style.display='none'}}
 
 function card(u,fn){const d=DEF[u.id];if(!d)return document.createElement('div');const r=R[u.rar]||R.common;try{const s=stats(u),tr=s.trait,e=document.createElement('div');e.className='card';e.style.borderColor=r.c;const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';const trHTML=tr?`<div style="font-size:9px;color:${tr.c}">${tr.i} ${tr.n}${tl}</div>`:`<div style="font-size:9px;color:#666">— no trait —</div>`;e.innerHTML=`<button class="card-trait-btn" data-i="${u.iid}" title="Trait">🎲</button><div style="font-size:18px">${d.icon}</div><b style="color:#fff;font-size:11px">${d.name}</b><div style="color:${r.c};font-size:9px">${r.n} · ${ROLE[role(d)][0]}</div>${trHTML}<div style="color:#f1c40f;font-size:9px">Max ${maxDep(u)} · 🪙${placeCost(u)}</div><div style="font-size:9px;color:#aaa">DMG ${s.dmg} · RNG ${s.rng}</div>`;e.onclick=fn;const tb=e.querySelector('.card-trait-btn');if(tb){tb.onclick=(ev)=>{ev.stopPropagation();TM.selected=u.iid;TM.pending=null;TM.old=null;TM.kept=null;$('ov').style.display='flex';renderTraitMenu()}}return e}catch(err){console.error('[card]',u,err);const e2=document.createElement('div');e2.className='card';e2.innerHTML='<div style="color:#e74c3c;font-size:9px;padding:4px">⚠️ Corrupt<br>'+u.id+'</div>';return e2}}
 
@@ -637,7 +825,107 @@ setInterval(() => {if(G && !G.paused && !G.over && $('game').classList.contains(
 
 $('speedBtn').onclick = () => {gameSpeed = gameSpeed === 1 ? 2 : 1;$('speedBtn').textContent = gameSpeed === 1 ? '▶ x1' : '⏩ x2';$('speedBtn').style.background = gameSpeed === 1 ? 'linear-gradient(#3498db,#2980b9)' : 'linear-gradient(#e74c3c,#c0392b)';};
 $('sk').onclick=()=>{while(G.q.length)spawn(G.q.shift());G.skipped=true;$('sk').style.display='none'};
-function sets(back){$('ob').innerHTML=`<h2 style="margin-bottom:8px">⚙️ Settings</h2><label class="tg"><span>⏩ Auto Skip</span><input type="checkbox" id="t1" ${S.auto?'checked':''}></label><label class="tg"><span>✨ Efek</span><input type="checkbox" id="t2" ${S.fx?'checked':''}></label><label class="tg"><span>🔊 Suara</span><input type="checkbox" id="t3" ${S.sound?'checked':''}></label><button id="sb" class="g">← Kembali</button>`;$('t1').onchange=e=>{S.auto=e.target.checked;save()};$('t2').onchange=e=>{S.fx=e.target.checked;save()};$('t3').onchange=e=>{S.sound=e.target.checked;soundEnabled=S.sound;save();if(S.sound){initAudio();playTone(600,0.15,'sine',0.1,900)}};$('sb').onclick=back}
+
+function sets(back){
+  const trackBtns = Object.keys(Music.TRACKS).map(k=>{
+    const on = S.music===k;
+    return `<button class="mus-btn" data-id="${k}" style="flex:1;min-width:78px;font-size:10px;padding:6px 8px;margin:2px;min-height:32px;background:${on?'linear-gradient(#2ecc71,#27ae60)':'linear-gradient(#555,#333)'}">${Music.TRACKS[k].n}</button>`;
+  }).join('');
+  const customInfo = S.music==='custom' ? `
+    <div style="background:#151a3a;border:1px dashed #9b59b6;border-radius:6px;padding:8px;margin-top:8px;font-size:11px;text-align:left">
+      <div style="color:#9b59b6;font-weight:bold;margin-bottom:4px">🎵 Custom Music</div>
+      <div style="color:#aaa;font-size:10px;margin-bottom:6px">📁 File tersimpan lokal · 🔗 URL streaming</div>
+      ${S.customMusicName?`<div style="color:#2ecc71;font-size:10px;margin-bottom:6px">▶️ File: <b>${S.customMusicName}</b></div>`:''}
+      ${S.customMusicUrl?`<div style="color:#66ccff;font-size:10px;margin-bottom:6px">🔗 URL: <span style="word-break:break-all">${S.customMusicUrl.substring(0,60)}${S.customMusicUrl.length>60?'...':''}</span></div>`:''}
+      <input type="file" id="musFile" accept="audio/*" style="display:none">
+      <button id="musPickFile" class="y" style="width:100%;font-size:11px;padding:6px;margin:2px 0;min-height:30px">📁 Pilih File Lagu (mp3/ogg/m4a/wav)</button>
+      <div style="display:flex;gap:4px;margin-top:4px">
+        <input id="musUrlIn" type="text" placeholder="https://...mp3" value="${S.customMusicUrl||''}" style="flex:1;padding:6px;border-radius:6px;border:1px solid #2a3a6a;background:#0a0e27;color:#fff;font-size:11px;outline:none">
+        <button id="musUrlOk" class="g" style="font-size:11px;padding:6px 10px;margin:0;min-height:30px">✓</button>
+      </div>
+      <div style="display:flex;gap:4px;margin-top:6px">
+        <button id="musTest" class="g" style="flex:1;font-size:11px;padding:6px;margin:0;min-height:30px">▶️ Putar</button>
+        <button id="musStop" class="r" style="flex:1;font-size:11px;padding:6px;margin:0;min-height:30px">⏹ Stop</button>
+        <button id="musClear" class="r" style="flex:1;font-size:11px;padding:6px;margin:0;min-height:30px">🗑 Hapus</button>
+      </div>
+    </div>` : '';
+  $('ob').innerHTML=`<h2 style="margin-bottom:8px">⚙️ Settings</h2>
+    <label class="tg"><span>⏩ Auto Skip</span><input type="checkbox" id="t1" ${S.auto?'checked':''}></label>
+    <label class="tg"><span>✨ Efek</span><input type="checkbox" id="t2" ${S.fx?'checked':''}></label>
+    <label class="tg"><span>🔊 Suara SFX</span><input type="checkbox" id="t3" ${S.sound?'checked':''}></label>
+    <div style="background:#0a0e27;border-radius:8px;padding:10px;margin:8px 0;text-align:left">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <b style="color:#fff;font-size:13px">🎵 Background Music</b>
+        <span style="color:#66ccff;font-size:11px" id="musNow">${Music.TRACKS[S.music||'none'].n}</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:2px;margin-bottom:8px">${trackBtns}</div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:11px">
+        <span style="color:#aaa">🔉 Volume</span>
+        <input type="range" id="musVol" min="0" max="100" value="${Math.round((S.musicVol||0.12)*100)}" style="flex:1;accent-color:#3498db">
+        <b style="color:#f1c40f;min-width:34px;text-align:right" id="musVolVal">${Math.round((S.musicVol||0.12)*100)}%</b>
+      </div>
+      ${customInfo}
+    </div>
+    <button id="sb" class="g">← Kembali</button>`;
+  $('t1').onchange=e=>{S.auto=e.target.checked;save()};
+  $('t2').onchange=e=>{S.fx=e.target.checked;save()};
+  $('t3').onchange=e=>{S.sound=e.target.checked;soundEnabled=S.sound;save();if(S.sound){initAudio();playTone(600,0.15,'sine',0.1,900)}};
+  document.querySelectorAll('.mus-btn').forEach(b=>{
+    b.onclick=()=>{
+      S.music=b.dataset.id;save();
+      Music.ensure();
+      Music.play(S.music);
+      sets(back);
+    };
+  });
+  const vol=$('musVol');
+  vol.oninput=e=>{
+    const v=+e.target.value/100;
+    S.musicVol=v;Music.setVolume(v);
+    $('musVolVal').textContent=e.target.value+'%';
+    save();
+  };
+  if(S.music==='custom'){
+    const fileInput=$('musFile');
+    $('musPickFile').onclick=()=>fileInput.click();
+    fileInput.onchange=async e=>{
+      const f=e.target.files[0];if(!f)return;
+      if(f.size>50*1024*1024){toast('❌ File >50MB, pakai URL saja');return;}
+      const ok=await Music.saveCustomFile(f);
+      if(ok){
+        S.customMusicUrl='';
+        S.customMusicName=f.name;
+        save();
+        toast('✅ File tersimpan: '+f.name);
+        sets(back);
+        setTimeout(()=>Music.play('custom'),300);
+      } else {
+        toast('❌ Gagal simpan file');
+      }
+    };
+    $('musUrlOk').onclick=()=>{
+      const url=$('musUrlIn').value.trim();
+      S.customMusicUrl=url;
+      if(url)S.customMusicName='';
+      save();
+      toast(url?'✅ URL tersimpan':'🗑 URL dikosongkan');
+      sets(back);
+      if(url)setTimeout(()=>Music.play('custom'),200);
+    };
+    $('musTest').onclick=()=>{Music.play('custom')};
+    $('musStop').onclick=()=>{Music.stop()};
+    $('musClear').onclick=async()=>{
+      if(!confirm('Hapus lagu custom?'))return;
+      S.customMusicUrl='';S.customMusicName='';
+      await Music._idbDelete();
+      save();
+      Music._stopCustom();
+      toast('🗑 Custom dihapus');
+      sets(back);
+    };
+  }
+  $('sb').onclick=back;
+}
 function pmenu(g){if(g&&G&&!G.over)G.paused=true;$('ov').style.display='flex';if(!g)return sets(()=>{$('ov').style.display='none'});const b='style="display:block;width:220px;margin:6px auto"';$('ob').innerHTML=`<h2 style="margin-bottom:10px">⏸ Menu</h2><button id="p1" class="g" ${b}>▶ Lanjut</button><button id="p2" ${b}>⚙️ Settings</button><button id="p3" class="r" ${b}>🏠 Menu</button>`;$('p1').onclick=()=>{$('ov').style.display='none';if(G)G.paused=false};$('p2').onclick=()=>sets(()=>pmenu(true));$('p3').onclick=()=>{sync();G=null;$('ov').style.display='none';pop.style.display='none';$('ultShortcutBar').classList.remove('on');$('evoCinema').classList.remove('on');$('evoFlash').classList.remove('on');stopPlayTimer();show('menu');updMenu();save()}}
 
 function evMenu(){
