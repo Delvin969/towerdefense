@@ -246,11 +246,11 @@ function resolveTrait(tr){if(!tr)return null;const id=typeof tr==='string'?tr:tr
 function getTrait(u){return resolveTrait(u&&u.trait)}
 
 const REDEEM_CODES={HTD2026:{gems:1000,rr:25,desc:'1000 💎 + 25 🎲'},TDREROLL:{gems:0,rr:100,desc:'100 🎲'},NIAMATD:{gems:1500,rr:0,desc:'1500 💎'},REROLLBOI:{gems:0,rr:250,desc:'250 🎲'}};
-let S={user:null,nickname:null,gems:500,coins:0,rr:0,inv:[],load:[],clr:{},nid:1,mi:0,ri:0,mode:'c',mats:{},auto:false,fx:true,sound:true,autoUpg:false,traitFilter:{},stage:null,best:0,usedCodes:{},stats:{bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0},gemsSpentWeek:0,gemsSpentToday:0,bestWeek:0,bestToday:0,weekKey:'',dayKey:'',claimedRewards:{},playTime:0,myLbRanks:{},music:'none',musicVol:0.12,customMusicUrl:'',customMusicName:''},G=null;
+let S={user:null,nickname:null,gems:500,coins:0,rr:0,inv:[],load:[],clr:{},nid:1,mi:0,ri:0,mode:'c',mats:{},auto:false,fx:true,sound:true,autoUpg:false,traitFilter:{},stage:null,best:0,usedCodes:{},stats:{bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0},gemsSpentWeek:0,gemsSpentToday:0,bestWeek:0,bestToday:0,weekKey:'',dayKey:'',claimedRewards:{},playTime:0,myLbRanks:{},music:'none',musicVol:0.12,customMusicUrl:'',customMusicName:'',customMusicId:''},G=null;
 const cv=$('cv'),ctx=cv.getContext('2d');
 let soundEnabled=true;
 
-function save(){try{localStorage.setItem('td2',JSON.stringify({user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,sound:S.sound,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},gemsSpentWeek:S.gemsSpentWeek||0,gemsSpentToday:S.gemsSpentToday||0,bestWeek:S.bestWeek||0,bestToday:S.bestToday||0,weekKey:S.weekKey||'',dayKey:S.dayKey||'',claimedRewards:S.claimedRewards||{},playTime:S.playTime||0,myLbRanks:S.myLbRanks||{},music:S.music||'none',musicVol:S.musicVol||0.12,customMusicUrl:S.customMusicUrl||'',customMusicName:S.customMusicName||''}))}catch(e){}if(isOnline){clearTimeout(window._csTimer);window._csTimer=setTimeout(cloudSave,2000)}}
+function save(){try{localStorage.setItem('td2',JSON.stringify({user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,sound:S.sound,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},gemsSpentWeek:S.gemsSpentWeek||0,gemsSpentToday:S.gemsSpentToday||0,bestWeek:S.bestWeek||0,bestToday:S.bestToday||0,weekKey:S.weekKey||'',dayKey:S.dayKey||'',claimedRewards:S.claimedRewards||{},playTime:S.playTime||0,myLbRanks:S.myLbRanks||{},music:S.music||'none',musicVol:S.musicVol||0.12,customMusicUrl:S.customMusicUrl||'',customMusicName:S.customMusicName||'',customMusicId:S.customMusicId||''}))}catch(e){}if(isOnline){clearTimeout(window._csTimer);window._csTimer=setTimeout(cloudSave,2000)}}
 try{const d=JSON.parse(localStorage.getItem('td2'));if(d)Object.assign(S,d)}catch(e){}
 if(!S.usedCodes)S.usedCodes={};
 if(typeof S.rr!=='number')S.rr=0;
@@ -274,7 +274,7 @@ if(S.music===undefined)S.music='none';
 if(typeof S.musicVol!=='number')S.musicVol=0.12;
 if(S.customMusicUrl===undefined)S.customMusicUrl='';
 if(S.customMusicName===undefined)S.customMusicName='';
-  if(S.customMusicId===undefined)S.customMusicId='';
+if(S.customMusicId===undefined)S.customMusicId='';
 if(!Array.isArray(S.inv))S.inv=[];
 (function(){S.inv=S.inv.filter(u=>{if(!u||!u.id)return false;if(!DEF[u.id])return false;if(!u.rar||!R[u.rar])u.rar=DEF[u.id].rar;if(!R[u.rar])return false;if(typeof u.lv!=='number'||u.lv<1)u.lv=1;if(typeof u.iid!=='number')u.iid=S.nid++;if(u.trait&&(typeof u.trait==='string'||!TRAITS[u.trait.id]))u.trait=null;return true})})();
 S.load = (Array.isArray(S.load) ? S.load : []).filter(i=>S.inv.some(u=>u.iid===i));
@@ -306,8 +306,8 @@ function getTimeUntilReset(period){const now=new Date();const target=period==='w
 checkPeriodReset();
 setInterval(()=>{const dk=getDayKey(),wk=getISOWeek(new Date());if(S.dayKey!==dk||S.weekKey!==wk){checkPeriodReset();save();if($('menu').classList.contains('on'))updMenu()}},60000);
 
-async function cloudSave(){if(!isOnline||!currentUser)return;try{const data={user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,sound:S.sound,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},gemsSpentWeek:S.gemsSpentWeek||0,gemsSpentToday:S.gemsSpentToday||0,bestWeek:S.bestWeek||0,bestToday:S.bestToday||0,weekKey:S.weekKey||'',dayKey:S.dayKey||'',claimedRewards:S.claimedRewards||{},playTime:S.playTime||0,myLbRanks:S.myLbRanks||{},music:S.music||'none',musicVol:S.musicVol||0.12,customMusicUrl:S.customMusicUrl||'',customMusicName:S.customMusicName||'',updatedAt:Date.now()};await fbDb.collection('users').doc(currentUser.uid).set(data)}catch(e){console.warn(e)}}
-async function cloudLoad(){if(!currentUser)return false;try{const doc=await fbDb.collection('users').doc(currentUser.uid).get();if(!doc.exists)return false;const d=doc.data();if(confirm(`📦 Save cloud!\n\n💎 ${d.gems||0}\n🪙 ${Math.floor(d.coins||0)}\n🎒 ${(d.inv||[]).length} unit\n🏆 Wave ${d.best||0}\n\nLoad CLOUD?`)){Object.assign(S,d);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};if(S.nickname === undefined) S.nickname = null;if(S.autoUpg === undefined) S.autoUpg = false;if(S.sound===undefined)S.sound=true;soundEnabled=S.sound;if(!S.traitFilter) S.traitFilter = {};if(S.gemsSpentWeek===undefined)S.gemsSpentWeek=0;if(S.gemsSpentToday===undefined)S.gemsSpentToday=0;if(S.bestWeek===undefined)S.bestWeek=0;if(S.bestToday===undefined)S.bestToday=0;if(S.weekKey===undefined)S.weekKey='';if(S.dayKey===undefined)S.dayKey='';if(!S.claimedRewards)S.claimedRewards={};if(!S.myLbRanks)S.myLbRanks={};if(typeof S.playTime!=='number')S.playTime=0;if(S.music===undefined)S.music='none';if(typeof S.musicVol!=='number')S.musicVol=0.12;if(S.customMusicUrl===undefined)S.customMusicUrl='';if(S.customMusicName===undefined)S.customMusicName='';if(!Array.isArray(S.inv))S.inv=[];(function(){S.inv=S.inv.filter(u=>{if(!u||!u.id||!DEF[u.id])return false;if(!u.rar||!R[u.rar])u.rar=DEF[u.id].rar;if(!R[u.rar])return false;if(typeof u.lv!=='number'||u.lv<1)u.lv=1;if(typeof u.iid!=='number')u.iid=S.nid++;if(u.trait&&(typeof u.trait==='string'||!TRAITS[u.trait.id]))u.trait=null;return true})})();checkPeriodReset();S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();toast('☁️ Loaded!')}return true}catch(e){return false}}
+async function cloudSave(){if(!isOnline||!currentUser)return;try{const data={user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,sound:S.sound,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},gemsSpentWeek:S.gemsSpentWeek||0,gemsSpentToday:S.gemsSpentToday||0,bestWeek:S.bestWeek||0,bestToday:S.bestToday||0,weekKey:S.weekKey||'',dayKey:S.dayKey||'',claimedRewards:S.claimedRewards||{},playTime:S.playTime||0,myLbRanks:S.myLbRanks||{},music:S.music||'none',musicVol:S.musicVol||0.12,customMusicUrl:S.customMusicUrl||'',customMusicName:S.customMusicName||'',customMusicId:S.customMusicId||'',updatedAt:Date.now()};await fbDb.collection('users').doc(currentUser.uid).set(data)}catch(e){console.warn(e)}}
+async function cloudLoad(){if(!currentUser)return false;try{const doc=await fbDb.collection('users').doc(currentUser.uid).get();if(!doc.exists)return false;const d=doc.data();if(confirm(`📦 Save cloud!\n\n💎 ${d.gems||0}\n🪙 ${Math.floor(d.coins||0)}\n🎒 ${(d.inv||[]).length} unit\n🏆 Wave ${d.best||0}\n\nLoad CLOUD?`)){Object.assign(S,d);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};if(S.nickname === undefined) S.nickname = null;if(S.autoUpg === undefined) S.autoUpg = false;if(S.sound===undefined)S.sound=true;soundEnabled=S.sound;if(!S.traitFilter) S.traitFilter = {};if(S.gemsSpentWeek===undefined)S.gemsSpentWeek=0;if(S.gemsSpentToday===undefined)S.gemsSpentToday=0;if(S.bestWeek===undefined)S.bestWeek=0;if(S.bestToday===undefined)S.bestToday=0;if(S.weekKey===undefined)S.weekKey='';if(S.dayKey===undefined)S.dayKey='';if(!S.claimedRewards)S.claimedRewards={};if(!S.myLbRanks)S.myLbRanks={};if(typeof S.playTime!=='number')S.playTime=0;if(S.music===undefined)S.music='none';if(typeof S.musicVol!=='number')S.musicVol=0.12;if(S.customMusicUrl===undefined)S.customMusicUrl='';if(S.customMusicName===undefined)S.customMusicName='';if(S.customMusicId===undefined)S.customMusicId='';if(!Array.isArray(S.inv))S.inv=[];(function(){S.inv=S.inv.filter(u=>{if(!u||!u.id||!DEF[u.id])return false;if(!u.rar||!R[u.rar])u.rar=DEF[u.id].rar;if(!R[u.rar])return false;if(typeof u.lv!=='number'||u.lv<1)u.lv=1;if(typeof u.iid!=='number')u.iid=S.nid++;if(u.trait&&(typeof u.trait==='string'||!TRAITS[u.trait.id]))u.trait=null;return true})})();checkPeriodReset();S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();toast('☁️ Loaded!')}return true}catch(e){return false}}
 function startCloudAutoSave(){if(cloudSaveTimer)clearInterval(cloudSaveTimer);cloudSaveTimer=setInterval(()=>{if(isOnline)cloudSave()},10000)}
 try{firebase.initializeApp(firebaseConfig);fbAuth=firebase.auth();fbDb=firebase.firestore()}catch(e){console.warn(e)}
 
@@ -343,7 +343,7 @@ const Music={
     }
     if(!this.idb){
       try{
-        const req=indexedDB.open('htd_music',1);
+        const req=indexedDB.open('htd_music_v2',1);
         req.onupgradeneeded=e=>{const db=e.target.result;if(!db.objectStoreNames.contains('tracks'))db.createObjectStore('tracks')};
         req.onsuccess=e=>{this.idb=e.target.result};
       }catch(e){}
@@ -418,64 +418,87 @@ const Music={
     if(this.customEl){try{this.customEl.pause();this.customEl.currentTime=0}catch(e){}}
     if(this.customBlobUrl){try{URL.revokeObjectURL(this.customBlobUrl)}catch(e){};this.customBlobUrl=null;}
   },
-  async _idbSave(blob){
-    if(!this.idb)await new Promise(r=>setTimeout(r,300));
-    if(!this.idb)return false;
+  async _idbGetAll(){
+    if(!this.idb) await new Promise(r=>setTimeout(r,300));
+    if(!this.idb) return [];
+    return new Promise(res=>{
+      try{
+        const tx=this.idb.transaction('tracks','readonly');
+        const rq=tx.objectStore('tracks').get('customTracks');
+        rq.onsuccess=()=>res(rq.result||[]);rq.onerror=()=>res([]);
+      }catch(e){res([])}
+    });
+  },
+  async _idbSetAll(arr){
+    if(!this.idb) await new Promise(r=>setTimeout(r,300));
+    if(!this.idb) return false;
     return new Promise(res=>{
       try{
         const tx=this.idb.transaction('tracks','readwrite');
-        tx.objectStore('tracks').put(blob,'custom');
+        tx.objectStore('tracks').put(arr,'customTracks');
         tx.oncomplete=()=>res(true);tx.onerror=()=>res(false);
       }catch(e){res(false)}
     });
   },
-  async _idbLoad(){
-    if(!this.idb)await new Promise(r=>setTimeout(r,300));
-    if(!this.idb)return null;
-    return new Promise(res=>{
-      try{
-        const tx=this.idb.transaction('tracks','readonly');
-        const rq=tx.objectStore('tracks').get('custom');
-        rq.onsuccess=()=>res(rq.result||null);rq.onerror=()=>res(null);
-      }catch(e){res(null)}
-    });
+  async listCustomTracks(){ return await this._idbGetAll(); },
+  async addCustomTrack(file){
+    if(!file) return null;
+    if(file.size > 30*1024*1024){ toast('❌ File >30MB, pakai URL saja'); return null; }
+    const arr = await this._idbGetAll();
+    const id = 'ct_' + Date.now() + '_' + Math.floor(Math.random()*1000);
+    arr.push({id, name: file.name, blob: file, addedAt: Date.now()});
+    const ok = await this._idbSetAll(arr);
+    if(!ok) return null;
+    return {id, name: file.name};
   },
-  async _idbDelete(){
-    if(!this.idb)return;
-    try{
-      const tx=this.idb.transaction('tracks','readwrite');
-      tx.objectStore('tracks').delete('custom');
-    }catch(e){}
+  async deleteCustomTrack(id){
+    const arr = await this._idbGetAll();
+    const filtered = arr.filter(x => x.id !== id);
+    await this._idbSetAll(filtered);
+    if (S.customMusicId === id) {
+      S.customMusicId = '';
+      this.stop();
+      save();
+    }
   },
-  async saveCustomFile(file){
-    if(!file)return false;
-    return await this._idbSave(file);
-  },
-  async playCustom(){
+  async playCustomTrack(id){
+    const arr = await this._idbGetAll();
+    const track = arr.find(x => x.id === id);
+    if(!track){ toast('❌ Lagu tidak ditemukan'); return; }
     this._stopCustom();
     if(!this.customEl){
-      this.customEl=new Audio();
-      this.customEl.loop=true;
-      this.customEl.volume=1;
+      this.customEl = new Audio();
+      this.customEl.loop = true;
     }
-    let src='';
-    if(S.customMusicUrl&&S.customMusicUrl.trim()){
-      src=S.customMusicUrl.trim();
-    } else {
-      const blob=await this._idbLoad();
-      if(!blob){toast('❌ Belum ada lagu custom! Upload file atau isi URL.');this.playing=false;return;}
-      this.customBlobUrl=URL.createObjectURL(blob);
-      src=this.customBlobUrl;
-    }
-    this.customEl.src=src;
-    this.customEl.volume=this.vol;
+    this.customBlobUrl = URL.createObjectURL(track.blob);
+    this.customEl.src = this.customBlobUrl;
+    this.customEl.volume = this.vol;
     try{
       await this.customEl.play();
-      this.playing=true;
+      this.playing = true;
+      S.customMusicId = id;
+      save();
     }catch(e){
       toast('⚠️ Gagal play: '+e.message);
-      this.playing=false;
+      this.playing = false;
     }
+  },
+  async playCustom(){
+    if(S.customMusicUrl && S.customMusicUrl.trim()){
+      this._stopCustom();
+      if(!this.customEl){ this.customEl = new Audio(); this.customEl.loop = true; }
+      this.customEl.src = S.customMusicUrl.trim();
+      this.customEl.volume = this.vol;
+      try{ await this.customEl.play(); this.playing = true; }catch(e){ toast('⚠️ Gagal play'); this.playing = false; }
+      return;
+    }
+    if(S.customMusicId){
+      return this.playCustomTrack(S.customMusicId);
+    }
+    const arr = await this._idbGetAll();
+    if(arr.length > 0){ return this.playCustomTrack(arr[0].id); }
+    toast('❌ Belum ada lagu custom! Upload file atau isi URL.');
+    this.playing = false;
   },
   play(id){
     this.stop();
@@ -571,8 +594,8 @@ function playEvoCinematic(oldName,newName,icon,color,skillName,skillDesc,ult,cb)
 
 function redeemMenu(){$('ov').style.display='flex';let h=`<h2 style="margin-bottom:6px">🎁 Redeem</h2><div style="display:flex;gap:6px;margin:8px 0"><input id="rdi" type="text" placeholder="Kode..." style="flex:1;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#fff;font-size:14px;font-weight:bold;text-transform:uppercase;outline:none"><button id="rdo" class="g" style="margin:0;padding:10px 16px">Redeem</button></div><div id="rdm" style="font-size:12px;min-height:18px;margin-bottom:8px"></div><div style="border-top:1px solid #2a3a6a;padding-top:8px">`;for(const code in REDEEM_CODES){const c=REDEEM_CODES[code],used=S.usedCodes[code];h+=`<div style="display:flex;justify-content:space-between;align-items:center;background:#0a0e27;border:1px solid ${used?'#333':'#2a3a6a'};border-radius:6px;padding:6px 10px;margin:4px 0;font-size:12px"><div><b style="color:${used?'#666':'#f1c40f'};font-family:monospace">${code}</b><div style="color:#888;font-size:10px">${c.desc}</div></div><span style="color:${used?'#e74c3c':'#2ecc71'};font-size:11px">${used?'✓':'OK'}</span></div>`}$('ob').innerHTML=h+`</div><button id="rdx" class="r" style="margin-top:10px;width:100%">Tutup</button>`;$('rdx').onclick=()=>{$('ov').style.display='none';updMenu()};const doRedeem=()=>{const raw=$('rdi').value.trim().toUpperCase(),msg=$('rdm');if(!raw){msg.innerHTML='<span style="color:#e74c3c">❌ Isi kode!</span>';return}if(!REDEEM_CODES[raw]){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>';return}if(S.usedCodes[raw]){msg.innerHTML='<span style="color:#f39c12">⚠️ Sudah dipakai</span>';return}const r=REDEEM_CODES[raw];S.usedCodes[raw]=Date.now();let lines=[];if(r.gems){S.gems+=r.gems;lines.push(`+${r.gems}💎`)}if(r.rr){S.rr=(S.rr||0)+r.rr;lines.push(`+${r.rr}🎲`)}save();msg.innerHTML=`<span style="color:#2ecc71">✅ ${lines.join(' ')}</span>`;$('rdi').value='';setTimeout(()=>redeemMenu(),700)};$('rdo').onclick=doRedeem;$('rdi').addEventListener('keydown',e=>{if(e.key==='Enter')doRedeem()});setTimeout(()=>$('rdi').focus(),100)}
 
-function exportSave(){const data={user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,sound:S.sound,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},gemsSpentWeek:S.gemsSpentWeek||0,gemsSpentToday:S.gemsSpentToday||0,bestWeek:S.bestWeek||0,bestToday:S.bestToday||0,weekKey:S.weekKey||'',dayKey:S.dayKey||'',claimedRewards:S.claimedRewards||{},playTime:S.playTime||0,myLbRanks:S.myLbRanks||{},music:S.music||'none',musicVol:S.musicVol||0.12,customMusicUrl:S.customMusicUrl||'',customMusicName:S.customMusicName||''};const json=JSON.stringify(data);const code=btoa(unescape(encodeURIComponent(json)));const chunks=code.match(/.{1,80}/g).join('\n');$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📤 Export</h2><div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:8px;padding:10px;text-align:left;max-height:40vh;overflow-y:auto;margin-bottom:8px"><textarea id="expText" readonly style="width:100%;background:transparent;border:none;color:#0ff;font-family:monospace;font-size:10px;resize:none;outline:none" rows="8">${chunks}</textarea></div><div style="font-size:10px;color:#666;margin-bottom:8px">Size: ${(json.length/1024).toFixed(2)} KB</div><button id="expCopy" class="g" style="width:100%;margin-bottom:6px">📋 Copy</button><button id="expDl" class="y" style="width:100%;margin-bottom:6px">💾 Download .txt</button><button id="expClose" style="width:100%">Tutup</button>`;$('expCopy').onclick=()=>{const txt=$('expText');txt.select();txt.setSelectionRange(0,999999);try{if(navigator.clipboard)navigator.clipboard.writeText(txt.value).then(()=>toast('✅ Copy!')).catch(()=>{document.execCommand('copy');toast('✅ Copy!')});else{document.execCommand('copy');toast('✅ Copy!')}}catch(e){toast('❌ Gagal')}};$('expDl').onclick=()=>{const blob=new Blob([code],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='htd_save_'+Date.now()+'.txt';a.click();URL.revokeObjectURL(url);toast('💾 OK')};$('expClose').onclick=()=>{$('ov').style.display='none'}}
-function importSave(){$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📥 Import</h2><textarea id="impText" placeholder="Paste kode..." style="width:100%;height:120px;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#0ff;font-family:monospace;font-size:10px;resize:vertical;outline:none;margin-bottom:8px"></textarea><input type="file" id="impFile" accept=".txt" style="display:none"><button id="impPick" class="y" style="width:100%;margin-bottom:6px">📁 File .txt</button><button id="impGo" class="g" style="width:100%;margin-bottom:6px">▶ Import</button><button id="impClose" style="width:100%">Tutup</button><div id="impMsg" style="font-size:11px;margin-top:8px;min-height:16px"></div>`;$('impPick').onclick=()=>$('impFile').click();$('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('impText').value=ev.target.result.trim();$('impMsg').innerHTML='<span style="color:#2ecc71">✅ Loaded</span>'};r.readAsText(f)};$('impGo').onclick=()=>{const code=$('impText').value.trim().replace(/\s+/g,'');const msg=$('impMsg');if(!code){msg.innerHTML='<span style="color:#e74c3c">❌ Kosong!</span>';return}try{const json=decodeURIComponent(escape(atob(code)));const data=JSON.parse(json);if(!data.inv||!Array.isArray(data.inv))throw new Error();if(!confirm('⚠️ Data DIGANTI. Lanjut?'))return;Object.assign(S,data);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};if(S.nickname === undefined) S.nickname = null;if(S.autoUpg === undefined) S.autoUpg = false;if(S.sound===undefined)S.sound=true;soundEnabled=S.sound;if(!S.traitFilter) S.traitFilter = {};if(!S.claimedRewards)S.claimedRewards={};if(!S.myLbRanks)S.myLbRanks={};if(typeof S.playTime!=='number')S.playTime=0;if(S.gemsSpentWeek===undefined)S.gemsSpentWeek=0;if(S.gemsSpentToday===undefined)S.gemsSpentToday=0;if(S.bestWeek===undefined)S.bestWeek=0;if(S.bestToday===undefined)S.bestToday=0;if(S.weekKey===undefined)S.weekKey='';if(S.dayKey===undefined)S.dayKey='';if(S.music===undefined)S.music='none';if(typeof S.musicVol!=='number')S.musicVol=0.12;if(S.customMusicUrl===undefined)S.customMusicUrl='';if(S.customMusicName===undefined)S.customMusicName='';S.inv=S.inv.filter(u=>{if(!u||!u.id||!DEF[u.id])return false;if(!u.rar||!R[u.rar])u.rar=DEF[u.id].rar;if(!R[u.rar])return false;if(typeof u.lv!=='number'||u.lv<1)u.lv=1;if(typeof u.iid!=='number')u.iid=S.nid++;return true});checkPeriodReset();S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();msg.innerHTML='<span style="color:#2ecc71">✅ OK! Reload...</span>';setTimeout(()=>location.reload(),900)}catch(err){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>'}};$('impClose').onclick=()=>{$('ov').style.display='none'}}
+function exportSave(){const data={user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,sound:S.sound,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},gemsSpentWeek:S.gemsSpentWeek||0,gemsSpentToday:S.gemsSpentToday||0,bestWeek:S.bestWeek||0,bestToday:S.bestToday||0,weekKey:S.weekKey||'',dayKey:S.dayKey||'',claimedRewards:S.claimedRewards||{},playTime:S.playTime||0,myLbRanks:S.myLbRanks||{},music:S.music||'none',musicVol:S.musicVol||0.12,customMusicUrl:S.customMusicUrl||'',customMusicName:S.customMusicName||'',customMusicId:S.customMusicId||''};const json=JSON.stringify(data);const code=btoa(unescape(encodeURIComponent(json)));const chunks=code.match(/.{1,80}/g).join('\n');$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📤 Export</h2><div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:8px;padding:10px;text-align:left;max-height:40vh;overflow-y:auto;margin-bottom:8px"><textarea id="expText" readonly style="width:100%;background:transparent;border:none;color:#0ff;font-family:monospace;font-size:10px;resize:none;outline:none" rows="8">${chunks}</textarea></div><div style="font-size:10px;color:#666;margin-bottom:8px">Size: ${(json.length/1024).toFixed(2)} KB</div><button id="expCopy" class="g" style="width:100%;margin-bottom:6px">📋 Copy</button><button id="expDl" class="y" style="width:100%;margin-bottom:6px">💾 Download .txt</button><button id="expClose" style="width:100%">Tutup</button>`;$('expCopy').onclick=()=>{const txt=$('expText');txt.select();txt.setSelectionRange(0,999999);try{if(navigator.clipboard)navigator.clipboard.writeText(txt.value).then(()=>toast('✅ Copy!')).catch(()=>{document.execCommand('copy');toast('✅ Copy!')});else{document.execCommand('copy');toast('✅ Copy!')}}catch(e){toast('❌ Gagal')}};$('expDl').onclick=()=>{const blob=new Blob([code],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='htd_save_'+Date.now()+'.txt';a.click();URL.revokeObjectURL(url);toast('💾 OK')};$('expClose').onclick=()=>{$('ov').style.display='none'}}
+function importSave(){$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📥 Import</h2><textarea id="impText" placeholder="Paste kode..." style="width:100%;height:120px;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#0ff;font-family:monospace;font-size:10px;resize:vertical;outline:none;margin-bottom:8px"></textarea><input type="file" id="impFile" accept=".txt" style="display:none"><button id="impPick" class="y" style="width:100%;margin-bottom:6px">📁 File .txt</button><button id="impGo" class="g" style="width:100%;margin-bottom:6px">▶ Import</button><button id="impClose" style="width:100%">Tutup</button><div id="impMsg" style="font-size:11px;margin-top:8px;min-height:16px"></div>`;$('impPick').onclick=()=>$('impFile').click();$('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('impText').value=ev.target.result.trim();$('impMsg').innerHTML='<span style="color:#2ecc71">✅ Loaded</span>'};r.readAsText(f)};$('impGo').onclick=()=>{const code=$('impText').value.trim().replace(/\s+/g,'');const msg=$('impMsg');if(!code){msg.innerHTML='<span style="color:#e74c3c">❌ Kosong!</span>';return}try{const json=decodeURIComponent(escape(atob(code)));const data=JSON.parse(json);if(!data.inv||!Array.isArray(data.inv))throw new Error();if(!confirm('⚠️ Data DIGANTI. Lanjut?'))return;Object.assign(S,data);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};if(S.nickname === undefined) S.nickname = null;if(S.autoUpg === undefined) S.autoUpg = false;if(S.sound===undefined)S.sound=true;soundEnabled=S.sound;if(!S.traitFilter) S.traitFilter = {};if(!S.claimedRewards)S.claimedRewards={};if(!S.myLbRanks)S.myLbRanks={};if(typeof S.playTime!=='number')S.playTime=0;if(S.gemsSpentWeek===undefined)S.gemsSpentWeek=0;if(S.gemsSpentToday===undefined)S.gemsSpentToday=0;if(S.bestWeek===undefined)S.bestWeek=0;if(S.bestToday===undefined)S.bestToday=0;if(S.weekKey===undefined)S.weekKey='';if(S.dayKey===undefined)S.dayKey='';if(S.music===undefined)S.music='none';if(typeof S.musicVol!=='number')S.musicVol=0.12;if(S.customMusicUrl===undefined)S.customMusicUrl='';if(S.customMusicName===undefined)S.customMusicName='';if(S.customMusicId===undefined)S.customMusicId='';S.inv=S.inv.filter(u=>{if(!u||!u.id||!DEF[u.id])return false;if(!u.rar||!R[u.rar])u.rar=DEF[u.id].rar;if(!R[u.rar])return false;if(typeof u.lv!=='number'||u.lv<1)u.lv=1;if(typeof u.iid!=='number')u.iid=S.nid++;return true});checkPeriodReset();S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();msg.innerHTML='<span style="color:#2ecc71">✅ OK! Reload...</span>';setTimeout(()=>location.reload(),900)}catch(err){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>'}};$('impClose').onclick=()=>{$('ov').style.display='none'}}
 
 function card(u,fn){const d=DEF[u.id];if(!d)return document.createElement('div');const r=R[u.rar]||R.common;try{const s=stats(u),tr=s.trait,e=document.createElement('div');e.className='card';e.style.borderColor=r.c;const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';const trHTML=tr?`<div style="font-size:9px;color:${tr.c}">${tr.i} ${tr.n}${tl}</div>`:`<div style="font-size:9px;color:#666">— no trait —</div>`;e.innerHTML=`<button class="card-trait-btn" data-i="${u.iid}" title="Trait">🎲</button><div style="font-size:18px">${d.icon}</div><b style="color:#fff;font-size:11px">${d.name}</b><div style="color:${r.c};font-size:9px">${r.n} · ${ROLE[role(d)][0]}</div>${trHTML}<div style="color:#f1c40f;font-size:9px">Max ${maxDep(u)} · 🪙${placeCost(u)}</div><div style="font-size:9px;color:#aaa">DMG ${s.dmg} · RNG ${s.rng}</div>`;e.onclick=fn;const tb=e.querySelector('.card-trait-btn');if(tb){tb.onclick=(ev)=>{ev.stopPropagation();TM.selected=u.iid;TM.pending=null;TM.old=null;TM.kept=null;$('ov').style.display='flex';renderTraitMenu()}}return e}catch(err){console.error('[card]',u,err);const e2=document.createElement('div');e2.className='card';e2.innerHTML='<div style="color:#e74c3c;font-size:9px;padding:4px">⚠️ Corrupt<br>'+u.id+'</div>';return e2}}
 
@@ -701,15 +724,15 @@ function summon(n){if(S.gems<100*n){toast('❌ Kurang!');return}if($('ov').style
   const SPECIAL=['td','secret','transcendent','primordial','eternal','exotic'];const rarType = bestUnit && SPECIAL.includes(bestUnit.rar) ? bestUnit.rar : null;
   playSummonBurst(rarType, ()=>{let msg='';if(got.length){got.sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar));const best=got[0];msg=`${DEF[best.id].icon} ${DEF[best.id].name} (${R[best.rar].n})!`;if(got.length>1)msg=`✨ ${got.length} baru! Best: `+msg}if(soldCount>0)msg+=(msg?' · ':'')+`♻️ x${soldCount} (+${soldGems}💎)`;if(!msg)msg='Tidak ada baru.';toast(msg);if(bestUnit)SFX.summon(bestUnit.rar);else if(got.length)SFX.summon(got[0].rar);if(bestUnit&&RAR_TRIGGER.includes(bestUnit.rar)){playSummonCinematic(bestUnit,()=>{updMenu();save()})}else{updMenu();save()}})}
 
-const ring=(x,y,r,c,l=.6,w=4)=>G.fx.push({t:'ring',x,y,r,c,l,m:l,w});
-const nova=(x,y,r,c,l=.5)=>G.fx.push({t:'nova',x,y,r,c,l,m:l});
-const slash=(x,y,c)=>G.fx.push({t:'slash',x,y,c,l:.3,m:.3,a:Math.random()*Math.PI});
-const ftext=(x,y,s,c,l=.8)=>G.fx.push({t:'text',x,y,s,c,l,m:l});
+const ring=(x,y,r,c,l=.6,w=4)=>{if(!S.fx)return;G.fx.push({t:'ring',x,y,r,c,l,m:l,w})};
+const nova=(x,y,r,c,l=.5)=>{if(!S.fx)return;G.fx.push({t:'nova',x,y,r,c,l,m:l})};
+const slash=(x,y,c)=>{if(!S.fx)return;G.fx.push({t:'slash',x,y,c,l:.3,m:.3,a:Math.random()*Math.PI})};
+const ftext=(x,y,s,c,l=.8)=>{if(!S.fx)return;G.fx.push({t:'text',x,y,s,c,l,m:l})};
 function parts(x,y,c,n,sp,l){if(!S.fx)return;for(let i=0;i<n;i++){const a=Math.random()*6.283,s=sp*(.5+Math.random());G.par.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:l*(.7+Math.random()*.6),m:l,c,z:2+Math.random()*3})}}
 function shake(i,d){/* DISABLED — no screen shake */}
 function flash(c,d){if(!S.fx)return;G.fc=c;G.flash=d}
-function beam(a,b,c,w=2,trail=false){G.bm.push({x1:a.x,y1:a.y,x2:b.x,y2:b.y,c,w,l:.15,m:.15,trail})}
-function bolt(a,b,c,w=3){const dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy)||1,n=Math.max(3,Math.floor(L/18)),nx=-dy/L,ny=dx/L,pts=[{x:a.x,y:a.y}];for(let i=1;i<n;i++){const t=i/n,o=(Math.random()-.5)*22;pts.push({x:a.x+dx*t+nx*o,y:a.y+dy*t+ny*o})}pts.push({x:b.x,y:b.y});G.bm.push({pts,c,w:w+1,l:.22,m:.22})}
+function beam(a,b,c,w=2,trail=false){if(!S.fx)return;G.bm.push({x1:a.x,y1:a.y,x2:b.x,y2:b.y,c,w,l:.15,m:.15,trail})}
+function bolt(a,b,c,w=3){if(!S.fx)return;const dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy)||1,n=Math.max(3,Math.floor(L/18)),nx=-dy/L,ny=dx/L,pts=[{x:a.x,y:a.y}];for(let i=1;i<n;i++){const t=i/n,o=(Math.random()-.5)*22;pts.push({x:a.x+dx*t+nx*o,y:a.y+dy*t+ny*o})}pts.push({x:b.x,y:b.y});G.bm.push({pts,c,w:w+1,l:.22,m:.22})}
 const TH={void_reaper:'#a040ff',void_emperor:'#c060ff',celestial_g:'#ffd84a',celestial_avatar:'#fff08a',phantom_lord:'#ff3ccf',phantom_god:'#ff6fe0',chronomancer:'#3fe0ff',time_lord:'#9ff0ff',void_sovereign:'#ff00ff',star_emperor:'#ff66ff',death_reaper:'#cc00ff',void_god:'#ff00aa',star_god:'#ffe0ff',death_god:'#aa00ff',void_primordial:'#ff0066',star_primordial:'#ffaa00',death_primordial:'#6600ff',eternal_dragon:'#00ffaa',eternal_angel:'#ffffff',eternal_demon:'#00ffaa',light_emperor:'#ffffaa',soul_weaver:'#a060ff',abyss_walker:'#0099aa',gold_empress:'#ffd700',eternal_flame:'#ff5500',frost_empress:'#aaeeff',exotic_nidhogg:'#ff00aa',exotic_metatron:'#ff00aa',exotic_lucifer:'#ff00aa',archdruid:'#00ffaa',void_seer:'#66ccff',temporal_god:'#ffcc00',oracle_rng:'#66ccff',warp_mage:'#ffcc00',omniscient:'#66ccff',accelerator:'#ffcc00',cosmic_sovereign:'#ff00ff',abyss_sovereign:'#ff00ff',cosmic_god:'#ffaaff',cosmic_primordial:'#ff00aa',abyss_god:'#aa66ff',abyss_primordial:'#6600ff',shadow_monarch:'#8e44ad',shadow_sovereign:'#9b59b6',shadow_emperor:'#aa66ff',shadow_god:'#ff00aa',shadow_origin:'#00ffaa',shadow_king:'#ff00aa',flame_god:'#ff4400',nature_god:'#00ff66',chrono_god:'#9966ff',flame_primordial:'#ff0066',nature_primordial:'#00ffaa',chrono_primordial:'#6600ff',necromancer:'#8e44ad',samurai:'#ff2255',paladin:'#ffd700',philosopher:'#ffd700',sniper_god:'#2ecc71',lich:'#aa00ff',shogun:'#ff2255',phoenix:'#ff4400',void_walker:'#9933ff',dragon_lord:'#ff2200',chaos_lord:'#aa00ff',frost_god:'#88ddff',primordial_wyrm:'#ff00aa',celestial_king:'#ffd700',infinity:'#ff00aa',oblivion:'#440088',genesis:'#ffd700',apocalypse:'#ff0066',eternal_phoenix:'#ff4400',eternal_void:'#00ffaa',exotic_chaos:'#ff00aa',exotic_omni:'#ff00aa',void_priest:'#e74c3c',star_weaver:'#e74c3c',chaos_knight:'#e74c3c',shadow_blade_master:'#e74c3c',void_monk:'#e74c3c',eclipse_lord:'#00ffff',aurora_queen:'#00ffff',solar_king:'#00ffff',prism_lord:'#00ffff',storm_emperor:'#00ffff',heaven_emperor:'#ff00ff',hell_emperor:'#ff00ff',purgatory_king:'#ff00ff',void_archon:'#ff00ff',astral_monarch:'#ff00ff',blood_sovereign:'#ff00ff',chaos_god:'#ff00ff',order_god:'#ff00ff',omni_king:'#ffd700',reality_weaver:'#ffd700',dimension_lord:'#ffd700',eternal_flame_king:'#ffd700',ancient_one:'#ff0066',titan_king:'#ff0066',world_serpent:'#ff0066',creation_titan:'#ff0066',eternal_knight:'#00ffaa',eternal_sage:'#00ffaa',eternal_seraphim:'#00ffaa',exotic_amaterasu:'#ff00aa',exotic_shiva:'#ff00aa',exotic_brahma:'#ff00aa'};
 const tc=u=>TH[u.i.id]||R[u.i.rar].c;
 function trail(a,b,c){if(!S.fx)return;for(let i=1;i<9;i++){const k=i/9;G.par.push({x:a.x+(b.x-a.x)*k,y:a.y+(b.y-a.y)*k,vx:(Math.random()-.5)*50,vy:(Math.random()-.5)*50,l:.35,m:.35,c,z:3})}}
@@ -743,6 +766,7 @@ function getSkillProfile(u){
   return PROFILES[id]||null;
 }
 function fxSkill(u,k,t){
+  if(!S.fx)return;
   const c=tc(u),hi=isHi(u.i),top=u.i.rar==='secret'||u.i.rar==='transcendent'||u.i.rar==='primordial'||u.i.rar==='eternal'||u.i.rar==='exotic';
   const prof=getSkillProfile(u)||{style:'default',col:c,pat:'default'};
   const pc=prof.col||c;
@@ -795,7 +819,7 @@ function update(dt){if(!G||G.paused||G.over)return;
     if(G.shake>0)G.shake-=dt;if(G.flash>0)G.flash-=dt;if(G.dim>0)G.dim-=dt;if(G.cd>0){G.cd-=dt;if(G.cd<=0){G.cd=0;startWave()}}if(G.nx>0){G.nx-=dt;if(G.nx<=0){G.nx=0;startWave()}}if(G.act){G.we+=dt;if(!G.skipped&&G.we>=30){if(S.auto){while(G.q.length)spawn(G.q.shift());G.skipped=true;toast('⏩ Skip!')}else $('sk').style.display='inline-block'}if(G.q.length){G.qt+=dt;const iv=G.inf?(G.wave%10===0?.4:.35):(G.wave===MAXW?.4:.35);if(G.qt>=iv){G.qt=0;spawn(G.q.shift())}}}for(const e of G.en){if(e.dead)continue;if(e.sl>0){e.sl-=dt;if(e.sl<=0)e.sf=1}if(e.hf>0)e.hf-=dt;const t=G.wp[e.wi];if(!t){e.dead=true;const boss=e.t==='boss';if(boss){if(G.inf){const dmg=DMG*10;G.lives=Math.max(0,G.lives-dmg);flash('#f00',.5);ftext(850,420,'💀 BOSS -'+dmg,'#f33',1.2)}else{G.lives=0;flash('#f00',.6);ftext(850,420,'💀 BOSS!','#f33',1.2)}}else{G.lives=Math.max(0,G.lives-DMG);flash('#f00',.2);ftext(850,420,'-'+DMG,'#f33',1.2)}if(G.lives<=0){G.over=true;defeat(boss);return}continue}const dx=t.x-e.x,dy=t.y-e.y,d=Math.hypot(dx,dy),mv=e.sp*e.sf*dt;if(d<=mv){e.x=t.x;e.y=t.y;e.wi++}else{e.x+=dx/d*mv;e.y+=dy/d*mv}}for(const u of G.pl){const st=stats(u.i);u.cdT-=dt;if(S.fx&&isHi(u.i)){const _rate=u.i.rar==='exotic'?18:u.i.rar==='eternal'?15:u.i.rar==='primordial'?13:u.i.rar==='transcendent'?11:u.i.rar==='secret'?14:8;if(Math.random()<dt*_rate){const _ang=Math.random()*6.283;const _rad=30+Math.random()*20;G.par.push({x:u.x+Math.cos(_ang)*_rad,y:u.y+Math.sin(_ang)*_rad*0.6,vx:(Math.random()-.5)*15,vy:-30-Math.random()*40,l:1.3,m:1.3,c:tc(u),z:2.5})}}u.pulse+=dt;if(u.ultCd>0)u.ultCd=Math.max(0,u.ultCd-dt);if(u.cdT<=0){const effRng = st.rng * (1 + (u.buffRng||0));let t=null,md=1e9;for(const e of G.en){if(e.dead)continue;const d=Math.hypot(u.x-e.x,u.y-e.y);if(d<=effRng&&d<md){md=d;t=e}}if(t){u.aimAngle=Math.atan2(t.y-u.y,t.x-u.x);fire(u,st,t);u.cdT=st.cd/(1+(u.buffSpd||0))}}}
     if(S.autoUpg){for(const u of G.pl){const i=u.i;const mx=MAXL[i.rar]||10;if(i.lv>=mx)continue;const c=upCost(i);if(S.coins>=c){S.coins-=c;i.lv++;parts(u.x,u.y,'#f1c40f',8,70,.5);if(isHi(i)&&i.lv===5){const col=R[i.rar].c;ring(u.x,u.y,90,col,.9,6);nova(u.x,u.y,70,col,.6);parts(u.x,u.y,col,40,220,1.2);flash(col,.3)}}}}
     for(const m of G.mn){if(m.dead)continue;m.lt-=dt;if(m.lt<=0){m.dead=true;continue}m.cdT-=dt;let mt=null,md=1e9;for(const e of G.en){if(e.dead)continue;const d=Math.hypot(m.x-e.x,m.y-e.y);if(d<md){md=d;mt=e}}if(mt){if(md>20){const dx=mt.x-m.x,dy=mt.y-m.y,dd=Math.hypot(dx,dy)||1;m.x+=dx/dd*m.spd*dt;m.y+=dy/dd*m.spd*dt}else if(m.cdT<=0){hit(mt,m.dmg);m.cdT=0.4;parts(mt.x,mt.y,m.c,3,60,.3)}}}
-    G.mn=G.mn.filter(m=>!m.dead);G.en=G.en.filter(e=>!e.dead);if(G.act&&!G.q.length&&!G.en.length){G.act=false;let ec=0;for(const u of G.pl)if(DEF[u.i.id].skill==='economy'){const rarK=ECO_K[u.i.rar]||1.0;const _st=stats(u.i);const r=Math.floor((80+u.i.lv*35)*rarK*_st.income);ec+=r;ftext(u.x,u.y-30,'+'+r+'🪙','#f1c40f',1.2)}const bonus=G.inf?Math.floor(250*(1+G.wave*.05)):250;S.coins+=bonus+ec;let gemBonus=0;if(G.inf&&G.wave%15===0){gemBonus=100;S.gems+=gemBonus;G.fx.push({t:'banner',s:'💎 +100 GEMS!',c:'#00ffff',l:2,m:2});flash('#00ffff',.5)}$('sk').style.display='none';if(!G.inf&&G.wave>=MAXW)victory();else{let msg=`🌊 Wave ${G.wave}! +${bonus+ec}🪙`;if(gemBonus)msg+=` +${gemBonus}💎`;toast(msg);G.nx=2}ui()}for(const a of[G.par,G.bm,G.fx])for(let i=a.length-1;i>=0;i--){a[i].l-=dt;if(a[i].l<=0)a.splice(i,1)}for(const p of G.par){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.94;p.vy*=.94}ui(true)}
+    G.mn=G.mn.filter(m=>!m.dead);G.en=G.en.filter(e=>!e.dead);if(G.act&&!G.q.length&&!G.en.length){G.act=false;let ec=0;for(const u of G.pl)if(DEF[u.i.id].skill==='economy'){const rarK=ECO_K[u.i.rar]||1.0;const _st=stats(u.i);const r=Math.floor((250+u.i.lv*100)*rarK*_st.income);ec+=r;ftext(u.x,u.y-30,'+'+r+'🪙','#f1c40f',1.2)}const bonus=G.inf?Math.floor(250*(1+G.wave*.05)):250;S.coins+=bonus+ec;let gemBonus=0;if(G.inf&&G.wave%15===0){gemBonus=100;S.gems+=gemBonus;G.fx.push({t:'banner',s:'💎 +100 GEMS!',c:'#00ffff',l:2,m:2});flash('#00ffff',.5)}$('sk').style.display='none';if(!G.inf&&G.wave>=MAXW)victory();else{let msg=`🌊 Wave ${G.wave}! +${bonus+ec}🪙`;if(gemBonus)msg+=` +${gemBonus}💎`;toast(msg);G.nx=2}ui()}for(const a of[G.par,G.bm,G.fx])for(let i=a.length-1;i>=0;i--){a[i].l-=dt;if(a[i].l<=0)a.splice(i,1)}for(const p of G.par){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.94;p.vy*=.94}ui(true)}
 function sync(){if(G && G.inf && G.wave > 0){checkPeriodReset();if(G.wave > (S.best || 0)) S.best = G.wave;if(G.wave > (S.stats.highestInf || 0)) S.stats.highestInf = G.wave;if(G.wave > (S.bestWeek || 0)) S.bestWeek = G.wave;if(G.wave > (S.bestToday || 0)) S.bestToday = G.wave;save();if(isOnline && currentUser){clearTimeout(window._csTimer);cloudSave()}}}
 function box(h){sync();save();$('ob').innerHTML=h;$('ov').style.display='flex';$('r1').onclick=()=>{G=null;$('ov').style.display='none';$('ultShortcutBar').classList.remove('on');stopPlayTimer();show('menu');updMenu();save()};if($('r2'))$('r2').onclick=()=>{$('ov').style.display='none';$('ultShortcutBar').classList.remove('on');startStage()}}
 function victory(){SFX.victory();G.over=true;stopPlayTimer();S.stats.gamesWon++;if(G.lives===BASE)S.stats.mvps++;const s=S.stage,k=s.k,first=!S.clr[k];S.clr[k]=(S.clr[k]||0)+1;const g=first?150:100;S.gems+=g;let mt='';if(s.mat){const a=s.drop+(first?1:0);S.mats[s.mat]=(S.mats[s.mat]||0)+a;mt=`<p style="color:#f1c40f">🎁 ${MATS[s.mat][1]} ${MATS[s.mat][0]} x${a}</p>`}let tok='';if(s.mat&&TOKEN_DROP_MATS.includes(s.mat)){const t=Math.floor(Math.random()*4);if(t>0){S.rr=(S.rr||0)+t;tok=`<p style="color:#66ccff">🎲 Token x${t}</p>`}}
@@ -807,7 +831,7 @@ let lastUi=0,PID=1;const pop=$('pop');
 const cnt=i=>G.pl.filter(p=>p.i.iid===i.iid).length;
 function ui(soft){const now=performance.now();if(soft&&now-lastUi<200)return;lastUi=now;const ultBtn=document.getElementById('ult');if(ultBtn&&G.selP){const pu=G.pl.find(x=>x.pid===G.selP);if(pu&&isHi(pu.i)&&pu.i.lv>=5){const st2=stats(pu.i),es2=EVO_SKILL[pu.i.id];const un2=es2?es2.ult:(ULT_DEF[st2.skill]?ULT_DEF[st2.skill].n:'ULTIMATE');if(pu.ultCd>0){ultBtn.disabled=true;ultBtn.textContent='⏳ '+Math.ceil(pu.ultCd)+'s'}else{ultBtn.disabled=false;ultBtn.textContent='⚡ '+un2}}}$('gc').textContent=Math.floor(S.coins);$('gl').textContent=G.lives;$('gw').textContent=G.wave;$('gwm').textContent=G.inf?' ♾️':'/'+MAXW;if(G.inf){const nb=15-(G.wave%15||15);$('gn').textContent='♾️ W'+G.wave+' · 💎+100 dlm '+nb+'w · 🏆'+(S.best||0)}else{$('gn').textContent=S.stage.n}$('sw').disabled=G.act||G.over||(!G.inf&&G.wave>=MAXW);updateUltShortcut();if(soft)return;hand();info()}
 function hand(){const h=$('hand');h.innerHTML='';const hand=S.inv.filter(u=>S.load.includes(u.iid));if(!hand.length){h.innerHTML='<div style="color:#666;font-size:11px;padding:8px">Semua unit di field / loadout kosong</div>';return}for(const u of hand){const d=DEF[u.id];if(!d)continue;const r=R[u.rar]||R.common,ro=ROLE[role(d)]||['-','#fff'],c=cnt(u),m=maxDep(u),full=c>=m,tr=getTrait(u),e=document.createElement('div');const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';const trHTML=tr?`<div style="color:${tr.c};font-size:9px">${tr.i} ${tr.n}${tl}</div>`:`<div style="color:#666;font-size:9px">—</div>`;e.className='hc'+(full?' dim':'')+(G.sel===u.iid?' sel':'');e.style.borderColor=G.sel===u.iid?'#f1c40f':r.c;e.innerHTML=`<span>${d.icon}</span><div><b style="color:#fff;font-size:10px">${d.name}</b><div style="color:${ro[1]};font-size:8px">${ro[0]}</div>${trHTML}<div style="color:#f1c40f;font-size:9px">🪙${placeCost(u)}</div></div><i>${m-c}/${m}</i>`;e.onclick=()=>{if(full){toast('Batas '+m+' penuh!');return}G.sel=G.sel===u.iid?null:u.iid;G.selP=null;[...h.children].forEach(c=>c.classList.remove('sel'));if(G.sel===u.iid)e.classList.add('sel');info()};h.appendChild(e)}}
-function info(){try{const u=G.pl.find(x=>x.pid===G.selP);if(!u){pop.style.display='none';return}const i=u.i,st=stats(i),mx=MAXL[i.rar]||10,c=upCost(i),d=DEF[i.id];if(!d){pop.style.display='none';return}const rc=RECIPES[i.id],ro=ROLE[role(d)]||['-','#fff'];let ev='';const tr=st.trait;const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';const traitHTML=tr?`<div class="row"><span>🎲</span><b style="color:${tr.c}">${tr.i} ${tr.n}${tl}</b></div>`:`<div class="row"><span>🎲</span><b style="color:#666">—</b></div>`;const es=EVO_SKILL[i.id];const skillName=es?`${es.icon} ${es.name}`:st.skill;const ultName=es?es.ult:(ULT_DEF[st.skill]?ULT_DEF[st.skill].n:'ULT');const ec=(st.skill==='economy')?Math.floor((80+i.lv*35)*(ECO_K[i.rar]||1)*st.income):0;if(rc&&EVOLVE_MIN_RAR.includes(i.rar)){let can=true;ev=`<div style="margin-top:4px;color:#aaa;font-size:10px">🧬 → ${DEF[rc.r].name}</div>`;for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;ev+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}const gc=rc.cost||0,hasG=S.gems>=gc;if(!hasG)can=false;ev+=`<div class="mr" style="border-color:${hasG?'#2ecc71':'#e74c3c'}"><span>💎</span><span>${S.gems}/${gc}</span></div><button id="ev" class="y" ${can?'':'disabled'}>Evolve</button>`}
+function info(){try{const u=G.pl.find(x=>x.pid===G.selP);if(!u){pop.style.display='none';return}const i=u.i,st=stats(i),mx=MAXL[i.rar]||10,c=upCost(i),d=DEF[i.id];if(!d){pop.style.display='none';return}const rc=RECIPES[i.id],ro=ROLE[role(d)]||['-','#fff'];let ev='';const tr=st.trait;const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';const traitHTML=tr?`<div class="row"><span>🎲</span><b style="color:${tr.c}">${tr.i} ${tr.n}${tl}</b></div>`:`<div class="row"><span>🎲</span><b style="color:#666">—</b></div>`;const es=EVO_SKILL[i.id];const skillName=es?`${es.icon} ${es.name}`:st.skill;const ultName=es?es.ult:(ULT_DEF[st.skill]?ULT_DEF[st.skill].n:'ULT');const ec=(st.skill==='economy')?Math.floor((250+i.lv*100)*(ECO_K[i.rar]||1)*st.income):0;if(rc&&EVOLVE_MIN_RAR.includes(i.rar)){let can=true;ev=`<div style="margin-top:4px;color:#aaa;font-size:10px">🧬 → ${DEF[rc.r].name}</div>`;for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;ev+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}const gc=rc.cost||0,hasG=S.gems>=gc;if(!hasG)can=false;ev+=`<div class="mr" style="border-color:${hasG?'#2ecc71':'#e74c3c'}"><span>💎</span><span>${S.gems}/${gc}</span></div><button id="ev" class="y" ${can?'':'disabled'}>Evolve</button>`}
     const buffedDmg = u.buff > 0 ? Math.floor(st.dmg * (1 + u.buff)) : st.dmg;const buffedRng = u.buffRng > 0 ? Math.floor(st.rng * (1 + u.buffRng)) : st.rng;const buffText = u.buff > 0 ? ` <span style="color:#00ffcc;font-size:9px">(+${Math.floor(u.buff*100)}%)</span>` : '';const buffRngText = u.buffRng > 0 ? ` <span style="color:#66ccff;font-size:9px">(+${Math.floor(u.buffRng*100)}%)</span>` : '';
     pop.innerHTML=`<b>${d.icon} ${d.name}</b> <span style="color:${ro[1]};font-size:11px">${ro[0]}</span><div class="row"><span>Lv</span><b>${i.lv}/${mx}</b></div><div class="row"><span>DMG</span><b>${buffedDmg}${buffText}</b></div><div class="row"><span>RNG</span><b>${buffedRng}${buffRngText}</b></div>${traitHTML}<div class="row"><span>Skill</span><b>${skillName}</b></div>${ec?`<div class="row"><span>🪙/Wave</span><b>+${ec}</b></div>`:''}${st.skill==='support'?`<div class="row"><span>✨ Aura</span><b style="color:#00ffcc">+${Math.floor((0.25+(i.lv*0.03))*100)}% DMG</b></div>`:''}${st.skill==='support_range'?`<div class="row"><span>🔭 Aura</span><b style="color:#66ccff">+${Math.floor((0.25+(i.lv*0.03))*100)}% RNG</b></div>`:''}${st.skill==='support_spd'?`<div class="row"><span>⏩ Aura</span><b style="color:#ffcc00">+${Math.floor((0.25+(i.lv*0.03))*100)}% SPD</b></div>`:''}${u.buffSpd>0?`<div class="row"><span>⚡ Speed Buff</span><b style="color:#ffcc00">+${Math.floor(u.buffSpd*100)}% ATK SPD</b></div>`:''}<div class="row"><span>Max</span><b>${cnt(i)}/${maxDep(i)}</b></div>${isHi(i)?`<div class="row"><span>Ult</span><b>${i.lv>=5?ultName:'Lv5'}</b></div>`:''}${isHi(i)&&i.lv>=5?`<button id="ult" style="width:100%;margin-top:4px;background:linear-gradient(180deg,#ff2266,#aa0033)" ${u.ultCd>0?'disabled':''}>${u.ultCd>0?'⏳'+Math.ceil(u.ultCd)+'s':'⚡'+ultName}</button>`:''}<button id="up" ${i.lv>=mx||S.coins<c?'disabled':''}>${i.lv>=mx?'🏆 MAX':'⬆ '+c+'🪙'}</button><button id="pk" class="r">Angkat</button>${ev}`;
     const rc2=cv.getBoundingClientRect(),wr=$('cw').getBoundingClientRect(),k=rc2.width/900,px=rc2.left-wr.left+u.x*k,py=rc2.top-wr.top+u.y*k;pop.style.display='block';if(window.innerWidth<=640){pop.style.left='50%';pop.style.transform='translateX(-50%)';pop.style.top='auto';pop.style.bottom='10px';pop.style.width='min(280px,90vw)'}else{pop.style.transform='';pop.style.bottom='';pop.style.width='180px';const pw=pop.offsetWidth||180,ph=pop.offsetHeight||200;let lx=px+26;if(lx+pw>wr.width-4)lx=px-pw-26;pop.style.left=Math.max(4,lx)+'px';pop.style.top=Math.max(4,Math.min(wr.height-ph-4,py-ph/2))+'px'}const ultEl=$('ult');if(ultEl)ultEl.onclick=()=>{if(u.ultCd>0||i.lv<5)return;fireUltimate(u,st);save();setTimeout(()=>info(),100)};const upEl=$('up');if(upEl)upEl.onclick=()=>{if(i.lv>=mx||S.coins<c)return;S.coins-=c;i.lv++;parts(u.x,u.y,'#f1c40f',14,90,.8);if(isHi(i)&&i.lv===5){const col=R[i.rar].c;ring(u.x,u.y,90,col,.9,6);nova(u.x,u.y,70,col,.6);parts(u.x,u.y,col,40,220,1.2);flash(col,.3)}toast('⬆️ Lv'+i.lv);save();ui()};const pkEl=$('pk');if(pkEl)pkEl.onclick=()=>{S.coins+=Math.floor(placeCost(u.i)/2);G.pl=G.pl.filter(x=>x!==u);G.selP=null;if(G.lastUltTower===u.pid)G.lastUltTower=null;pop.style.display='none';ui()};const eb=$('ev');if(eb)eb.onclick=()=>{if(!rc)return;for(const k in rc.m)if((S.mats[k]||0)<rc.m[k])return toast('❌ Bahan kurang!');const gc=rc.cost||0;if(S.gems<gc)return toast('❌ Butuh '+gc+'💎!');for(const k in rc.m)S.mats[k]-=rc.m[k];if(!spendGems(gc))return;const oldN=DEF[i.id].name;ring(u.x,u.y,120,EVO_SKILL[rc.r].color,.9,7);nova(u.x,u.y,150,EVO_SKILL[rc.r].color,.8);parts(u.x,u.y,EVO_SKILL[rc.r].color,60,320,1.3);i.id=rc.r;u.i.id=rc.r;i.rar=DEF[rc.r].rar;u.i.rar=DEF[rc.r].rar;i.lv=1;u.i.lv=1;const es2=EVO_SKILL[i.id];save();pop.style.display='none';G.paused=true;playEvoCinematic(oldN,DEF[i.id].name,DEF[i.id].icon,es2.color,es2.icon+' '+es2.name,es2.desc,es2.ult,()=>{if(G){G.paused=false;ui();if(G.pl.includes(u))G.selP=u.pid;info()}toast('🌟 '+oldN+' → '+DEF[i.id].name)})}}catch(e){console.error(e);pop.style.display='none'}}
@@ -834,25 +858,24 @@ function sets(back){
   }).join('');
   const customInfo = S.music==='custom' ? `
     <div style="background:#151a3a;border:1px dashed #9b59b6;border-radius:6px;padding:8px;margin-top:8px;font-size:11px;text-align:left">
-      <div style="color:#9b59b6;font-weight:bold;margin-bottom:4px">🎵 Custom Music</div>
-      <div style="color:#aaa;font-size:10px;margin-bottom:6px">📁 File tersimpan lokal · 🔗 URL streaming</div>
-      ${S.customMusicName?`<div style="color:#2ecc71;font-size:10px;margin-bottom:6px">▶️ File: <b>${S.customMusicName}</b></div>`:''}
-      ${S.customMusicUrl?`<div style="color:#66ccff;font-size:10px;margin-bottom:6px">🔗 URL: <span style="word-break:break-all">${S.customMusicUrl.substring(0,60)}${S.customMusicUrl.length>60?'...':''}</span></div>`:''}
-      <input type="file" id="musFile" accept="audio/*" style="display:none">
-      <button id="musPickFile" class="y" style="width:100%;font-size:11px;padding:6px;margin:2px 0;min-height:30px">📁 Pilih File Lagu (mp3/ogg/m4a/wav)</button>
-      <div style="display:flex;gap:4px;margin-top:4px">
-        <input id="musUrlIn" type="text" placeholder="https://...mp3" value="${S.customMusicUrl||''}" style="flex:1;padding:6px;border-radius:6px;border:1px solid #2a3a6a;background:#0a0e27;color:#fff;font-size:11px;outline:none">
+      <div style="color:#9b59b6;font-weight:bold;margin-bottom:4px">🎵 Custom Music Library</div>
+      <div style="color:#aaa;font-size:10px;margin-bottom:8px">📁 File tersimpan lokal · 🔗 URL streaming</div>
+      <div id="customTrackList" style="margin-bottom:8px">
+        <div style="color:#666;font-size:10px;text-align:center;padding:8px">⏳ Memuat...</div>
+      </div>
+      <input type="file" id="musFile" accept="audio/*" multiple style="display:none">
+      <button id="musPickFile" class="y" style="width:100%;font-size:11px;padding:6px;margin:0;min-height:30px">➕ Tambah Lagu (bisa pilih banyak)</button>
+      <div style="display:flex;gap:4px;margin-top:8px">
+        <input id="musUrlIn" type="text" placeholder="URL mp3 (opsional)" value="${S.customMusicUrl||''}" style="flex:1;padding:6px;border-radius:6px;border:1px solid #2a3a6a;background:#0a0e27;color:#fff;font-size:11px;outline:none">
         <button id="musUrlOk" class="g" style="font-size:11px;padding:6px 10px;margin:0;min-height:30px">✓</button>
       </div>
       <div style="display:flex;gap:4px;margin-top:6px">
-        <button id="musTest" class="g" style="flex:1;font-size:11px;padding:6px;margin:0;min-height:30px">▶️ Putar</button>
         <button id="musStop" class="r" style="flex:1;font-size:11px;padding:6px;margin:0;min-height:30px">⏹ Stop</button>
-        <button id="musClear" class="r" style="flex:1;font-size:11px;padding:6px;margin:0;min-height:30px">🗑 Hapus</button>
       </div>
     </div>` : '';
   $('ob').innerHTML=`<h2 style="margin-bottom:8px">⚙️ Settings</h2>
     <label class="tg"><span>⏩ Auto Skip</span><input type="checkbox" id="t1" ${S.auto?'checked':''}></label>
-    <label class="tg"><span>✨ Efek</span><input type="checkbox" id="t2" ${S.fx?'checked':''}></label>
+    <label class="tg"><span>✨ Efek Serangan & Skill</span><input type="checkbox" id="t2" ${S.fx?'checked':''}></label>
     <label class="tg"><span>🔊 Suara SFX</span><input type="checkbox" id="t3" ${S.sound?'checked':''}></label>
     <div style="background:#0a0e27;border-radius:8px;padding:10px;margin:8px 0;text-align:left">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
@@ -869,7 +892,7 @@ function sets(back){
     </div>
     <button id="sb" class="g">← Kembali</button>`;
   $('t1').onchange=e=>{S.auto=e.target.checked;save()};
-  $('t2').onchange=e=>{S.fx=e.target.checked;save()};
+  $('t2').onchange=e=>{S.fx=e.target.checked;save();toast(e.target.checked?'✨ Efek ON':'✨ Efek OFF (hemat performa)')};
   $('t3').onchange=e=>{S.sound=e.target.checked;soundEnabled=S.sound;save();if(S.sound){initAudio();playTone(600,0.15,'sine',0.1,900)}};
   document.querySelectorAll('.mus-btn').forEach(b=>{
     b.onclick=()=>{
@@ -887,43 +910,66 @@ function sets(back){
     save();
   };
   if(S.music==='custom'){
-    const fileInput=$('musFile');
-    $('musPickFile').onclick=()=>fileInput.click();
-    fileInput.onchange=async e=>{
-      const f=e.target.files[0];if(!f)return;
-      if(f.size>50*1024*1024){toast('❌ File >50MB, pakai URL saja');return;}
-      const ok=await Music.saveCustomFile(f);
-      if(ok){
-        S.customMusicUrl='';
-        S.customMusicName=f.name;
-        save();
-        toast('✅ File tersimpan: '+f.name);
-        sets(back);
-        setTimeout(()=>Music.play('custom'),300);
-      } else {
-        toast('❌ Gagal simpan file');
+    const fileInput = $('musFile');
+    const listEl = $('customTrackList');
+
+    const renderList = async () => {
+      const arr = await Music.listCustomTracks();
+      if(arr.length === 0){
+        listEl.innerHTML = `<div style="color:#666;font-size:10px;text-align:center;padding:8px;background:#0a0e27;border-radius:4px">Belum ada lagu. Klik ➕ Tambah Lagu</div>`;
+        return;
       }
+      listEl.innerHTML = arr.map(t => {
+        const isPlaying = S.customMusicId === t.id && Music.playing;
+        const active = S.customMusicId === t.id;
+        return `<div style="display:flex;justify-content:space-between;align-items:center;background:${active?'#0a2050':'#0a0e27'};border:1px solid ${active?'#3498db':'#2a3a6a'};border-radius:6px;padding:6px 8px;margin:3px 0;gap:6px">
+          <div style="flex:1;min-width:0">
+            <div style="color:${active?'#66ccff':'#fff'};font-size:11px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${isPlaying?'▶️ ':''}${t.name}</div>
+          </div>
+          <button class="ct-play" data-id="${t.id}" style="font-size:10px;padding:4px 8px;margin:0;min-height:26px;background:linear-gradient(#2ecc71,#27ae60)">${isPlaying?'▶':'▶ Play'}</button>
+          <button class="ct-del" data-id="${t.id}" style="font-size:10px;padding:4px 8px;margin:0;min-height:26px;background:linear-gradient(#e74c3c,#c0392b)">🗑</button>
+        </div>`;
+      }).join('');
+      listEl.querySelectorAll('.ct-play').forEach(b => {
+        b.onclick = async () => {
+          await Music.playCustomTrack(b.dataset.id);
+          renderList();
+        };
+      });
+      listEl.querySelectorAll('.ct-del').forEach(b => {
+        b.onclick = async () => {
+          if(!confirm('Hapus lagu ini?')) return;
+          await Music.deleteCustomTrack(b.dataset.id);
+          toast('🗑 Lagu dihapus');
+          renderList();
+        };
+      });
     };
-    $('musUrlOk').onclick=()=>{
-      const url=$('musUrlIn').value.trim();
-      S.customMusicUrl=url;
-      if(url)S.customMusicName='';
+    renderList();
+
+    $('musPickFile').onclick = () => fileInput.click();
+    fileInput.onchange = async e => {
+      const files = Array.from(e.target.files);
+      if(!files.length) return;
+      let added = 0, failed = 0;
+      for(const f of files){
+        const r = await Music.addCustomTrack(f);
+        if(r) added++; else failed++;
+      }
+      toast(`✅ ${added} lagu ditambah${failed?`, ${failed} gagal`:''}`);
+      fileInput.value = '';
+      renderList();
+    };
+
+    $('musUrlOk').onclick = () => {
+      const url = $('musUrlIn').value.trim();
+      S.customMusicUrl = url;
       save();
-      toast(url?'✅ URL tersimpan':'🗑 URL dikosongkan');
-      sets(back);
-      if(url)setTimeout(()=>Music.play('custom'),200);
+      toast(url ? '✅ URL tersimpan' : '🗑 URL dikosongkan');
+      if(url) Music.play('custom');
     };
-    $('musTest').onclick=()=>{Music.play('custom')};
-    $('musStop').onclick=()=>{Music.stop()};
-    $('musClear').onclick=async()=>{
-      if(!confirm('Hapus lagu custom?'))return;
-      S.customMusicUrl='';S.customMusicName='';
-      await Music._idbDelete();
-      save();
-      Music._stopCustom();
-      toast('🗑 Custom dihapus');
-      sets(back);
-    };
+
+    $('musStop').onclick = () => { Music.stop(); renderList(); };
   }
   $('sb').onclick=back;
 }
@@ -1031,6 +1077,9 @@ function updateBackpackBadge(){
   if(total > 0){ badge.textContent = total > 99 ? '99+' : total; badge.style.display = 'inline-block'; }
   else badge.style.display = 'none';
 }
+
+const _firstAudio=()=>{initAudio();Music.ensure();Music.setVolume(S.musicVol||0.12);if(S.music&&S.music!=='none')setTimeout(()=>Music.play(S.music),200)};
+document.addEventListener('pointerdown',_firstAudio,{once:true});document.addEventListener('touchstart',_firstAudio,{once:true});
 
 checkLogin();
 $('googleLoginBtn').onclick=()=>{if(!fbAuth)return toast('❌ Firebase error!');const provider=new firebase.auth.GoogleAuthProvider();fbAuth.signInWithPopup(provider).catch(e=>{toast('❌ Login gagal: '+e.message);$('loginMsg').innerHTML='<span style="color:#e74c3c">❌ '+e.message+'</span>'})};
@@ -1260,7 +1309,7 @@ function draw(){
   ctx.strokeStyle = theme.path[1];ctx.lineWidth = 30;ctx.beginPath();G.wp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
   ctx.strokeStyle = 'rgba(255,255,255,0.15)';ctx.lineWidth = 2;ctx.setLineDash([8, 12]);ctx.lineDashOffset = -t * 30;ctx.beginPath();G.wp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();ctx.setLineDash([]);
   for(const e of G.en){if(e.dead)continue;ctx.fillStyle=e.hf>0?'#fff':e.c;ctx.shadowColor=e.c;ctx.shadowBlur=10;ctx.beginPath();ctx.arc(e.x,e.y,e.r,0,6.283);ctx.fill();ctx.shadowBlur=0;const hpPct=e.hp/e.mx;ctx.fillStyle='#333';ctx.fillRect(e.x-20,e.y-e.r-10,40,4);ctx.fillStyle=hpPct>.5?'#2ecc71':hpPct>.25?'#f1c40f':'#e74c3c';ctx.fillRect(e.x-20,e.y-e.r-10,40*hpPct,4);if(e.sl>0){ctx.strokeStyle='#66ccff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,e.r+3,0,6.283);ctx.stroke()}}
-  for(const u of G.pl){const d=DEF[u.i.id];if(!d)continue;const r=R[u.i.rar]||R.common,c=tc(u),hi=isHi(u.i);const _bob=Math.sin(t*2.5+u.pid*0.7)*2.5;ctx.save();ctx.translate(u.x, u.y+15);ctx.scale(1, 0.42);ctx.fillStyle=r.c;ctx.globalAlpha=0.28;ctx.beginPath();ctx.arc(0,0,26,0,6.283);ctx.fill();ctx.globalAlpha=0.65;ctx.beginPath();ctx.arc(0,0,19,0,6.283);ctx.fill();ctx.globalAlpha=0.95;ctx.beginPath();ctx.arc(0,0,10,0,6.283);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=r.c;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(0,0,22,0,6.283);ctx.stroke();ctx.restore();if(hi){aura(u,c);sigil(u,c);drawHighTierAura(u,c,u.i.rar,t)}ctx.save();ctx.translate(u.x, u.y+_bob);const _fs = hi ? 30 : (u.i.rar==='epic'||u.i.rar==='legendary' ? 26 : 24);ctx.font = `${_fs}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor = c;ctx.shadowBlur = hi ? 22 : 9;ctx.fillText(d.icon, 0, 0);ctx.shadowBlur = hi ? 8 : 4;ctx.fillText(d.icon, 0, 0);ctx.restore();const _bx=u.x+15, _by=u.y-15+_bob;ctx.save();ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillStyle='rgba(0,0,0,0.85)';ctx.beginPath();ctx.arc(_bx,_by,9,0,6.283);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle=r.c;ctx.lineWidth=1.8;ctx.beginPath();ctx.arc(_bx,_by,9,0,6.283);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(u.i.lv,_bx,_by+0.5);ctx.restore();if(hi){ctx.save();ctx.font='bold 9px sans-serif';ctx.textAlign='center';const nm=d.name;const _nw=ctx.measureText(nm).width+10;const _ny=u.y+22;ctx.fillStyle='rgba(0,0,0,0.75)';ctx.strokeStyle=c;ctx.lineWidth=1;ctx.beginPath();ctx.rect(u.x-_nw/2,_ny,_nw,12);ctx.fill();ctx.stroke();ctx.fillStyle=c;ctx.fillText(nm,u.x,_ny+6.5);ctx.restore()}if(G.selP===u.pid){const st=stats(u.i);ctx.save();ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=2;ctx.setLineDash([5,5]);ctx.beginPath();ctx.arc(u.x,u.y,st.rng,0,6.283);ctx.stroke();ctx.setLineDash([]);ctx.restore()}}
+  for(const u of G.pl){const d=DEF[u.i.id];if(!d)continue;const r=R[u.i.rar]||R.common,c=tc(u),hi=isHi(u.i);const _bob=Math.sin(t*2.5+u.pid*0.7)*2.5;ctx.save();ctx.translate(u.x, u.y+15);ctx.scale(1, 0.42);ctx.fillStyle=r.c;ctx.globalAlpha=0.28;ctx.beginPath();ctx.arc(0,0,26,0,6.283);ctx.fill();ctx.globalAlpha=0.65;ctx.beginPath();ctx.arc(0,0,19,0,6.283);ctx.fill();ctx.globalAlpha=0.95;ctx.beginPath();ctx.arc(0,0,10,0,6.283);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=r.c;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(0,0,22,0,6.283);ctx.stroke();ctx.restore();if(S.fx&&hi){aura(u,c);sigil(u,c);drawHighTierAura(u,c,u.i.rar,t)}ctx.save();ctx.translate(u.x, u.y+_bob);const _fs = hi ? 30 : (u.i.rar==='epic'||u.i.rar==='legendary' ? 26 : 24);ctx.font = `${_fs}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor = c;ctx.shadowBlur = hi ? 22 : 9;ctx.fillText(d.icon, 0, 0);ctx.shadowBlur = hi ? 8 : 4;ctx.fillText(d.icon, 0, 0);ctx.restore();const _bx=u.x+15, _by=u.y-15+_bob;ctx.save();ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillStyle='rgba(0,0,0,0.85)';ctx.beginPath();ctx.arc(_bx,_by,9,0,6.283);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle=r.c;ctx.lineWidth=1.8;ctx.beginPath();ctx.arc(_bx,_by,9,0,6.283);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(u.i.lv,_bx,_by+0.5);ctx.restore();if(hi){ctx.save();ctx.font='bold 9px sans-serif';ctx.textAlign='center';const nm=d.name;const _nw=ctx.measureText(nm).width+10;const _ny=u.y+22;ctx.fillStyle='rgba(0,0,0,0.75)';ctx.strokeStyle=c;ctx.lineWidth=1;ctx.beginPath();ctx.rect(u.x-_nw/2,_ny,_nw,12);ctx.fill();ctx.stroke();ctx.fillStyle=c;ctx.fillText(nm,u.x,_ny+6.5);ctx.restore()}if(G.selP===u.pid){const st=stats(u.i);ctx.save();ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=2;ctx.setLineDash([5,5]);ctx.beginPath();ctx.arc(u.x,u.y,st.rng,0,6.283);ctx.stroke();ctx.setLineDash([]);ctx.restore()}}
   for(const m of G.mn){if(m.dead) continue;ctx.globalAlpha = Math.min(1, m.lt / 2);ctx.font = '16px sans-serif';ctx.textAlign = 'center';ctx.textBaseline = 'middle';ctx.fillStyle = '#fff';ctx.fillText(m.icon, m.x, m.y);ctx.globalAlpha = 1;}
   for(const f of G.fx){const a=f.l/(f.m||1);ctx.globalAlpha=a;if(f.t==='ring'){ctx.strokeStyle=f.c;ctx.lineWidth=f.w||4;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a)*2,0,6.283);ctx.stroke()}else if(f.t==='nova'){ctx.fillStyle=f.c;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a),0,6.283);ctx.fill()}else if(f.t==='slash'){ctx.strokeStyle=f.c;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(f.x-20,f.y-20);ctx.lineTo(f.x+20,f.y+20);ctx.stroke()}else if(f.t==='text'){ctx.fillStyle=f.c;ctx.font='bold 16px sans-serif';ctx.textAlign='center';ctx.fillText(f.s,f.x,f.y-(1-a)*30)}else if(f.t==='exp'){ctx.strokeStyle='#fff';ctx.lineWidth=4;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a),0,6.283);ctx.stroke()}else if(f.t==='scythe'){ctx.strokeStyle=f.c;ctx.lineWidth=6;ctx.beginPath();ctx.arc(f.x,f.y,f.len,f.a-f.ang,f.a+f.ang);ctx.stroke()}else if(f.t==='banner'){ctx.fillStyle=f.c;ctx.font='bold 24px sans-serif';ctx.textAlign='center';ctx.fillText(f.s,450,100+(1-a)*50)}else if(f.t==='shockwave'){ctx.strokeStyle=f.c;ctx.globalAlpha=a*0.7;ctx.lineWidth=3;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a),0,6.283);ctx.stroke();ctx.lineWidth=1.5;ctx.globalAlpha=a*0.4;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a)*0.7,0,6.283);ctx.stroke();ctx.lineWidth=1;ctx.globalAlpha=a*0.25;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a)*1.3,0,6.283);ctx.stroke()}ctx.globalAlpha=1;}
   for(const b of G.bm){const a=b.l/(b.m||1);ctx.globalAlpha=a;ctx.strokeStyle=b.c;ctx.lineWidth=b.w||2;if(b.trail){ctx.shadowColor=b.c;ctx.shadowBlur=14;ctx.beginPath();if(b.pts){b.pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y))}else{ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.x2,b.y2)}ctx.stroke();ctx.shadowBlur=0;}ctx.beginPath();if(b.pts){b.pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y))}else{ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.x2,b.y2)}ctx.stroke();ctx.globalAlpha=1;}
