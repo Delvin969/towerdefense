@@ -195,24 +195,28 @@ const ORD=['exotic','eternal','primordial','transcendent','secret','td','mythic'
 const COST={common:40,rare:70,epic:110,legendary:170,mythic:300,td:600,secret:1200,transcendent:2000,primordial:3500,eternal:5000,exotic:10000};
 const MAXD={common:8,rare:6,epic:5,legendary:4,mythic:3,td:2,secret:1,transcendent:1,primordial:1,eternal:1,exotic:1};
 const MAXL={common:10,rare:12,epic:15,legendary:18,mythic:20,td:25,secret:30,transcendent:40,primordial:50,eternal:60,exotic:80};
+const GOJO_LEVEL_REQ=1000;
 const POOL={
 common:[['archer','Archer','🏹',13,90,.7,'single'],['swordsman','Swordsman','⚔️',20,60,.9,'single'],['shieldman','Shieldman','🛡️',10,55,1.2,'slow'],['hunter','Hunter','🎯',15,110,.85,'single'],['apprentice','Apprentice','🧙',12,85,.75,'single'],['pikeman','Pikeman','🗡️',22,55,1.0,'single']],
 rare:[['ice_mage','Ice Mage','❄️',15,110,.9,'slow'],['knight','Knight','🗡️',29,70,1,'single'],['wind_mage','Wind Mage','🌪️',16,120,.7,'chain'],['cleric','Cleric','⛪',10,90,1.2,'economy'],['berserker','Berserker','🪓',35,65,1.1,'crit'],['merchant','Merchant','💼',14,95,1.1,'economy'],['bard','Bard','🎵',5,130,1.5,'support'],['spotter','Spotter','🔭',4,140,1.5,'support_range'],['drummer','Drummer','🥁',4,120,1.4,'support_spd'],['monk','Monk','🧘',24,75,1.0,'single'],['ranger','Ranger','🏹',20,130,.9,'single'],['alchemist','Alchemist','⚗️',18,100,1.1,'aoe']],
 epic:[['fire_wizard','Fire Wizard','🔥',24,100,1.2,'aoe'],['assassin','Assassin','🔪',48,80,1.5,'crit'],['gold_miner','Gold Miner','⛏️',8,80,2,'economy'],['thunder_mage','Thunder Mage','⚡',22,115,1.1,'chain'],['banker','Banker','🏦',16,105,1.3,'economy'],['poison_rogue','Poison Rogue','🗡️',40,90,1.3,'slow'],['priest','Priest','⛪',8,150,1.8,'support'],['seer','Seer','📖',6,160,1.8,'support_range'],['haste','Haste','⏩',6,140,1.7,'support_spd'],['necromancer','Necromancer','💀',30,110,1.2,'summon'],['samurai','Samurai','🎎',55,75,1.1,'crit'],['paladin','Paladin','🛡️',30,90,1.1,'single'],['philosopher','Philosopher','📜',22,120,1.3,'aoe']],
 legendary:[['dragon_kn','Dragon Knight','🐉',40,110,.9,'aoe'],['storm_cal','Storm Caller','🌩️',32,130,1.1,'chain'],['shadow_bl','Shadow Blade','🌑',56,95,1,'crit'],['ice_queen','Ice Queen','👑',29,130,1,'slow'],['treasurer','Treasurer','💎',18,120,1.4,'economy'],['archangel','Archangel','😇',48,125,1,'single'],['druid','Druid','🌿',10,170,2.0,'support'],['oracle_rng','Oracle','👁️',8,180,2.0,'support_range'],['warp_mage','Warp Mage','🌀',8,160,1.9,'support_spd'],['sniper_god','Sniper God','🎯',40,220,.7,'crit'],['lich','Lich','💀',40,120,1.2,'summon'],['shogun','Shogun','🎎',60,100,.9,'crit'],['phoenix','Phoenix','🦅',35,140,.9,'aoe']],
-mythic:[['void_reaper','Void Reaper','👁️',56,120,.8,'chain'],['celestial_g','Celestial Guardian','✨',48,140,1,'aoe'],['phantom_lord','Phantom Lord','👻',64,110,.9,'crit'],['chronomancer','Chronomancer','⏳',51,145,.9,'slow'],['soul_weaver','Soul Weaver','🧵',52,135,.85,'chain'],['abyss_walker','Abyss Walker','🐙',60,130,.9,'aoe'],['gold_empress','Gold Empress','👸',30,130,1.5,'economy'],['oracle','Oracle','🔮',15,190,2.2,'support'],['omniscient','Omniscient','🌐',12,200,2.2,'support_range'],['accelerator','Accelerator','⏱️',12,180,2.1,'support_spd'],['void_walker','Void Walker','🕳️',55,130,.85,'chain'],['dragon_lord','Dragon Lord','🐲',60,120,.9,'aoe'],['void_priest','Void Priest','🕯️',60,125,.85,'chain'],['star_weaver','Star Weaver','🌟',55,145,.95,'aoe'],['chaos_knight','Chaos Knight','⚔️',70,110,.85,'crit'],['shadow_blade_master','Shadow Blade Master','🗡️',75,115,.8,'crit'],['void_monk','Void Monk','🧘',65,130,.9,'chain']],
+mythic:[['void_reaper','Void Reaper','👁️',56,120,.8,'chain'],['celestial_g','Celestial Guardian','✨',48,140,1,'aoe'],['phantom_lord','Phantom Lord','👻',64,110,.9,'crit'],['chronomancer','Chronomancer','⏳',51,145,.9,'slow'],['soul_weaver','Soul Weaver','🧵',52,135,.85,'chain'],['abyss_walker','Abyss Walker','🐙',60,130,.9,'aoe'],['gold_empress','Gold Empress','👸',30,130,1.5,'economy'],['oracle','Oracle','🔮',15,190,2.2,'support'],['omniscient','Omniscient','🌐',12,200,2.2,'support_range'],['accelerator','Accelerator','⏱️',12,180,2.1,'support_spd'],['void_walker','Void Walker','🕳️',55,130,.85,'chain'],['dragon_lord','Dragon Lord','🐲',60,120,.9,'aoe'],['void_priest','Void Priest','🕯️',60,125,.85,'chain'],['star_weaver','Star Weaver','🌟',55,145,.95,'aoe'],['chaos_knight','Chaos Knight','⚔️',70,110,.85,'crit'],['shadow_blade_master','Shadow Blade Master','🗡️',75,115,.8,'crit'],['void_monk','Void Monk','🧘',65,130,.9,'chain'],['gojo','Gojo Satoru','👁️',85,150,.85,'gojo_domain']],
 td:[['void_emperor','Void Emperor','🕳️',104,160,.6,'chain'],['celestial_avatar','Celestial Avatar','🌟',93,180,.8,'aoe'],['phantom_god','Phantom God','💀',120,140,.7,'crit'],['time_lord','Time Lord','⏰',96,175,.75,'slow'],['eternal_flame','Eternal Flame','🔥',110,170,.7,'aoe'],['frost_empress','Frost Empress','❄️',98,190,.75,'slow'],['archdruid','Archdruid','🌳',20,210,2.5,'support'],['void_seer','Void Seer','🔮',16,220,2.5,'support_range'],['temporal_god','Temporal God','⏳',16,200,2.4,'support_spd'],['shadow_monarch','Shadow Monarch','👑',100,180,2.0,'summon'],['chaos_lord','Chaos Lord','🌀',100,150,.65,'chain'],['frost_god','Frost God','❄️',95,170,.7,'slow'],['eclipse_lord','Eclipse Lord','🌑',105,165,.65,'chain'],['aurora_queen','Aurora Queen','🌈',95,185,.75,'slow'],['solar_king','Solar King','☀️',110,175,.7,'aoe'],['prism_lord','Prism Lord','💎',115,170,.65,'chain'],['storm_emperor','Storm Emperor','⛈️',108,180,.7,'aoe']],
-secret:[['void_sovereign','Void Sovereign','👑',168,190,.5,'chain'],['star_emperor','Star Emperor','🌠',160,210,.55,'aoe'],['death_reaper','Death Reaper','⚰️',208,170,.45,'crit'],['light_emperor','Light Emperor','☀️',180,200,.5,'chain'],['cosmic_sovereign','Cosmic Sovereign','🌌',175,195,.5,'aoe'],['abyss_sovereign','Abyss Sovereign','🕳️',195,180,.48,'crit'],['shadow_sovereign','Shadow Sovereign','🗡️',165,200,2.2,'summon'],['primordial_wyrm','Primordial Wyrm','🐉',180,200,.5,'aoe'],['celestial_king','Celestial King','👑',165,180,.5,'chain'],['heaven_emperor','Heaven Emperor','👼',220,200,.45,'aoe'],['hell_emperor','Hell Emperor','😈',240,180,.4,'crit'],['purgatory_king','Purgatory King','💀',230,190,.48,'chain'],['void_archon','Void Archon','🕳️',210,205,.47,'chain'],['astral_monarch','Astral Monarch','✨',200,215,.5,'aoe'],['blood_sovereign','Blood Sovereign','🩸',235,185,.42,'crit'],['chaos_god','Chaos God','🌪️',250,195,.4,'chain'],['order_god','Order God','⚖️',245,200,.42,'aoe']],
+secret:[['void_sovereign','Void Sovereign','👑',168,190,.5,'chain'],['star_emperor','Star Emperor','🌠',160,210,.55,'aoe'],['death_reaper','Death Reaper','⚰️',208,170,.45,'crit'],['light_emperor','Light Emperor','☀️',180,200,.5,'chain'],['cosmic_sovereign','Cosmic Sovereign','🌌',175,195,.5,'aoe'],['abyss_sovereign','Abyss Sovereign','🕳️',195,180,.48,'crit'],['shadow_sovereign','Shadow Sovereign','🗡️',165,200,2.2,'summon'],['primordial_wyrm','Primordial Wyrm','🐉',180,200,.5,'aoe'],['celestial_king','Celestial King','👑',165,180,.5,'chain'],['heaven_emperor','Heaven Emperor','👼',220,200,.45,'aoe'],['hell_emperor','Hell Emperor','😈',240,180,.4,'crit'],['purgatory_king','Purgatory King','💀',230,190,.48,'chain'],['void_archon','Void Archon','🕳️',210,205,.47,'chain'],['astral_monarch','Astral Monarch','✨',200,215,.5,'aoe'],['blood_sovereign','Blood Sovereign','🩸',235,185,.42,'crit'],['chaos_god','Chaos God','🌪️',250,195,.4,'chain'],['order_god','Order God','⚖️',245,200,.42,'aoe'],['gojo_awakened','Gojo (Awakened)','🟣',280,220,.45,'hollow_purple']],
 transcendent:[['void_god','Void God','🌌',288,240,.35,'chain'],['star_god','Star God','💫',272,260,.4,'aoe'],['death_god','Death God','☠️',352,220,.35,'crit'],['cosmic_god','Cosmic God','🌟',285,255,.4,'aoe'],['abyss_god','Abyss God','🕳️',340,225,.38,'crit'],['shadow_emperor','Shadow Emperor','☠️',240,220,2.4,'summon'],['flame_god','Flame God','🔥',290,250,.38,'aoe'],['nature_god','Nature God','🌿',270,260,.4,'support'],['chrono_god','Chrono God','⌛',265,270,.4,'slow'],['infinity','Infinity','♾️',300,250,.35,'chain'],['oblivion','Oblivion','🌑',320,230,.35,'crit'],['omni_king','Omni King','👁️',380,245,.35,'chain'],['reality_weaver','Reality Weaver','🕸️',350,260,.38,'aoe'],['dimension_lord','Dimension Lord','🌀',365,240,.37,'crit'],['eternal_flame_king','Eternal Flame King','🔥',390,250,.35,'aoe']],
 primordial:[['void_primordial','Void Primordial','🕳️',450,300,.3,'chain'],['star_primordial','Star Primordial','🌌',430,320,.33,'aoe'],['death_primordial','Death Primordial','💀',550,280,.3,'crit'],['cosmic_primordial','Cosmic Primordial','💫',440,325,.32,'aoe'],['abyss_primordial','Abyss Primordial','🕳️',545,290,.29,'crit'],['shadow_god','Shadow God','🌑',380,240,2.6,'summon'],['flame_primordial','Flame Primordial','🔥',470,310,.3,'aoe'],['nature_primordial','Nature Primordial','🌿',440,320,.31,'support'],['chrono_primordial','Chrono Primordial','⌛',435,325,.31,'slow'],['genesis','Genesis','🌟',460,320,.3,'aoe'],['apocalypse','Apocalypse','☄️',520,290,.3,'crit'],['ancient_one','Ancient One','🗿',600,310,.28,'aoe'],['titan_king','Titan King','⛰️',580,290,.3,'crit'],['world_serpent','World Serpent','🐍',620,305,.29,'chain'],['creation_titan','Creation Titan','🌍',650,315,.28,'aoe']],
 eternal:[['eternal_dragon','Eternal Dragon','🐲',800,350,.25,'chain'],['eternal_angel','Eternal Angel','👼',750,380,.28,'aoe'],['eternal_demon','Eternal Demon','😈',900,320,.25,'crit'],['shadow_origin','Shadow Origin','💫',680,260,2.8,'summon'],['eternal_phoenix','Eternal Phoenix','🔥',850,360,.25,'aoe'],['eternal_void','Eternal Void','🕳️',820,370,.25,'chain'],['eternal_knight','Eternal Knight','⚔️',950,340,.24,'crit'],['eternal_sage','Eternal Sage','📜',880,370,.26,'aoe'],['eternal_seraphim','Eternal Seraphim','🕊️',1000,380,.23,'aoe']],
 exotic:[['exotic_nidhogg','Nidhogg','🐉',1500,420,.2,'chain'],['exotic_metatron','Metatron','👁️',1400,450,.22,'aoe'],['exotic_lucifer','Lucifer','🦇',1700,400,.2,'crit'],['shadow_king','Shadow King Igris','🐉',1250,280,3.0,'summon'],['exotic_chaos','Chaos Incarnate','🌪️',1550,430,.2,'chain'],['exotic_omni','Omni God','🌌',1450,460,.22,'aoe'],['exotic_amaterasu','Amaterasu','🌸',1800,440,.19,'aoe'],['exotic_shiva','Shiva','🔱',1900,420,.18,'chain'],['exotic_brahma','Brahma','🪷',2000,450,.17,'aoe']]};
 const DEF={};for(const r in POOL)for(const a of POOL[r])DEF[a[0]]={id:a[0],name:a[1],icon:a[2],dmg:a[3],rng:a[4],cd:a[5],skill:a[6],rar:r};
 const ULT_CD=60;
-const ULT_DEF={chain:{n:'☄️ VOID STORM',c:'#cc66ff',t:'storm'},aoe:{n:'🌟 SUPERNOVA',c:'#ff8800',t:'nova'},crit:{n:'⚔️ SCYTHE SWEEP',c:'#ff2255',t:'scythe'},slow:{n:'⏰ TIME FREEZE',c:'#66ccff',t:'freeze'},summon:{n:'👥 SHADOW ARMY',c:'#8e44ad',t:'storm'}};
+const ULT_DEF={chain:{n:'☄️ VOID STORM',c:'#cc66ff',t:'storm'},aoe:{n:'🌟 SUPERNOVA',c:'#ff8800',t:'nova'},crit:{n:'⚔️ SCYTHE SWEEP',c:'#ff2255',t:'scythe'},slow:{n:'⏰ TIME FREEZE',c:'#66ccff',t:'freeze'},summon:{n:'👥 SHADOW ARMY',c:'#8e44ad',t:'storm'},gojo_domain:{n:'♾️ UNLIMITED VOID',c:'#00ccff',t:'domain'},hollow_purple:{n:'🟣 HOLLOW PURPLE',c:'#aa00ff',t:'hollow'}};
 function inTriangle(px,py,cx,cy,ang,len,spread){const dx=px-cx,dy=py-cy,dist=Math.hypot(dx,dy);if(dist>len)return false;let diff=Math.atan2(dy,dx)-ang;while(diff>Math.PI)diff-=2*Math.PI;while(diff<-Math.PI)diff+=2*Math.PI;return Math.abs(diff)<=spread}
+function getPlayerLevel(){return Math.floor((S.stats.gamesPlayed*1.5)+(S.stats.gamesWon*3))+1;}
 
-const EVO_SKILL={void_emperor:{name:'Void Collapse',icon:'🕳️',desc:'Chain + AOE',color:'#c060ff',ult:'☄️ VOID ANNIHILATION'},celestial_avatar:{name:'Divine Judgement',icon:'🌟',desc:'AOE + heal',color:'#fff08a',ult:'🕊️ GENESIS'},phantom_god:{name:'Soul Harvest',icon:'💀',desc:'Crit + bonus',color:'#ff6fe0',ult:'🔥 ARMAGEDDON'},time_lord:{name:'Temporal Rift',icon:'⏰',desc:'Slow + freeze',color:'#9ff0ff',ult:'⏰ TIME STOP'},void_sovereign:{name:'Void Supremacy',icon:'👑',desc:'Chain + slow',color:'#ff00ff',ult:'👑 VOID DOMINION'},star_emperor:{name:'Cosmic Judgement',icon:'🌠',desc:'AOE + heal',color:'#ff00ff',ult:'🌌 GALAXY BURST'},death_reaper:{name:'Grim Harvest',icon:'⚰️',desc:'Crit + execute',color:'#ff00ff',ult:'💀 REAPER DUE'},void_god:{name:'Void Genesis',icon:'🌌',desc:'Chain 5 + AOE',color:'#ff00aa',ult:'🌌 GENESIS ANNIHILATION'},star_god:{name:'Cosmic Apocalypse',icon:'💫',desc:'AOE + stun',color:'#ffe0ff',ult:'💫 APOCALYPSE'},death_god:{name:'Oblivion',icon:'☠️',desc:'Crit x6 + execute',color:'#aa00ff',ult:'☠️ OBLIVION'},void_primordial:{name:'Void Apocalypse',icon:'🕳️',desc:'Chain 8 + AOE 120',color:'#ff0066',ult:'🕳️ VOID APOCALYPSE'},star_primordial:{name:'Cosmic Extinction',icon:'🌌',desc:'AOE 400 + heal 5',color:'#ffaa00',ult:'🌌 COSMIC EXTINCTION'},death_primordial:{name:'Total Oblivion',icon:'💀',desc:'Crit x10 + execute',color:'#6600ff',ult:'💀 TOTAL OBLIVION'},soul_weaver:{name:'Soul Bind',icon:'🧵',desc:'Chain + slow',color:'#a060ff',ult:'🧵 SOUL BIND'},abyss_walker:{name:'Abyss Reach',icon:'🐙',desc:'AOE + slow',color:'#0099aa',ult:'🐙 ABYSS CALL'},gold_empress:{name:'Royal Fortune',icon:'👸',desc:'Ekonomi +',color:'#ffd700',ult:'👸 ROYAL DECREE'},eternal_flame:{name:'Flame Nova',icon:'🔥',desc:'AOE bakar',color:'#ff5500',ult:'🔥 ETERNAL BLAZE'},frost_empress:{name:'Frost Nova',icon:'❄️',desc:'Slow + freeze',color:'#aaeeff',ult:'❄️ ABSOLUTE ZERO'},light_emperor:{name:'Light Judgement',icon:'☀️',desc:'Chain + bonus',color:'#ffffaa',ult:'☀️ LIGHT JUDGEMENT'},eternal_dragon:{name:'Eternal Breath',icon:'🐲',desc:'Chain 8 + AOE',color:'#00ffaa',ult:'🐲 ETERNAL RUIN'},eternal_angel:{name:'Divine Wrath',icon:'👼',desc:'AOE 500 + heal',color:'#ffffff',ult:'👼 DIVINE WRATH'},eternal_demon:{name:'Hellfire',icon:'😈',desc:'Crit x15 + execute',color:'#00ffaa',ult:'😈 HELLFIRE'},exotic_nidhogg:{name:'Dragon Apocalypse',icon:'🐉',desc:'Chain 12 + AOE 200 + instant kill',color:'#ff00aa',ult:'🐉 RAGNAROK'},exotic_metatron:{name:'Divine Ascension',icon:'👁️',desc:'AOE 700 + heal 20 + stun',color:'#ff00aa',ult:'👁️ DIVINE ASCENSION'},exotic_lucifer:{name:'Infernal Judgement',icon:'🦇',desc:'Crit x30 + execute 95%',color:'#ff00aa',ult:'🦇 INFERNAL JUDGEMENT'},archdruid:{name:'Nature Blessing',icon:'🌳',desc:'Massive DMG Buff',color:'#00ffaa',ult:'🌳 WORLD TREE'},void_seer:{name:'Void Vision',icon:'🔮',desc:'Massive RNG Buff',color:'#66ccff',ult:'🔮 OMNI VISION'},temporal_god:{name:'Time Acceleration',icon:'⏳',desc:'Massive SPD Buff',color:'#ffcc00',ult:'⏳ TIME WARP'},oracle_rng:{name:'Farsight',icon:'👁️',desc:'RNG Buff Aura',color:'#66ccff',ult:'👁️ TRUE SIGHT'},warp_mage:{name:'Warp Field',icon:'🌀',desc:'SPD Buff Aura',color:'#ffcc00',ult:'🌀 WARP FIELD'},omniscient:{name:'All-Seeing',icon:'🌐',desc:'Massive RNG Buff',color:'#66ccff',ult:'🌐 OMNISCIENCE'},accelerator:{name:'Haste Field',icon:'⏱️',desc:'Massive SPD Buff',color:'#ffcc00',ult:'⏱️ OVERCLOCK'},cosmic_sovereign:{name:'Cosmic Supremacy',icon:'🌌',desc:'AOE + heal',color:'#ff00ff',ult:'🌌 COSMIC SUPREMACY'},abyss_sovereign:{name:'Abyss Devour',icon:'🕳️',desc:'Crit + execute',color:'#ff00ff',ult:'🕳️ ABYSS DEVOUR'},cosmic_god:{name:'Cosmic Judgement',icon:'🌟',desc:'AOE + massive',color:'#ffaaff',ult:'🌌 COSMIC ANNIHILATION'},cosmic_primordial:{name:'Cosmic Apocalypse',icon:'💫',desc:'AOE 500 + heal',color:'#ff00aa',ult:'💫 COSMIC APOCALYPSE'},abyss_god:{name:'Abyss Oblivion',icon:'🕳️',desc:'Crit x8 + execute',color:'#aa66ff',ult:'🕳️ ABYSS OBLIVION'},abyss_primordial:{name:'Void Extinction',icon:'💀',desc:'Crit x12 + execute',color:'#6600ff',ult:'💀 VOID EXTINCTION'},shadow_monarch:{name:'Arise',icon:'👑',desc:'Summon shadow soldiers',color:'#8e44ad',ult:'👑 SHADOW ARMY'},shadow_sovereign:{name:'Shadow Extraction',icon:'🗡️',desc:'Summon shadow knights',color:'#9b59b6',ult:'🗡️ SHADOW LEGION'},shadow_emperor:{name:'Sovereign of Shadows',icon:'☠️',desc:'Summon shadow warriors',color:'#aa66ff',ult:'☠️ ARMY OF DEAD'},shadow_god:{name:'Shadow Genesis',icon:'🌑',desc:'Summon shadow lords',color:'#ff00aa',ult:'🌑 SHADOW GENESIS'},shadow_origin:{name:'Absolute Shadow',icon:'💫',desc:'Summon shadow titans',color:'#00ffaa',ult:'💫 ABSOLUTE SHADOW'},shadow_king:{name:'Monarch Army',icon:'🐉',desc:'Summon shadow dragons',color:'#ff00aa',ult:'🐉 ARMY OF THE MONARCH'},flame_god:{name:'Inferno Judgement',icon:'🔥',desc:'Massive AOE + burn',color:'#ff4400',ult:'🔥 INFERNO JUDGEMENT'},nature_god:{name:'Nature Wrath',icon:'🌿',desc:'Massive AOE buff',color:'#00ff66',ult:'🌿 NATURE WRATH'},chrono_god:{name:'Time Lock',icon:'⌛',desc:'Massive slow + freeze',color:'#9966ff',ult:'⌛ TIME LOCK'},flame_primordial:{name:'Apocalyptic Flame',icon:'🔥',desc:'AOE 600 + burn',color:'#ff0066',ult:'🔥 APOCALYPTIC FLAME'},nature_primordial:{name:'Primordial Nature',icon:'🌿',desc:'Massive AOE buff',color:'#00ffaa',ult:'🌿 PRIMORDIAL NATURE'},chrono_primordial:{name:'Eternal Lock',icon:'⌛',desc:'Massive slow',color:'#6600ff',ult:'⌛ ETERNAL LOCK'},necromancer:{name:'Raise Dead',icon:'💀',desc:'Summon skeletons',color:'#8e44ad',ult:'💀 UNDEAD ARMY'},samurai:{name:'Iaido',icon:'🎎',desc:'Crit + execute',color:'#ff2255',ult:'⚔️ ZEN SLASH'},paladin:{name:'Divine Shield',icon:'🛡️',desc:'Defensive heal',color:'#ffd700',ult:'🛡️ HOLY SHIELD'},philosopher:{name:"Philosopher's Stone",icon:'📜',desc:'AOE + gold',color:'#ffd700',ult:'📜 ALCHEMY'},sniper_god:{name:'Perfect Aim',icon:'🎯',desc:'Extreme range crit',color:'#2ecc71',ult:'🎯 HEADSHOT'},lich:{name:'Soul Legion',icon:'💀',desc:'Massive summon',color:'#aa00ff',ult:'💀 SOUL STORM'},shogun:{name:'Bushido',icon:'🎎',desc:'Multi-crit',color:'#ff2255',ult:'⚔️ SEVEN SAMURAI'},phoenix:{name:'Rebirth Flame',icon:'🦅',desc:'AOE burn heal',color:'#ff4400',ult:'🔥 REBIRTH'},void_walker:{name:'Rift Walk',icon:'🕳️',desc:'Chain + slow',color:'#9933ff',ult:'🕳️ VOID PORTAL'},dragon_lord:{name:'Dragon Roar',icon:'🐲',desc:'AOE + burn',color:'#ff2200',ult:'🐲 DRAGON ROAR'},chaos_lord:{name:'Chaos Storm',icon:'🌀',desc:'Chain 6 + AOE',color:'#aa00ff',ult:'🌀 CHAOS STORM'},frost_god:{name:'Absolute Freeze',icon:'❄️',desc:'Massive slow',color:'#88ddff',ult:'❄️ ABSOLUTE FREEZE'},primordial_wyrm:{name:'Ancient Roar',icon:'🐉',desc:'AOE 800 + burn',color:'#ff00aa',ult:'🐉 ANCIENT ROAR'},celestial_king:{name:'King Judgement',icon:'👑',desc:'Chain 10 + heal',color:'#ffd700',ult:'👑 KING JUDGEMENT'},infinity:{name:'Infinity Void',icon:'♾️',desc:'Chain 15 + AOE',color:'#ff00aa',ult:'♾️ INFINITY'},oblivion:{name:'Total Erase',icon:'🌑',desc:'Crit x50 + execute',color:'#440088',ult:'🌑 TOTAL ERASE'},genesis:{name:'World Creation',icon:'🌟',desc:'AOE 2000 + heal',color:'#ffd700',ult:'🌟 GENESIS'},apocalypse:{name:'World End',icon:'☄️',desc:'Crit x80 + execute',color:'#ff0066',ult:'☄️ APOCALYPSE'},eternal_phoenix:{name:'Eternal Fire',icon:'🔥',desc:'Chain 20 + AOE 3000',color:'#ff4400',ult:'🔥 ETERNAL FIRE'},eternal_void:{name:'Eternal Rift',icon:'🕳️',desc:'Chain 25 + AOE 2500',color:'#00ffaa',ult:'🕳️ ETERNAL RIFT'},exotic_chaos:{name:'Chaos Incarnate',icon:'🌪️',desc:'Chain 30 + AOE 5000',color:'#ff00aa',ult:'🌪️ CHAOS INCARNATE'},exotic_omni:{name:'Omniscience',icon:'🌌',desc:'AOE 8000 + stun',color:'#ff00aa',ult:'🌌 OMNI GENESIS'},eclipse_lord:{name:'Eclipse Void',icon:'🌑',desc:'Chain 8 + dark',color:'#8844ff',ult:'🌑 ECLIPSE FALL'},aurora_queen:{name:'Aurora Storm',icon:'🌈',desc:'AOE + freeze',color:'#88ffff',ult:'🌈 AURORA BARRIER'},solar_king:{name:'Solar Flare',icon:'☀️',desc:'Massive AOE burn',color:'#ffdd44',ult:'☀️ SOLAR ERUPTION'},heaven_emperor:{name:'Divine Judgement',icon:'👼',desc:'AOE 500 + heal',color:'#ffddff',ult:'👼 HEAVEN FALL'},hell_emperor:{name:'Infernal Judgement',icon:'😈',desc:'Crit x20 + execute',color:'#ff00ff',ult:'😈 HELL FALL'},purgatory_king:{name:'Soul Reap',icon:'💀',desc:'Chain 15 + soul',color:'#8800ff',ult:'💀 PURGATORY'},void_archon:{name:'Void Supremacy',icon:'🕳️',desc:'Chain 12 + AOE',color:'#cc00ff',ult:'🕳️ VOID SUPREMACY'},astral_monarch:{name:'Astral Judgement',icon:'✨',desc:'AOE 600 + stun',color:'#cc00ff',ult:'✨ ASTRAL FALL'},blood_sovereign:{name:'Blood Pact',icon:'🩸',desc:'Crit x25 + execute',color:'#cc00ff',ult:'🩸 BLOOD REQUIEM'},omni_king:{name:'Omni Power',icon:'👁️',desc:'Chain 20 + AOE',color:'#ffd700',ult:'👁️ OMNI FALL'},reality_weaver:{name:'Reality Break',icon:'🕸️',desc:'AOE 2000 + slow',color:'#ffd700',ult:'🕸️ REALITY BREAK'},dimension_lord:{name:'Dimension Cut',icon:'🌀',desc:'Crit x40 + execute',color:'#ffd700',ult:'🌀 DIMENSION CUT'},ancient_one:{name:'Ancient Wrath',icon:'🗿',desc:'AOE 3000 + stun',color:'#ff0066',ult:'🗿 ANCIENT WRATH'},titan_king:{name:'Titan Smash',icon:'⛰️',desc:'Crit x60 + execute',color:'#ff0066',ult:'⛰️ TITAN SMASH'},world_serpent:{name:'World Devour',icon:'🐍',desc:'Chain 30 + AOE',color:'#ff0066',ult:'🐍 WORLD DEVOUR'},eternal_knight:{name:'Eternal Slash',icon:'⚔️',desc:'Crit x80 + execute',color:'#00ffaa',ult:'⚔️ ETERNAL SLASH'},eternal_sage:{name:'Eternal Knowledge',icon:'📜',desc:'AOE 6000 + heal',color:'#00ffaa',ult:'📜 ETERNAL WISDOM'},exotic_amaterasu:{name:'Sun Goddess',icon:'🌸',desc:'AOE 12000 + burn',color:'#ff00aa',ult:'🌸 SOLAR GODDESS'},exotic_shiva:{name:'Destroyer',icon:'🔱',desc:'Chain 50 + AOE 10000',color:'#ff00aa',ult:'🔱 COSMIC DESTROYER'},void_priest:{name:'Void Sermon',icon:'🕯️',desc:'Chain + heal',color:'#8e44ad',ult:'🕯️ VOID SERMON'},star_weaver:{name:'Star Weave',icon:'🌟',desc:'AOE + bonus',color:'#e74c3c',ult:'🌟 STAR WEAVE'},chaos_knight:{name:'Chaos Strike',icon:'⚔️',desc:'Crit + execute',color:'#e74c3c',ult:'⚔️ CHAOS STRIKE'},shadow_blade_master:{name:'Shadow Barrage',icon:'🗡️',desc:'Multi-crit bonus',color:'#e74c3c',ult:'🗡️ SHADOW BARRAGE'},void_monk:{name:'Void Meditation',icon:'🧘',desc:'Chain + heal',color:'#e74c3c',ult:'🧘 VOID TRANSCENDENCE'},prism_lord:{name:'Prism Beam',icon:'💎',desc:'Chain + AOE',color:'#66ffff',ult:'💎 PRISM ANNIHILATION'},storm_emperor:{name:'Storm Apocalypse',icon:'⛈️',desc:'AOE + lightning',color:'#88ddff',ult:'⛈️ STORM EMPIRE'},chaos_god:{name:'Chaos Unbound',icon:'🌪️',desc:'Chain 20 + AOE',color:'#ff00ff',ult:'🌪️ CHAOS UNBOUND'},order_god:{name:'Order Judgement',icon:'⚖️',desc:'AOE 1200 + heal',color:'#ff00ff',ult:'⚖️ ORDER JUDGEMENT'},eternal_flame_king:{name:'Flame Emperor',icon:'🔥',desc:'AOE 2500 + burn',color:'#ffd700',ult:'🔥 FLAME EMPEROR'},creation_titan:{name:'World Creation',icon:'🌍',desc:'AOE 4000 + heal',color:'#ff0066',ult:'🌍 WORLD CREATION'},eternal_seraphim:{name:'Seraph Judgement',icon:'🕊️',desc:'AOE 8000 + heal',color:'#00ffaa',ult:'🕊️ SERAPH JUDGEMENT'},exotic_brahma:{name:'Cosmic Creation',icon:'🪷',desc:'AOE 15000 + stun',color:'#ff00aa',ult:'🪷 COSMIC CREATION'}};
+const EVO_SKILL={void_emperor:{name:'Void Collapse',icon:'🕳️',desc:'Chain + AOE',color:'#c060ff',ult:'☄️ VOID ANNIHILATION'},celestial_avatar:{name:'Divine Judgement',icon:'🌟',desc:'AOE + heal',color:'#fff08a',ult:'🕊️ GENESIS'},phantom_god:{name:'Soul Harvest',icon:'💀',desc:'Crit + bonus',color:'#ff6fe0',ult:'🔥 ARMAGEDDON'},time_lord:{name:'Temporal Rift',icon:'⏰',desc:'Slow + freeze',color:'#9ff0ff',ult:'⏰ TIME STOP'},void_sovereign:{name:'Void Supremacy',icon:'👑',desc:'Chain + slow',color:'#ff00ff',ult:'👑 VOID DOMINION'},star_emperor:{name:'Cosmic Judgement',icon:'🌠',desc:'AOE + heal',color:'#ff00ff',ult:'🌌 GALAXY BURST'},death_reaper:{name:'Grim Harvest',icon:'⚰️',desc:'Crit + execute',color:'#ff00ff',ult:'💀 REAPER DUE'},void_god:{name:'Void Genesis',icon:'🌌',desc:'Chain 5 + AOE',color:'#ff00aa',ult:'🌌 GENESIS ANNIHILATION'},star_god:{name:'Cosmic Apocalypse',icon:'💫',desc:'AOE + stun',color:'#ffe0ff',ult:'💫 APOCALYPSE'},death_god:{name:'Oblivion',icon:'☠️',desc:'Crit x6 + execute',color:'#aa00ff',ult:'☠️ OBLIVION'},void_primordial:{name:'Void Apocalypse',icon:'🕳️',desc:'Chain 8 + AOE 120',color:'#ff0066',ult:'🕳️ VOID APOCALYPSE'},star_primordial:{name:'Cosmic Extinction',icon:'🌌',desc:'AOE 400 + heal 5',color:'#ffaa00',ult:'🌌 COSMIC EXTINCTION'},death_primordial:{name:'Total Oblivion',icon:'💀',desc:'Crit x10 + execute',color:'#6600ff',ult:'💀 TOTAL OBLIVION'},soul_weaver:{name:'Soul Bind',icon:'🧵',desc:'Chain + slow',color:'#a060ff',ult:'🧵 SOUL BIND'},abyss_walker:{name:'Abyss Reach',icon:'🐙',desc:'AOE + slow',color:'#0099aa',ult:'🐙 ABYSS CALL'},gold_empress:{name:'Royal Fortune',icon:'👸',desc:'Ekonomi +',color:'#ffd700',ult:'👸 ROYAL DECREE'},eternal_flame:{name:'Flame Nova',icon:'🔥',desc:'AOE bakar',color:'#ff5500',ult:'🔥 ETERNAL BLAZE'},frost_empress:{name:'Frost Nova',icon:'❄️',desc:'Slow + freeze',color:'#aaeeff',ult:'❄️ ABSOLUTE ZERO'},light_emperor:{name:'Light Judgement',icon:'☀️',desc:'Chain + bonus',color:'#ffffaa',ult:'☀️ LIGHT JUDGEMENT'},eternal_dragon:{name:'Eternal Breath',icon:'🐲',desc:'Chain 8 + AOE',color:'#00ffaa',ult:'🐲 ETERNAL RUIN'},eternal_angel:{name:'Divine Wrath',icon:'👼',desc:'AOE 500 + heal',color:'#ffffff',ult:'👼 DIVINE WRATH'},eternal_demon:{name:'Hellfire',icon:'😈',desc:'Crit x15 + execute',color:'#00ffaa',ult:'😈 HELLFIRE'},exotic_nidhogg:{name:'Dragon Apocalypse',icon:'🐉',desc:'Chain 12 + AOE 200 + instant kill',color:'#ff00aa',ult:'🐉 RAGNAROK'},exotic_metatron:{name:'Divine Ascension',icon:'👁️',desc:'AOE 700 + heal 20 + stun',color:'#ff00aa',ult:'👁️ DIVINE ASCENSION'},exotic_lucifer:{name:'Infernal Judgement',icon:'🦇',desc:'Crit x30 + execute 95%',color:'#ff00aa',ult:'🦇 INFERNAL JUDGEMENT'},archdruid:{name:'Nature Blessing',icon:'🌳',desc:'Massive DMG Buff',color:'#00ffaa',ult:'🌳 WORLD TREE'},void_seer:{name:'Void Vision',icon:'🔮',desc:'Massive RNG Buff',color:'#66ccff',ult:'🔮 OMNI VISION'},temporal_god:{name:'Time Acceleration',icon:'⏳',desc:'Massive SPD Buff',color:'#ffcc00',ult:'⏳ TIME WARP'},oracle_rng:{name:'Farsight',icon:'👁️',desc:'RNG Buff Aura',color:'#66ccff',ult:'👁️ TRUE SIGHT'},warp_mage:{name:'Warp Field',icon:'🌀',desc:'SPD Buff Aura',color:'#ffcc00',ult:'🌀 WARP FIELD'},omniscient:{name:'All-Seeing',icon:'🌐',desc:'Massive RNG Buff',color:'#66ccff',ult:'🌐 OMNISCIENCE'},accelerator:{name:'Haste Field',icon:'⏱️',desc:'Massive SPD Buff',color:'#ffcc00',ult:'⏱️ OVERCLOCK'},cosmic_sovereign:{name:'Cosmic Supremacy',icon:'🌌',desc:'AOE + heal',color:'#ff00ff',ult:'🌌 COSMIC SUPREMACY'},abyss_sovereign:{name:'Abyss Devour',icon:'🕳️',desc:'Crit + execute',color:'#ff00ff',ult:'🕳️ ABYSS DEVOUR'},cosmic_god:{name:'Cosmic Judgement',icon:'🌟',desc:'AOE + massive',color:'#ffaaff',ult:'🌌 COSMIC ANNIHILATION'},cosmic_primordial:{name:'Cosmic Apocalypse',icon:'💫',desc:'AOE 500 + heal',color:'#ff00aa',ult:'💫 COSMIC APOCALYPSE'},abyss_god:{name:'Abyss Oblivion',icon:'🕳️',desc:'Crit x8 + execute',color:'#aa66ff',ult:'🕳️ ABYSS OBLIVION'},abyss_primordial:{name:'Void Extinction',icon:'💀',desc:'Crit x12 + execute',color:'#6600ff',ult:'💀 VOID EXTINCTION'},shadow_monarch:{name:'Arise',icon:'👑',desc:'Summon shadow soldiers',color:'#8e44ad',ult:'👑 SHADOW ARMY'},shadow_sovereign:{name:'Shadow Extraction',icon:'🗡️',desc:'Summon shadow knights',color:'#9b59b6',ult:'🗡️ SHADOW LEGION'},shadow_emperor:{name:'Sovereign of Shadows',icon:'☠️',desc:'Summon shadow warriors',color:'#aa66ff',ult:'☠️ ARMY OF DEAD'},shadow_god:{name:'Shadow Genesis',icon:'🌑',desc:'Summon shadow lords',color:'#ff00aa',ult:'🌑 SHADOW GENESIS'},shadow_origin:{name:'Absolute Shadow',icon:'💫',desc:'Summon shadow titans',color:'#00ffaa',ult:'💫 ABSOLUTE SHADOW'},shadow_king:{name:'Monarch Army',icon:'🐉',desc:'Summon shadow dragons',color:'#ff00aa',ult:'🐉 ARMY OF THE MONARCH'},flame_god:{name:'Inferno Judgement',icon:'🔥',desc:'Massive AOE + burn',color:'#ff4400',ult:'🔥 INFERNO JUDGEMENT'},nature_god:{name:'Nature Wrath',icon:'🌿',desc:'Massive AOE buff',color:'#00ff66',ult:'🌿 NATURE WRATH'},chrono_god:{name:'Time Lock',icon:'⌛',desc:'Massive slow + freeze',color:'#9966ff',ult:'⌛ TIME LOCK'},flame_primordial:{name:'Apocalyptic Flame',icon:'🔥',desc:'AOE 600 + burn',color:'#ff0066',ult:'🔥 APOCALYPTIC FLAME'},nature_primordial:{name:'Primordial Nature',icon:'🌿',desc:'Massive AOE buff',color:'#00ffaa',ult:'🌿 PRIMORDIAL NATURE'},chrono_primordial:{name:'Eternal Lock',icon:'⌛',desc:'Massive slow',color:'#6600ff',ult:'⌛ ETERNAL LOCK'},necromancer:{name:'Raise Dead',icon:'💀',desc:'Summon skeletons',color:'#8e44ad',ult:'💀 UNDEAD ARMY'},samurai:{name:'Iaido',icon:'🎎',desc:'Crit + execute',color:'#ff2255',ult:'⚔️ ZEN SLASH'},paladin:{name:'Divine Shield',icon:'🛡️',desc:'Defensive heal',color:'#ffd700',ult:'🛡️ HOLY SHIELD'},philosopher:{name:"Philosopher's Stone",icon:'📜',desc:'AOE + gold',color:'#ffd700',ult:'📜 ALCHEMY'},sniper_god:{name:'Perfect Aim',icon:'🎯',desc:'Extreme range crit',color:'#2ecc71',ult:'🎯 HEADSHOT'},lich:{name:'Soul Legion',icon:'💀',desc:'Massive summon',color:'#aa00ff',ult:'💀 SOUL STORM'},shogun:{name:'Bushido',icon:'🎎',desc:'Multi-crit',color:'#ff2255',ult:'⚔️ SEVEN SAMURAI'},phoenix:{name:'Rebirth Flame',icon:'🦅',desc:'AOE burn heal',color:'#ff4400',ult:'🔥 REBIRTH'},void_walker:{name:'Rift Walk',icon:'🕳️',desc:'Chain + slow',color:'#9933ff',ult:'🕳️ VOID PORTAL'},dragon_lord:{name:'Dragon Roar',icon:'🐲',desc:'AOE + burn',color:'#ff2200',ult:'🐲 DRAGON ROAR'},chaos_lord:{name:'Chaos Storm',icon:'🌀',desc:'Chain 6 + AOE',color:'#aa00ff',ult:'🌀 CHAOS STORM'},frost_god:{name:'Absolute Freeze',icon:'❄️',desc:'Massive slow',color:'#88ddff',ult:'❄️ ABSOLUTE FREEZE'},primordial_wyrm:{name:'Ancient Roar',icon:'🐉',desc:'AOE 800 + burn',color:'#ff00aa',ult:'🐉 ANCIENT ROAR'},celestial_king:{name:'King Judgement',icon:'👑',desc:'Chain 10 + heal',color:'#ffd700',ult:'👑 KING JUDGEMENT'},infinity:{name:'Infinity Void',icon:'♾️',desc:'Chain 15 + AOE',color:'#ff00aa',ult:'♾️ INFINITY'},oblivion:{name:'Total Erase',icon:'🌑',desc:'Crit x50 + execute',color:'#440088',ult:'🌑 TOTAL ERASE'},genesis:{name:'World Creation',icon:'🌟',desc:'AOE 2000 + heal',color:'#ffd700',ult:'🌟 GENESIS'},apocalypse:{name:'World End',icon:'☄️',desc:'Crit x80 + execute',color:'#ff0066',ult:'☄️ APOCALYPSE'},eternal_phoenix:{name:'Eternal Fire',icon:'🔥',desc:'Chain 20 + AOE 3000',color:'#ff4400',ult:'🔥 ETERNAL FIRE'},eternal_void:{name:'Eternal Rift',icon:'🕳️',desc:'Chain 25 + AOE 2500',color:'#00ffaa',ult:'🕳️ ETERNAL RIFT'},exotic_chaos:{name:'Chaos Incarnate',icon:'🌪️',desc:'Chain 30 + AOE 5000',color:'#ff00aa',ult:'🌪️ CHAOS INCARNATE'},exotic_omni:{name:'Omniscience',icon:'🌌',desc:'AOE 8000 + stun',color:'#ff00aa',ult:'🌌 OMNI GENESIS'},eclipse_lord:{name:'Eclipse Void',icon:'🌑',desc:'Chain 8 + dark',color:'#8844ff',ult:'🌑 ECLIPSE FALL'},aurora_queen:{name:'Aurora Storm',icon:'🌈',desc:'AOE + freeze',color:'#88ffff',ult:'🌈 AURORA BARRIER'},solar_king:{name:'Solar Flare',icon:'☀️',desc:'Massive AOE burn',color:'#ffdd44',ult:'☀️ SOLAR ERUPTION'},heaven_emperor:{name:'Divine Judgement',icon:'👼',desc:'AOE 500 + heal',color:'#ffddff',ult:'👼 HEAVEN FALL'},hell_emperor:{name:'Infernal Judgement',icon:'😈',desc:'Crit x20 + execute',color:'#ff00ff',ult:'😈 HELL FALL'},purgatory_king:{name:'Soul Reap',icon:'💀',desc:'Chain 15 + soul',color:'#8800ff',ult:'💀 PURGATORY'},void_archon:{name:'Void Supremacy',icon:'🕳️',desc:'Chain 12 + AOE',color:'#cc00ff',ult:'🕳️ VOID SUPREMACY'},astral_monarch:{name:'Astral Judgement',icon:'✨',desc:'AOE 600 + stun',color:'#cc00ff',ult:'✨ ASTRAL FALL'},blood_sovereign:{name:'Blood Pact',icon:'🩸',desc:'Crit x25 + execute',color:'#cc00ff',ult:'🩸 BLOOD REQUIEM'},omni_king:{name:'Omni Power',icon:'👁️',desc:'Chain 20 + AOE',color:'#ffd700',ult:'👁️ OMNI FALL'},reality_weaver:{name:'Reality Break',icon:'🕸️',desc:'AOE 2000 + slow',color:'#ffd700',ult:'🕸️ REALITY BREAK'},dimension_lord:{name:'Dimension Cut',icon:'🌀',desc:'Crit x40 + execute',color:'#ffd700',ult:'🌀 DIMENSION CUT'},ancient_one:{name:'Ancient Wrath',icon:'🗿',desc:'AOE 3000 + stun',color:'#ff0066',ult:'🗿 ANCIENT WRATH'},titan_king:{name:'Titan Smash',icon:'⛰️',desc:'Crit x60 + execute',color:'#ff0066',ult:'⛰️ TITAN SMASH'},world_serpent:{name:'World Devour',icon:'🐍',desc:'Chain 30 + AOE',color:'#ff0066',ult:'🐍 WORLD DEVOUR'},eternal_knight:{name:'Eternal Slash',icon:'⚔️',desc:'Crit x80 + execute',color:'#00ffaa',ult:'⚔️ ETERNAL SLASH'},eternal_sage:{name:'Eternal Knowledge',icon:'📜',desc:'AOE 6000 + heal',color:'#00ffaa',ult:'📜 ETERNAL WISDOM'},exotic_amaterasu:{name:'Sun Goddess',icon:'🌸',desc:'AOE 12000 + burn',color:'#ff00aa',ult:'🌸 SOLAR GODDESS'},exotic_shiva:{name:'Destroyer',icon:'🔱',desc:'Chain 50 + AOE 10000',color:'#ff00aa',ult:'🔱 COSMIC DESTROYER'},void_priest:{name:'Void Sermon',icon:'🕯️',desc:'Chain + heal',color:'#8e44ad',ult:'🕯️ VOID SERMON'},star_weaver:{name:'Star Weave',icon:'🌟',desc:'AOE + bonus',color:'#e74c3c',ult:'🌟 STAR WEAVE'},chaos_knight:{name:'Chaos Strike',icon:'⚔️',desc:'Crit + execute',color:'#e74c3c',ult:'⚔️ CHAOS STRIKE'},shadow_blade_master:{name:'Shadow Barrage',icon:'🗡️',desc:'Multi-crit bonus',color:'#e74c3c',ult:'🗡️ SHADOW BARRAGE'},void_monk:{name:'Void Meditation',icon:'🧘',desc:'Chain + heal',color:'#e74c3c',ult:'🧘 VOID TRANSCENDENCE'},prism_lord:{name:'Prism Beam',icon:'💎',desc:'Chain + AOE',color:'#66ffff',ult:'💎 PRISM ANNIHILATION'},storm_emperor:{name:'Storm Apocalypse',icon:'⛈️',desc:'AOE + lightning',color:'#88ddff',ult:'⛈️ STORM EMPIRE'},chaos_god:{name:'Chaos Unbound',icon:'🌪️',desc:'Chain 20 + AOE',color:'#ff00ff',ult:'🌪️ CHAOS UNBOUND'},order_god:{name:'Order Judgement',icon:'⚖️',desc:'AOE 1200 + heal',color:'#ff00ff',ult:'⚖️ ORDER JUDGEMENT'},eternal_flame_king:{name:'Flame Emperor',icon:'🔥',desc:'AOE 2500 + burn',color:'#ffd700',ult:'🔥 FLAME EMPEROR'},creation_titan:{name:'World Creation',icon:'🌍',desc:'AOE 4000 + heal',color:'#ff0066',ult:'🌍 WORLD CREATION'},eternal_seraphim:{name:'Seraph Judgement',icon:'🕊️',desc:'AOE 8000 + heal',color:'#00ffaa',ult:'🕊️ SERAPH JUDGEMENT'},exotic_brahma:{name:'Cosmic Creation',icon:'🪷',desc:'AOE 15000 + stun',color:'#ff00aa',ult:'🪷 COSMIC CREATION'},
+gojo:{name:'Domain Expansion',icon:'♾️',desc:'Unlimited Void — 2x range',color:'#00ccff',ult:'♾️ UNLIMITED VOID'},
+gojo_awakened:{name:'Hollow Purple',icon:'🟣',desc:'Map-wide annihilation',color:'#aa00ff',ult:'🟣 HOLLOW PURPLE'}};
 
 const SECRET_DROPS={void_core:'void_sovereign',star_fragment:'star_emperor',death_crystal:'death_reaper',cosmic_essence:'cosmic_sovereign',eternal_shard:'abyss_sovereign',abyssal_pearl:'heaven_emperor',solar_flare:'hell_emperor',divine_crown:'purgatory_king'};
 const SECRET_CHANCE=0.01;
@@ -227,12 +231,13 @@ const MAP_WP=['forest','desert','volcano','cosmos','island','hell'];
 const THEMES={forest:{bg:['#0a2818','#0d3a20'],path:['#3a2a1a','#2a1f10'],decos:'trees',decoColor:'#1a5a2a',decoHighlight:'#2a8a3a',particles:{c:'#88ff88',n:20}},desert:{bg:['#3a2810','#4a3518'],path:['#6a5030','#5a4020'],decos:'cactus',decoColor:'#2a5a20',decoHighlight:'#3a7a30',particles:{c:'#ffcc66',n:25}},volcano:{bg:['#2a0a0a','#3a1010'],path:['#1a0808','#0a0404'],decos:'lava',decoColor:'#ff3300',decoHighlight:'#ffaa00',particles:{c:'#ff5500',n:30}},cosmos:{bg:['#0a0a2a','#15103a'],path:['#2a1a5a','#1a1040'],decos:'stars',decoColor:'#ffffff',decoHighlight:'#aaccff',particles:{c:'#ffaaff',n:35}},legend:{bg:['#1a0a2a','#2a153a'],path:['#3a1a5a','#2a1040'],decos:'runes',decoColor:'#ffd700',decoHighlight:'#ffffaa',particles:{c:'#ffdd88',n:25}},inf:{bg:['#0a0e27','#150a2a'],path:['#1a153a','#0a0a1a'],decos:'portals',decoColor:'#ff00ff',decoHighlight:'#00ffff',particles:{c:'#aa00ff',n:30}},void_shard:{bg:['#1a0a2a','#2a1040'],path:['#3a1a5a','#2a1040'],decos:'rifts',decoColor:'#9933ff',decoHighlight:'#cc66ff',particles:{c:'#aa66ff',n:25}},celestial_tear:{bg:['#3a2a10','#4a3518'],path:['#8a6020','#6a4810'],decos:'halos',decoColor:'#ffd700',decoHighlight:'#fff8cc',particles:{c:'#ffee88',n:25}},phantom_essence:{bg:['#0a2a20','#103a28'],path:['#1a5a40','#0d3a28'],decos:'wisps',decoColor:'#66ffcc',decoHighlight:'#aaffee',particles:{c:'#88ffdd',n:30}},void_core:{bg:['#0a0408','#15080f'],path:['#2a0a1a','#100408'],decos:'blackholes',decoColor:'#6600ff',decoHighlight:'#aa66ff',particles:{c:'#8844ff',n:28}},star_fragment:{bg:['#0a0a2a','#15103a'],path:['#2a1a5a','#1a1040'],decos:'stars',decoColor:'#ffffff',decoHighlight:'#ffee88',particles:{c:'#ffdd88',n:35}},death_crystal:{bg:['#1a0404','#2a0808'],path:['#4a0f0f','#2a0808'],decos:'skulls',decoColor:'#ff2200',decoHighlight:'#ff8866',particles:{c:'#ff4444',n:30}},cosmic_essence:{bg:['#2a0a3a','#3a104a'],path:['#6a1a8a','#4a1060'],decos:'galaxies',decoColor:'#ff00ff',decoHighlight:'#ffaaff',particles:{c:'#ff66ff',n:35}},eternal_shard:{bg:['#0a1a2a','#0d2a3a'],path:['#1a4a6a','#0d3050'],decos:'portals',decoColor:'#00ccff',decoHighlight:'#aaffff',particles:{c:'#66ddff',n:30}},island:{bg:['#0a2a2a','#0d3a3a'],path:['#7a5a30','#5a4020'],decos:'palms',decoColor:'#2a8a4a',decoHighlight:'#5affa0',particles:{c:'#aaffee',n:25}},hell:{bg:['#2a0404','#3a0606'],path:['#0a0202','#180404'],decos:'hellfire',decoColor:'#ff2200',decoHighlight:'#ffcc00',particles:{c:'#ff3300',n:40}}};
 function generateDeco(themeKey){const theme=THEMES[themeKey]||THEMES.forest;const N=theme.decos==='stars'?60:theme.decos==='trees'?25:theme.decos==='hellfire'?50:theme.decos==='palms'?22:20;const decos=[];for(let i=0;i<N;i++){decos.push({x:Math.random()*900,y:Math.random()*550,size:0.5+Math.random()*1.5,phase:Math.random()*6.28,type:Math.floor(Math.random()*3)})}return decos}
 const MAPS=[{n:'🌲 Forest',d:[.7,.85,1,1.2,1.4,1.65,2]},{n:'🏜️ Desert',d:[2.2,2.5,2.8,3.1,3.5,3.9,4.5]},{n:'🌋 Volcano',d:[5,5.5,6,6.5,7.2,8,9]},{n:'🌌 Cosmos',d:[12,13.5,15,17,19,22,26]},{n:'🏝️ Island',d:[24,28,32,38,44,52,62]},{n:'👹 Hell',d:[50,60,72,86,102,120,145]}];
-const RECIPES={void_reaper:{r:'void_emperor',m:{void_shard:25,void_core:10,phantom_essence:8},cost:500},celestial_g:{r:'celestial_avatar',m:{celestial_tear:25,star_fragment:10,void_shard:8},cost:500},phantom_lord:{r:'phantom_god',m:{phantom_essence:25,death_crystal:10,celestial_tear:8},cost:500},chronomancer:{r:'time_lord',m:{phantom_essence:25,star_fragment:10,void_shard:8},cost:500},void_sovereign:{r:'void_god',m:{void_core:50,star_fragment:40,death_crystal:40,void_shard:30},cost:2000},star_emperor:{r:'star_god',m:{star_fragment:50,death_crystal:40,void_core:40,celestial_tear:30},cost:2000},death_reaper:{r:'death_god',m:{death_crystal:50,void_core:40,star_fragment:40,phantom_essence:30},cost:2000},cosmic_sovereign:{r:'cosmic_god',m:{cosmic_essence:50,star_fragment:40,death_crystal:40,celestial_tear:30},cost:2000},abyss_sovereign:{r:'abyss_god',m:{eternal_shard:50,void_core:40,star_fragment:40,phantom_essence:30},cost:2000},void_emperor:{r:'void_god',m:{cosmic_essence:80,eternal_shard:60,void_core:60,phantom_essence:50,death_crystal:40},cost:15000},celestial_avatar:{r:'star_god',m:{cosmic_essence:80,eternal_shard:60,star_fragment:60,celestial_tear:50,void_core:40},cost:15000},phantom_god:{r:'death_god',m:{cosmic_essence:80,eternal_shard:60,death_crystal:60,phantom_essence:50,star_fragment:40},cost:15000},time_lord:{r:'cosmic_god',m:{cosmic_essence:80,eternal_shard:60,celestial_tear:60,star_fragment:50,void_core:40},cost:15000},eternal_flame:{r:'flame_god',m:{cosmic_essence:80,eternal_shard:60,void_shard:60,celestial_tear:50,death_crystal:40},cost:15000},frost_empress:{r:'abyss_god',m:{cosmic_essence:80,eternal_shard:60,phantom_essence:60,death_crystal:50,celestial_tear:40},cost:15000},archdruid:{r:'nature_god',m:{cosmic_essence:80,eternal_shard:60,celestial_tear:60,phantom_essence:50,void_shard:40},cost:15000},void_seer:{r:'void_god',m:{cosmic_essence:80,eternal_shard:60,void_core:60,star_fragment:50,death_crystal:40},cost:15000},temporal_god:{r:'chrono_god',m:{cosmic_essence:80,eternal_shard:60,star_fragment:60,celestial_tear:50,phantom_essence:40},cost:15000},shadow_monarch:{r:'shadow_emperor',m:{cosmic_essence:80,eternal_shard:60,void_core:60,death_crystal:50,star_fragment:50},cost:15000},light_emperor:{r:'cosmic_god',m:{star_fragment:50,death_crystal:40,void_core:40,celestial_tear:30},cost:2000},void_god:{r:'void_primordial',m:{cosmic_essence:80,eternal_shard:60,void_core:80,star_fragment:50,death_crystal:50},cost:10000},star_god:{r:'star_primordial',m:{cosmic_essence:80,eternal_shard:60,star_fragment:80,void_core:50,death_crystal:50},cost:10000},death_god:{r:'death_primordial',m:{cosmic_essence:80,eternal_shard:60,death_crystal:80,void_core:50,star_fragment:50},cost:10000},cosmic_god:{r:'cosmic_primordial',m:{cosmic_essence:80,eternal_shard:60,star_fragment:80,void_core:50,death_crystal:50},cost:10000},abyss_god:{r:'abyss_primordial',m:{cosmic_essence:80,eternal_shard:60,death_crystal:80,void_core:50,star_fragment:50},cost:10000},flame_god:{r:'flame_primordial',m:{cosmic_essence:120,eternal_shard:90,void_core:80,death_crystal:80,star_fragment:60},cost:25000},nature_god:{r:'nature_primordial',m:{cosmic_essence:120,eternal_shard:90,star_fragment:80,celestial_tear:80,phantom_essence:60},cost:25000},chrono_god:{r:'chrono_primordial',m:{cosmic_essence:120,eternal_shard:90,star_fragment:80,celestial_tear:80,death_crystal:60},cost:25000},shadow_sovereign:{r:'shadow_emperor',m:{cosmic_essence:80,eternal_shard:60,void_core:80,death_crystal:50,star_fragment:50},cost:12000},shadow_emperor:{r:'shadow_god',m:{cosmic_essence:120,eternal_shard:100,void_core:100,death_crystal:100,star_fragment:80},cost:25000},shadow_god:{r:'shadow_origin',m:{cosmic_essence:250,eternal_shard:200,void_core:150,death_crystal:150,star_fragment:150},cost:60000},shadow_origin:{r:'shadow_king',m:{cosmic_essence:400,eternal_shard:350,void_core:250,death_crystal:250,star_fragment:250},cost:150000},void_primordial:{r:'eternal_dragon',m:{cosmic_essence:150,eternal_shard:100,void_core:100,death_crystal:80,star_fragment:80},cost:30000},star_primordial:{r:'eternal_angel',m:{cosmic_essence:150,eternal_shard:100,star_fragment:100,void_core:80,death_crystal:80},cost:30000},death_primordial:{r:'eternal_demon',m:{cosmic_essence:150,eternal_shard:100,death_crystal:100,void_core:80,star_fragment:80},cost:30000},cosmic_primordial:{r:'eternal_angel',m:{cosmic_essence:150,eternal_shard:100,star_fragment:100,void_core:80,death_crystal:80},cost:30000},abyss_primordial:{r:'eternal_demon',m:{cosmic_essence:150,eternal_shard:100,death_crystal:100,void_core:80,star_fragment:80},cost:30000},flame_primordial:{r:'exotic_nidhogg',m:{cosmic_essence:200,eternal_shard:150,void_core:100,death_crystal:100,star_fragment:100},cost:50000},nature_primordial:{r:'exotic_metatron',m:{cosmic_essence:200,eternal_shard:150,star_fragment:100,void_core:100,celestial_tear:100},cost:50000},chrono_primordial:{r:'exotic_lucifer',m:{cosmic_essence:200,eternal_shard:150,star_fragment:100,death_crystal:100,phantom_essence:100},cost:50000},eternal_dragon:{r:'exotic_nidhogg',m:{cosmic_essence:200,eternal_shard:150,void_core:100,star_fragment:100,death_crystal:100},cost:50000},eternal_angel:{r:'exotic_metatron',m:{cosmic_essence:200,eternal_shard:150,star_fragment:100,void_core:100,death_crystal:100},cost:50000},eternal_demon:{r:'exotic_lucifer',m:{cosmic_essence:200,eternal_shard:150,death_crystal:100,void_core:100,star_fragment:100},cost:50000},chaos_lord:{r:'infinity',m:{cosmic_essence:100,eternal_shard:80,void_core:80,star_fragment:60,death_crystal:60},cost:20000},frost_god:{r:'oblivion',m:{cosmic_essence:100,eternal_shard:80,death_crystal:80,phantom_essence:60,star_fragment:60},cost:20000},celestial_king:{r:'genesis',m:{cosmic_essence:120,eternal_shard:100,star_fragment:100,void_core:80,celestial_tear:80},cost:30000},primordial_wyrm:{r:'apocalypse',m:{cosmic_essence:120,eternal_shard:100,death_crystal:100,void_core:80,star_fragment:80},cost:30000},infinity:{r:'eternal_void',m:{cosmic_essence:200,eternal_shard:150,star_fragment:120,void_core:100,death_crystal:100},cost:50000},oblivion:{r:'eternal_phoenix',m:{cosmic_essence:200,eternal_shard:150,death_crystal:120,phantom_essence:100,star_fragment:100},cost:50000},genesis:{r:'eternal_void',m:{cosmic_essence:250,eternal_shard:200,star_fragment:150,celestial_tear:120,void_core:120},cost:80000},apocalypse:{r:'eternal_phoenix',m:{cosmic_essence:250,eternal_shard:200,death_crystal:150,phantom_essence:120,star_fragment:120},cost:80000},eternal_phoenix:{r:'exotic_chaos',m:{cosmic_essence:400,eternal_shard:300,death_crystal:200,void_core:200,star_fragment:200},cost:200000},eternal_void:{r:'exotic_omni',m:{cosmic_essence:400,eternal_shard:300,star_fragment:200,celestial_tear:200,death_crystal:200},cost:200000},void_priest:{r:'eclipse_lord',m:{void_core:60,phantom_essence:50,star_fragment:40},cost:8000},star_weaver:{r:'aurora_queen',m:{star_fragment:60,celestial_tear:50,void_core:40},cost:8000},chaos_knight:{r:'solar_king',m:{death_crystal:60,void_core:50,star_fragment:40},cost:8000},shadow_blade_master:{r:'prism_lord',m:{void_core:60,death_crystal:50,star_fragment:40},cost:8000},void_monk:{r:'storm_emperor',m:{void_core:60,phantom_essence:50,star_fragment:40},cost:8000},eclipse_lord:{r:'omni_king',m:{abyssal_pearl:100,cosmic_essence:80,eternal_shard:80,void_core:60,death_crystal:60},cost:20000},aurora_queen:{r:'reality_weaver',m:{solar_flare:100,cosmic_essence:80,eternal_shard:80,star_fragment:60,void_core:60},cost:20000},solar_king:{r:'dimension_lord',m:{divine_crown:100,cosmic_essence:80,eternal_shard:80,star_fragment:60,death_crystal:60},cost:20000},prism_lord:{r:'eternal_flame_king',m:{abyssal_pearl:80,solar_flare:60,cosmic_essence:60,void_core:50,death_crystal:50},cost:18000},storm_emperor:{r:'eternal_flame_king',m:{solar_flare:80,divine_crown:60,cosmic_essence:60,star_fragment:50,void_core:50},cost:18000},heaven_emperor:{r:'omni_king',m:{abyssal_pearl:120,cosmic_essence:100,eternal_shard:100,void_core:80,celestial_tear:80},cost:25000},hell_emperor:{r:'dimension_lord',m:{solar_flare:120,cosmic_essence:100,eternal_shard:100,death_crystal:80,star_fragment:80},cost:25000},purgatory_king:{r:'reality_weaver',m:{divine_crown:120,cosmic_essence:100,eternal_shard:100,void_core:80,phantom_essence:80},cost:25000},chaos_god:{r:'creation_titan',m:{abyssal_pearl:120,solar_flare:100,cosmic_essence:100,eternal_shard:80,death_crystal:80},cost:30000},order_god:{r:'creation_titan',m:{divine_crown:120,abyssal_pearl:100,cosmic_essence:100,eternal_shard:80,star_fragment:80},cost:30000},omni_king:{r:'ancient_one',m:{cosmic_essence:200,eternal_shard:150,abyssal_pearl:100,void_core:100,death_crystal:100},cost:50000},reality_weaver:{r:'titan_king',m:{cosmic_essence:200,eternal_shard:150,solar_flare:100,star_fragment:100,death_crystal:100},cost:50000},dimension_lord:{r:'world_serpent',m:{cosmic_essence:200,eternal_shard:150,divine_crown:100,void_core:100,star_fragment:100},cost:50000},eternal_flame_king:{r:'eternal_seraphim',m:{cosmic_essence:350,eternal_shard:300,abyssal_pearl:150,solar_flare:150,death_crystal:150},cost:150000},ancient_one:{r:'eternal_knight',m:{cosmic_essence:300,eternal_shard:250,abyssal_pearl:150,death_crystal:150,void_core:150},cost:100000},titan_king:{r:'eternal_knight',m:{cosmic_essence:300,eternal_shard:250,solar_flare:150,death_crystal:150,star_fragment:150},cost:100000},world_serpent:{r:'eternal_sage',m:{cosmic_essence:300,eternal_shard:250,divine_crown:150,void_core:150,phantom_essence:150},cost:100000},eternal_knight:{r:'exotic_amaterasu',m:{cosmic_essence:500,eternal_shard:400,abyssal_pearl:200,solar_flare:200,death_crystal:200},cost:300000},eternal_sage:{r:'exotic_shiva',m:{cosmic_essence:500,eternal_shard:400,divine_crown:200,solar_flare:200,celestial_tear:200},cost:300000},creation_titan:{r:'exotic_brahma',m:{cosmic_essence:600,eternal_shard:500,divine_crown:250,solar_flare:250,abyssal_pearl:250},cost:400000},eternal_seraphim:{r:'exotic_brahma',m:{cosmic_essence:700,eternal_shard:600,divine_crown:300,abyssal_pearl:300,celestial_tear:300},cost:500000}};
+const RECIPES={void_reaper:{r:'void_emperor',m:{void_shard:25,void_core:10,phantom_essence:8},cost:500},celestial_g:{r:'celestial_avatar',m:{celestial_tear:25,star_fragment:10,void_shard:8},cost:500},phantom_lord:{r:'phantom_god',m:{phantom_essence:25,death_crystal:10,celestial_tear:8},cost:500},chronomancer:{r:'time_lord',m:{phantom_essence:25,star_fragment:10,void_shard:8},cost:500},void_sovereign:{r:'void_god',m:{void_core:50,star_fragment:40,death_crystal:40,void_shard:30},cost:2000},star_emperor:{r:'star_god',m:{star_fragment:50,death_crystal:40,void_core:40,celestial_tear:30},cost:2000},death_reaper:{r:'death_god',m:{death_crystal:50,void_core:40,star_fragment:40,phantom_essence:30},cost:2000},cosmic_sovereign:{r:'cosmic_god',m:{cosmic_essence:50,star_fragment:40,death_crystal:40,celestial_tear:30},cost:2000},abyss_sovereign:{r:'abyss_god',m:{eternal_shard:50,void_core:40,star_fragment:40,phantom_essence:30},cost:2000},void_emperor:{r:'void_god',m:{cosmic_essence:80,eternal_shard:60,void_core:60,phantom_essence:50,death_crystal:40},cost:15000},celestial_avatar:{r:'star_god',m:{cosmic_essence:80,eternal_shard:60,star_fragment:60,celestial_tear:50,void_core:40},cost:15000},phantom_god:{r:'death_god',m:{cosmic_essence:80,eternal_shard:60,death_crystal:60,phantom_essence:50,star_fragment:40},cost:15000},time_lord:{r:'cosmic_god',m:{cosmic_essence:80,eternal_shard:60,celestial_tear:60,star_fragment:50,void_core:40},cost:15000},eternal_flame:{r:'flame_god',m:{cosmic_essence:80,eternal_shard:60,void_shard:60,celestial_tear:50,death_crystal:40},cost:15000},frost_empress:{r:'abyss_god',m:{cosmic_essence:80,eternal_shard:60,phantom_essence:60,death_crystal:50,celestial_tear:40},cost:15000},archdruid:{r:'nature_god',m:{cosmic_essence:80,eternal_shard:60,celestial_tear:60,phantom_essence:50,void_shard:40},cost:15000},void_seer:{r:'void_god',m:{cosmic_essence:80,eternal_shard:60,void_core:60,star_fragment:50,death_crystal:40},cost:15000},temporal_god:{r:'chrono_god',m:{cosmic_essence:80,eternal_shard:60,star_fragment:60,celestial_tear:50,phantom_essence:40},cost:15000},shadow_monarch:{r:'shadow_emperor',m:{cosmic_essence:80,eternal_shard:60,void_core:60,death_crystal:50,star_fragment:50},cost:15000},light_emperor:{r:'cosmic_god',m:{star_fragment:50,death_crystal:40,void_core:40,celestial_tear:30},cost:2000},void_god:{r:'void_primordial',m:{cosmic_essence:80,eternal_shard:60,void_core:80,star_fragment:50,death_crystal:50},cost:10000},star_god:{r:'star_primordial',m:{cosmic_essence:80,eternal_shard:60,star_fragment:80,void_core:50,death_crystal:50},cost:10000},death_god:{r:'death_primordial',m:{cosmic_essence:80,eternal_shard:60,death_crystal:80,void_core:50,star_fragment:50},cost:10000},cosmic_god:{r:'cosmic_primordial',m:{cosmic_essence:80,eternal_shard:60,star_fragment:80,void_core:50,death_crystal:50},cost:10000},abyss_god:{r:'abyss_primordial',m:{cosmic_essence:80,eternal_shard:60,death_crystal:80,void_core:50,star_fragment:50},cost:10000},flame_god:{r:'flame_primordial',m:{cosmic_essence:120,eternal_shard:90,void_core:80,death_crystal:80,star_fragment:60},cost:25000},nature_god:{r:'nature_primordial',m:{cosmic_essence:120,eternal_shard:90,star_fragment:80,celestial_tear:80,phantom_essence:60},cost:25000},chrono_god:{r:'chrono_primordial',m:{cosmic_essence:120,eternal_shard:90,star_fragment:80,celestial_tear:80,death_crystal:60},cost:25000},shadow_sovereign:{r:'shadow_emperor',m:{cosmic_essence:80,eternal_shard:60,void_core:80,death_crystal:50,star_fragment:50},cost:12000},shadow_emperor:{r:'shadow_god',m:{cosmic_essence:120,eternal_shard:100,void_core:100,death_crystal:100,star_fragment:80},cost:25000},shadow_god:{r:'shadow_origin',m:{cosmic_essence:250,eternal_shard:200,void_core:150,death_crystal:150,star_fragment:150},cost:60000},shadow_origin:{r:'shadow_king',m:{cosmic_essence:400,eternal_shard:350,void_core:250,death_crystal:250,star_fragment:250},cost:150000},void_primordial:{r:'eternal_dragon',m:{cosmic_essence:150,eternal_shard:100,void_core:100,death_crystal:80,star_fragment:80},cost:30000},star_primordial:{r:'eternal_angel',m:{cosmic_essence:150,eternal_shard:100,star_fragment:100,void_core:80,death_crystal:80},cost:30000},death_primordial:{r:'eternal_demon',m:{cosmic_essence:150,eternal_shard:100,death_crystal:100,void_core:80,star_fragment:80},cost:30000},cosmic_primordial:{r:'eternal_angel',m:{cosmic_essence:150,eternal_shard:100,star_fragment:100,void_core:80,death_crystal:80},cost:30000},abyss_primordial:{r:'eternal_demon',m:{cosmic_essence:150,eternal_shard:100,death_crystal:100,void_core:80,star_fragment:80},cost:30000},flame_primordial:{r:'exotic_nidhogg',m:{cosmic_essence:200,eternal_shard:150,void_core:100,death_crystal:100,star_fragment:100},cost:50000},nature_primordial:{r:'exotic_metatron',m:{cosmic_essence:200,eternal_shard:150,star_fragment:100,void_core:100,celestial_tear:100},cost:50000},chrono_primordial:{r:'exotic_lucifer',m:{cosmic_essence:200,eternal_shard:150,star_fragment:100,death_crystal:100,phantom_essence:100},cost:50000},eternal_dragon:{r:'exotic_nidhogg',m:{cosmic_essence:200,eternal_shard:150,void_core:100,star_fragment:100,death_crystal:100},cost:50000},eternal_angel:{r:'exotic_metatron',m:{cosmic_essence:200,eternal_shard:150,star_fragment:100,void_core:100,death_crystal:100},cost:50000},eternal_demon:{r:'exotic_lucifer',m:{cosmic_essence:200,eternal_shard:150,death_crystal:100,void_core:100,star_fragment:100},cost:50000},chaos_lord:{r:'infinity',m:{cosmic_essence:100,eternal_shard:80,void_core:80,star_fragment:60,death_crystal:60},cost:20000},frost_god:{r:'oblivion',m:{cosmic_essence:100,eternal_shard:80,death_crystal:80,phantom_essence:60,star_fragment:60},cost:20000},celestial_king:{r:'genesis',m:{cosmic_essence:120,eternal_shard:100,star_fragment:100,void_core:80,celestial_tear:80},cost:30000},primordial_wyrm:{r:'apocalypse',m:{cosmic_essence:120,eternal_shard:100,death_crystal:100,void_core:80,star_fragment:80},cost:30000},infinity:{r:'eternal_void',m:{cosmic_essence:200,eternal_shard:150,star_fragment:120,void_core:100,death_crystal:100},cost:50000},oblivion:{r:'eternal_phoenix',m:{cosmic_essence:200,eternal_shard:150,death_crystal:120,phantom_essence:100,star_fragment:100},cost:50000},genesis:{r:'eternal_void',m:{cosmic_essence:250,eternal_shard:200,star_fragment:150,celestial_tear:120,void_core:120},cost:80000},apocalypse:{r:'eternal_phoenix',m:{cosmic_essence:250,eternal_shard:200,death_crystal:150,phantom_essence:120,star_fragment:120},cost:80000},eternal_phoenix:{r:'exotic_chaos',m:{cosmic_essence:400,eternal_shard:300,death_crystal:200,void_core:200,star_fragment:200},cost:200000},eternal_void:{r:'exotic_omni',m:{cosmic_essence:400,eternal_shard:300,star_fragment:200,celestial_tear:200,death_crystal:200},cost:200000},void_priest:{r:'eclipse_lord',m:{void_core:60,phantom_essence:50,star_fragment:40},cost:8000},star_weaver:{r:'aurora_queen',m:{star_fragment:60,celestial_tear:50,void_core:40},cost:8000},chaos_knight:{r:'solar_king',m:{death_crystal:60,void_core:50,star_fragment:40},cost:8000},shadow_blade_master:{r:'prism_lord',m:{void_core:60,death_crystal:50,star_fragment:40},cost:8000},void_monk:{r:'storm_emperor',m:{void_core:60,phantom_essence:50,star_fragment:40},cost:8000},eclipse_lord:{r:'omni_king',m:{abyssal_pearl:100,cosmic_essence:80,eternal_shard:80,void_core:60,death_crystal:60},cost:20000},aurora_queen:{r:'reality_weaver',m:{solar_flare:100,cosmic_essence:80,eternal_shard:80,star_fragment:60,void_core:60},cost:20000},solar_king:{r:'dimension_lord',m:{divine_crown:100,cosmic_essence:80,eternal_shard:80,star_fragment:60,death_crystal:60},cost:20000},prism_lord:{r:'eternal_flame_king',m:{abyssal_pearl:80,solar_flare:60,cosmic_essence:60,void_core:50,death_crystal:50},cost:18000},storm_emperor:{r:'eternal_flame_king',m:{solar_flare:80,divine_crown:60,cosmic_essence:60,star_fragment:50,void_core:50},cost:18000},heaven_emperor:{r:'omni_king',m:{abyssal_pearl:120,cosmic_essence:100,eternal_shard:100,void_core:80,celestial_tear:80},cost:25000},hell_emperor:{r:'dimension_lord',m:{solar_flare:120,cosmic_essence:100,eternal_shard:100,death_crystal:80,star_fragment:80},cost:25000},purgatory_king:{r:'reality_weaver',m:{divine_crown:120,cosmic_essence:100,eternal_shard:100,void_core:80,phantom_essence:80},cost:25000},chaos_god:{r:'creation_titan',m:{abyssal_pearl:120,solar_flare:100,cosmic_essence:100,eternal_shard:80,death_crystal:80},cost:30000},order_god:{r:'creation_titan',m:{divine_crown:120,abyssal_pearl:100,cosmic_essence:100,eternal_shard:80,star_fragment:80},cost:30000},omni_king:{r:'ancient_one',m:{cosmic_essence:200,eternal_shard:150,abyssal_pearl:100,void_core:100,death_crystal:100},cost:50000},reality_weaver:{r:'titan_king',m:{cosmic_essence:200,eternal_shard:150,solar_flare:100,star_fragment:100,death_crystal:100},cost:50000},dimension_lord:{r:'world_serpent',m:{cosmic_essence:200,eternal_shard:150,divine_crown:100,void_core:100,star_fragment:100},cost:50000},eternal_flame_king:{r:'eternal_seraphim',m:{cosmic_essence:350,eternal_shard:300,abyssal_pearl:150,solar_flare:150,death_crystal:150},cost:150000},ancient_one:{r:'eternal_knight',m:{cosmic_essence:300,eternal_shard:250,abyssal_pearl:150,death_crystal:150,void_core:150},cost:100000},titan_king:{r:'eternal_knight',m:{cosmic_essence:300,eternal_shard:250,solar_flare:150,death_crystal:150,star_fragment:150},cost:100000},world_serpent:{r:'eternal_sage',m:{cosmic_essence:300,eternal_shard:250,divine_crown:150,void_core:150,phantom_essence:150},cost:100000},eternal_knight:{r:'exotic_amaterasu',m:{cosmic_essence:500,eternal_shard:400,abyssal_pearl:200,solar_flare:200,death_crystal:200},cost:300000},eternal_sage:{r:'exotic_shiva',m:{cosmic_essence:500,eternal_shard:400,divine_crown:200,solar_flare:200,celestial_tear:200},cost:300000},creation_titan:{r:'exotic_brahma',m:{cosmic_essence:600,eternal_shard:500,divine_crown:250,solar_flare:250,abyssal_pearl:250},cost:400000},eternal_seraphim:{r:'exotic_brahma',m:{cosmic_essence:700,eternal_shard:600,divine_crown:300,abyssal_pearl:300,celestial_tear:300},cost:500000},
+gojo:{r:'gojo_awakened',m:{void_core:100,star_fragment:100,death_crystal:100,cosmic_essence:80,eternal_shard:80},cost:50000}};
 const MATS={void_shard:['Void Shard','🔷'],celestial_tear:['Celestial Tear','💧'],phantom_essence:['Phantom Essence','🌀'],void_core:['Void Core','⚫'],star_fragment:['Star Fragment','⭐'],death_crystal:['Death Crystal','💎'],cosmic_essence:['Cosmic Essence','🌠'],eternal_shard:['Eternal Shard','🔮'],abyssal_pearl:['Abyssal Pearl','🫧'],solar_flare:['Solar Flare','☀️'],divine_crown:['Divine Crown','👑']};
 const REALMS=[{n:'🕳️ Void Realm',m:'void_shard',d:[[3,1],[5,2],[8,3]]},{n:'✨ Celestial Realm',m:'celestial_tear',d:[[3.2,1],[5.2,2],[8.5,3]]},{n:'👻 Phantom Realm',m:'phantom_essence',d:[[3.5,1],[5.5,2],[9,3]]},{n:'⚫ Void Core',m:'void_core',d:[[5.5,1],[8,2],[12,3]]},{n:'⭐ Star Realm',m:'star_fragment',d:[[5.8,1],[8.5,2],[12.5,3]]},{n:'💀 Death Realm',m:'death_crystal',d:[[6,1],[9,2],[13,3]]},{n:'🌠 Celestial Void',m:'cosmic_essence',d:[[13,1],[18,2],[24,3]]},{n:'🔮 Eternal Abyss',m:'eternal_shard',d:[[14,1],[20,2],[27,3]]},{n:'🌊 Abyssal Realm',m:'abyssal_pearl',d:[[16,1],[22,2],[30,3]]},{n:'☀️ Solar Realm',m:'solar_flare',d:[[18,1],[25,2],[34,3]]},{n:'👑 Divine Realm',m:'divine_crown',d:[[22,1],[30,2],[42,3]]}];
 const RLIM={dps:5,sniper:3,aoe:3,chain:3,crit:3,cc:3,economy:2,supporter:2,summoner:2};
 const ROLE={dps:['⚔️ DPS','#e74c3c'],sniper:['🎯 Sniper','#2ecc71'],aoe:['💣 AOE','#f39c12'],chain:['⛓️ Chain','#9b59b6'],crit:['⚡ Crit','#f1c40f'],cc:['❄️ CC','#66ccff'],economy:['💰 Eco','#f1c40f'],supporter:['✨ Supporter','#00ffcc'],summoner:['👥 Summoner','#8e44ad']};
-const role=d=>d.skill==='single'?(d.rng>=110?'sniper':'dps'):d.skill==='slow'?'cc':d.skill.startsWith('support')?'supporter':d.skill==='summon'?'summoner':d.skill;
+const role=d=>{if(d.skill==='gojo_domain'||d.skill==='hollow_purple')return 'aoe';return d.skill==='single'?(d.rng>=110?'sniper':'dps'):d.skill==='slow'?'cc':d.skill.startsWith('support')?'supporter':d.skill==='summon'?'summoner':d.skill};
 const CD_ROLE_MULT={dps:1.0,sniper:1.15,aoe:1.4,chain:1.25,crit:1.05,cc:0.85,economy:1.25,supporter:1.2,summon:0.9};
 const ECO_K={common:1.0,rare:1.2,epic:1.6,legendary:2.2,mythic:3.0,td:4.0,secret:5.0,transcendent:7.0,primordial:10.0,eternal:15.0,exotic:25.0};
 const EVOLVE_MIN_RAR=['mythic','td','secret','transcendent','primordial','eternal','exotic'];
@@ -245,7 +250,7 @@ const rndTrait=()=>rollTrait();
 function resolveTrait(tr){if(!tr)return null;const id=typeof tr==='string'?tr:tr.id;const t=TRAITS[id];if(!t)return null;const tier=typeof tr==='object'&&tr.tier!==undefined?tr.tier:0;const tt=t.tiers[tier]||t.tiers[0];return{id,tier,...tt,f:t.f,special:t.special,n:t.n,i:t.i,c:t.c,rar:t.rar}}
 function getTrait(u){return resolveTrait(u&&u.trait)}
 
-const REDEEM_CODES={HTD2026:{gems:1000,rr:25,desc:'1000 💎 + 25 🎲'},TDREROLL:{gems:0,rr:100,desc:'100 🎲'},NIAMATD:{gems:1500,rr:0,desc:'1500 💎'},REROLLBOI:{gems:0,rr:250,desc:'250 🎲'}};
+const REDEEM_CODES={HTD2026:{gems:1000,rr:25,desc:'1000 💎 + 25 🎲'},TDREROLL:{gems:0,rr:100,desc:'100 🎲'},NIAMATD:{gems:1500,rr:0,desc:'1500 💎'},REROLLBOI:{gems:0,rr:250,desc:'250 🎲'},GOJOSATORU:{gems:5000,rr:100,desc:'🎁 Gojo Unlock Boost (Level masih wajib 1000)'}};
 let S={user:null,nickname:null,gems:500,coins:0,rr:0,inv:[],load:[],clr:{},nid:1,mi:0,ri:0,mode:'c',mats:{},auto:false,fx:true,sound:true,autoUpg:false,traitFilter:{},stage:null,best:0,usedCodes:{},stats:{bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0},gemsSpentWeek:0,gemsSpentToday:0,bestWeek:0,bestToday:0,weekKey:'',dayKey:'',claimedRewards:{},playTime:0,myLbRanks:{},music:'none',musicVol:0.12,customMusicUrl:'',customMusicName:'',customMusicId:''},G=null;
 const cv=$('cv'),ctx=cv.getContext('2d');
 let soundEnabled=true;
@@ -418,117 +423,36 @@ const Music={
     if(this.customEl){try{this.customEl.pause();this.customEl.currentTime=0}catch(e){}}
     if(this.customBlobUrl){try{URL.revokeObjectURL(this.customBlobUrl)}catch(e){};this.customBlobUrl=null;}
   },
-  async _idbGetAll(){
-    if(!this.idb) await new Promise(r=>setTimeout(r,300));
-    if(!this.idb) return [];
-    return new Promise(res=>{
-      try{
-        const tx=this.idb.transaction('tracks','readonly');
-        const rq=tx.objectStore('tracks').get('customTracks');
-        rq.onsuccess=()=>res(rq.result||[]);rq.onerror=()=>res([]);
-      }catch(e){res([])}
-    });
-  },
-  async _idbSetAll(arr){
-    if(!this.idb) await new Promise(r=>setTimeout(r,300));
-    if(!this.idb) return false;
-    return new Promise(res=>{
-      try{
-        const tx=this.idb.transaction('tracks','readwrite');
-        tx.objectStore('tracks').put(arr,'customTracks');
-        tx.oncomplete=()=>res(true);tx.onerror=()=>res(false);
-      }catch(e){res(false)}
-    });
-  },
-  async listCustomTracks(){ return await this._idbGetAll(); },
-  async addCustomTrack(file){
-    if(!file) return null;
-    if(file.size > 30*1024*1024){ toast('❌ File >30MB, pakai URL saja'); return null; }
-    const arr = await this._idbGetAll();
-    const id = 'ct_' + Date.now() + '_' + Math.floor(Math.random()*1000);
-    arr.push({id, name: file.name, blob: file, addedAt: Date.now()});
-    const ok = await this._idbSetAll(arr);
-    if(!ok) return null;
-    return {id, name: file.name};
-  },
-  async deleteCustomTrack(id){
-    const arr = await this._idbGetAll();
-    const filtered = arr.filter(x => x.id !== id);
-    await this._idbSetAll(filtered);
-    if (S.customMusicId === id) {
-      S.customMusicId = '';
-      this.stop();
-      save();
-    }
-  },
-  async playCustomTrack(id){
-    const arr = await this._idbGetAll();
-    const track = arr.find(x => x.id === id);
-    if(!track){ toast('❌ Lagu tidak ditemukan'); return; }
-    this._stopCustom();
-    if(!this.customEl){
-      this.customEl = new Audio();
-      this.customEl.loop = true;
-    }
-    this.customBlobUrl = URL.createObjectURL(track.blob);
-    this.customEl.src = this.customBlobUrl;
-    this.customEl.volume = this.vol;
-    try{
-      await this.customEl.play();
-      this.playing = true;
-      S.customMusicId = id;
-      save();
-    }catch(e){
-      toast('⚠️ Gagal play: '+e.message);
-      this.playing = false;
-    }
-  },
+  async _idbGetAll(){if(!this.idb)await new Promise(r=>setTimeout(r,300));if(!this.idb)return[];return new Promise(res=>{try{const tx=this.idb.transaction('tracks','readonly');const rq=tx.objectStore('tracks').get('customTracks');rq.onsuccess=()=>res(rq.result||[]);rq.onerror=()=>res([])}catch(e){res([])}})},
+  async _idbSetAll(arr){if(!this.idb)await new Promise(r=>setTimeout(r,300));if(!this.idb)return false;return new Promise(res=>{try{const tx=this.idb.transaction('tracks','readwrite');tx.objectStore('tracks').put(arr,'customTracks');tx.oncomplete=()=>res(true);tx.onerror=()=>res(false)}catch(e){res(false)}})},
+  async listCustomTracks(){return await this._idbGetAll()},
+  async addCustomTrack(file){if(!file)return null;if(file.size>30*1024*1024){toast('❌ File >30MB');return null}const arr=await this._idbGetAll();const id='ct_'+Date.now()+'_'+Math.floor(Math.random()*1000);arr.push({id,name:file.name,blob:file,addedAt:Date.now()});const ok=await this._idbSetAll(arr);if(!ok)return null;return{id,name:file.name}},
+  async deleteCustomTrack(id){const arr=await this._idbGetAll();const filtered=arr.filter(x=>x.id!==id);await this._idbSetAll(filtered);if(S.customMusicId===id){S.customMusicId='';this.stop();save()}},
+  async playCustomTrack(id){const arr=await this._idbGetAll();const track=arr.find(x=>x.id===id);if(!track){toast('❌ Lagu tidak ditemukan');return}this._stopCustom();if(!this.customEl){this.customEl=new Audio();this.customEl.loop=true}this.customBlobUrl=URL.createObjectURL(track.blob);this.customEl.src=this.customBlobUrl;this.customEl.volume=this.vol;try{await this.customEl.play();this.playing=true;S.customMusicId=id;save()}catch(e){toast('⚠️ Gagal play: '+e.message);this.playing=false}},
   async playCustom(){
     if(S.customMusicUrl && S.customMusicUrl.trim()){
       this._stopCustom();
-      if(!this.customEl){ this.customEl = new Audio(); this.customEl.loop = true; }
-      this.customEl.src = S.customMusicUrl.trim();
-      this.customEl.volume = this.vol;
-      try{ await this.customEl.play(); this.playing = true; }catch(e){ toast('⚠️ Gagal play'); this.playing = false; }
+      if(!this.customEl){this.customEl=new Audio();this.customEl.loop=true}
+      this.customEl.src=S.customMusicUrl.trim();
+      this.customEl.volume=this.vol;
+      try{await this.customEl.play();this.playing=true}catch(e){toast('⚠️ Gagal play');this.playing=false}
       return;
     }
-    if(S.customMusicId){
-      return this.playCustomTrack(S.customMusicId);
-    }
-    const arr = await this._idbGetAll();
-    if(arr.length > 0){ return this.playCustomTrack(arr[0].id); }
-    toast('❌ Belum ada lagu custom! Upload file atau isi URL.');
-    this.playing = false;
+    if(S.customMusicId)return this.playCustomTrack(S.customMusicId);
+    const arr=await this._idbGetAll();
+    if(arr.length>0)return this.playCustomTrack(arr[0].id);
+    toast('❌ Belum ada lagu custom!');this.playing=false;
   },
-  play(id){
-    this.stop();
-    this._stopCustom();
-    this.id=id||'none';
-    if(this.id==='none')return;
-    if(this.id==='custom'){this.playCustom();return;}
-    if(!this.ensure())return;
-    this.playing=true;
-    this.current16th=0;
-    this.nextNoteTime=audioCtx.currentTime+0.05;
-    this.scheduler();
-  },
-  stop(){
-    this.playing=false;
-    if(this.timerId){clearTimeout(this.timerId);this.timerId=null;}
-    if(this.customEl){try{this.customEl.pause();this.customEl.currentTime=0}catch(e){}}
-  },
-  setVolume(v){
-    this.vol=Math.max(0,Math.min(1,v));
-    if(this.masterGain)this.masterGain.gain.value=this.vol;
-    if(this.customEl)this.customEl.volume=this.vol;
-  }
+  play(id){this.stop();this._stopCustom();this.id=id||'none';if(this.id==='none')return;if(this.id==='custom'){this.playCustom();return}if(!this.ensure())return;this.playing=true;this.current16th=0;this.nextNoteTime=audioCtx.currentTime+0.05;this.scheduler()},
+  stop(){this.playing=false;if(this.timerId){clearTimeout(this.timerId);this.timerId=null}if(this.customEl){try{this.customEl.pause();this.customEl.currentTime=0}catch(e){}}},
+  setVolume(v){this.vol=Math.max(0,Math.min(1,v));if(this.masterGain)this.masterGain.gain.value=this.vol;if(this.customEl)this.customEl.volume=this.vol}
 };
 
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400)}
 function show(n){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));$(n).classList.add('on')}
 function stats(u){const d=DEF[u.id]||DEF.archer,r=R[u.rar]||R.common,tr=getTrait(u);const cdMul=CD_ROLE_MULT[role(d)]||1;const dmgPerLv=(u.rar==='mythic'||u.rar==='td'||u.rar==='secret'||u.rar==='transcendent'||u.rar==='primordial'||u.rar==='eternal'||u.rar==='exotic')?.25:.18;let dmg=d.dmg*r.d*(1+(u.lv-1)*dmgPerLv);let rng=d.rng*r.r*(1+(u.lv-1)*.02)*RANGE_NERF;let cd=d.cd*cdMul/(r.s*(1+(u.lv-1)*.04));let income=1;if(tr){if(tr.dmg)dmg*=1+tr.dmg/100;if(tr.cd)cd*=1+tr.cd/100;if(tr.rng)rng*=1+tr.rng/100;if(tr.income)income*=1+tr.income/100}return{dmg:Math.floor(dmg),rng:Math.floor(rng),cd,skill:d.skill,trait:tr,income}}
 const upCost=u=>Math.floor(COST[u.rar]*1.15*R[u.rar].k*Math.pow(1.35,u.lv-1));
-const SKM={single:1,slow:1.1,crit:1.15,aoe:1.25,chain:1.3,economy:1.4,support:1.2,support_range:1.2,support_spd:1.2,summon:1.3};
+const SKM={single:1,slow:1.1,crit:1.15,aoe:1.25,chain:1.3,economy:1.4,support:1.2,support_range:1.2,support_spd:1.2,summon:1.3,gojo_domain:1.5,hollow_purple:2.0};
 const placeCost=u=>Math.round(COST[u.rar]*SKM[DEF[u.id].skill]/5)*5;
 function maxDep(u){const tr=getTrait(u);if(tr&&tr.special==='monarch')return 1;return Math.min(RLIM[role(DEF[u.id])],MAXD[u.rar])}
 const isHi=u=>u.rar==='mythic'||u.rar==='td'||u.rar==='secret'||u.rar==='transcendent'||u.rar==='primordial'||u.rar==='eternal'||u.rar==='exotic';
@@ -586,7 +510,7 @@ function playSummonCinematic(unit,cb){
 }
 function checkLogin(){if(!fbAuth){if(S.user){$('mu').textContent=S.user;show('menu');updMenu()}else{show('login')}return}fbAuth.onAuthStateChanged(async(user)=>{if(user){currentUser=user;isOnline=true;S.user=user.email;save();$('mu').textContent=user.email;$('cloudBadge').className='cloud-badge cloud-on';$('cloudBadge').textContent='☁️ Cloud aktif';$('loginMsg').innerHTML='<span style="color:#2ecc71">✅ '+user.email+'</span>';await cloudLoad();startCloudAutoSave();show('menu');updMenu();toast('☁️ Login: '+user.email)}else{currentUser=null;isOnline=false;if(cloudSaveTimer)clearInterval(cloudSaveTimer);$('cloudBadge').className='cloud-badge cloud-off';$('cloudBadge').textContent='⚪ Offline';if(S.user&&S.user!=='Guest'){show('menu');updMenu()}else{show('login')}}})}
 
-function showRarityPool(rar){const r=R[rar],pool=POOL[rar]||[];$('ov').style.display='flex';let h=`<h2 style="color:${r.c};margin-bottom:4px">${r.n}</h2>`;if(r.p>0)h+=`<p style="color:#888;font-size:12px;margin-bottom:10px">Chance: ${(r.p*100).toFixed(2)}%</p>`;else h+=`<p style="color:#888;font-size:12px;margin-bottom:10px">Hanya Legend/Evolve</p>`;h+=`<div style="display:grid;gap:6px;text-align:left;max-height:50vh;overflow-y:auto">`;pool.forEach(arr=>{const u=DEF[arr[0]];if(!u)return;const es=EVO_SKILL[arr[0]];const skillName=es?`${es.icon} ${es.name}`:u.skill;const isExo=arr[0].startsWith('exotic_'),isGod=arr[0].endsWith('_god'),isPrim=arr[0].endsWith('_primordial'),isEter=arr[0].startsWith('eternal_')&&!isExo;const isEvoable=!!RECIPES[arr[0]];const tag=isExo?' <span style="color:#ff00aa;font-size:10px">💎 EXOTIC</span>':(isEter?' <span style="color:#00ffaa;font-size:10px">✦ ETERNAL</span>':(isPrim?' <span style="color:#ff0066;font-size:10px">🔥 PRIMORDIAL</span>':(isGod?' <span style="color:#ffd700;font-size:10px">✦ GOD</span>':'')));h+=`<div style="background:#0a0e27;border:1px solid ${r.c};border-radius:6px;padding:8px;display:flex;align-items:center;gap:10px"><span style="font-size:26px">${u.icon}</span><div style="flex:1;min-width:0"><div><b style="color:#fff;font-size:13px">${u.name}</b>${tag}${isEvoable?' 🧬':''}</div><div style="font-size:10px;color:#aaa">DMG ${u.dmg} · RNG ${u.rng} · ${ROLE[role(u)][0]}</div><div style="font-size:10px;color:${r.c}">Skill: ${skillName}</div></div></div>`});$('ob').innerHTML=h+'<button id="rpClose" class="r" style="width:100%;margin-top:10px">Tutup</button>';$('rpClose').onclick=()=>{$('ov').style.display='none'}}
+function showRarityPool(rar){const r=R[rar],pool=POOL[rar]||[];$('ov').style.display='flex';let h=`<h2 style="color:${r.c};margin-bottom:4px">${r.n}</h2>`;if(r.p>0)h+=`<p style="color:#888;font-size:12px;margin-bottom:10px">Chance: ${(r.p*100).toFixed(2)}%</p>`;else h+=`<p style="color:#888;font-size:12px;margin-bottom:10px">Hanya Legend/Evolve</p>`;h+=`<div style="display:grid;gap:6px;text-align:left;max-height:50vh;overflow-y:auto">`;pool.forEach(arr=>{const u=DEF[arr[0]];if(!u)return;const es=EVO_SKILL[arr[0]];const skillName=es?`${es.icon} ${es.name}`:u.skill;const isExo=arr[0].startsWith('exotic_'),isGod=arr[0].endsWith('_god'),isPrim=arr[0].endsWith('_primordial'),isEter=arr[0].startsWith('eternal_')&&!isExo;const isEvoable=!!RECIPES[arr[0]];const tag=isExo?' <span style="color:#ff00aa;font-size:10px">💎 EXOTIC</span>':(isEter?' <span style="color:#00ffaa;font-size:10px">✦ ETERNAL</span>':(isPrim?' <span style="color:#ff0066;font-size:10px">🔥 PRIMORDIAL</span>':(isGod?' <span style="color:#ffd700;font-size:10px">✦ GOD</span>':'')));const isGojo=arr[0]==='gojo';const gojoGate=isGojo?`<div style="font-size:10px;color:#ff88ff;font-weight:bold;margin-top:3px">🔒 Butuh Player Level ${GOJO_LEVEL_REQ} (kamu: Lv ${getPlayerLevel()})</div>`:'';h+=`<div style="background:#0a0e27;border:1px solid ${r.c};border-radius:6px;padding:8px;display:flex;align-items:center;gap:10px"><span style="font-size:26px">${u.icon}</span><div style="flex:1;min-width:0"><div><b style="color:#fff;font-size:13px">${u.name}</b>${tag}${isEvoable?' 🧬':''}</div><div style="font-size:10px;color:#aaa">DMG ${u.dmg} · RNG ${u.rng} · ${ROLE[role(u)][0]}</div><div style="font-size:10px;color:${r.c}">Skill: ${skillName}</div>${gojoGate}</div></div>`});$('ob').innerHTML=h+'<button id="rpClose" class="r" style="width:100%;margin-top:10px">Tutup</button>';$('rpClose').onclick=()=>{$('ov').style.display='none'}}
 
 function showEquipModal(iid){const u=S.inv.find(x=>x.iid===iid);if(!u)return;if(!DEF[u.id]){toast('❌ Unit corrupt');return}const inLoad=S.load.includes(iid);const d=DEF[u.id],r=R[u.rar]||R.common,s=stats(u),tr=s.trait;const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';const es=EVO_SKILL[u.id];const skillName=es?`${es.icon} ${es.name}`:s.skill;$('ov').style.display='flex';$('ob').innerHTML=`<div style="font-size:40px">${d.icon}</div><div style="font-size:16px;font-weight:bold;color:#fff;margin-top:4px">${d.name}</div><div style="font-size:11px;color:${r.c}">${r.n} · ${ROLE[role(d)][0]}</div><div class="eq-stats" style="text-align:left"><div class="row"><span>Level</span><b>${u.lv}/${MAXL[u.rar]||10}</b></div><div class="row"><span>DMG</span><b>${s.dmg}</b></div><div class="row"><span>RNG</span><b>${s.rng}</b></div><div class="row"><span>CD</span><b>${s.cd.toFixed(2)}s</b></div><div class="row"><span>Skill</span><b>${skillName}</b></div><div class="row"><span>Trait</span><b style="color:${tr?tr.c:'#666'}">${tr?`${tr.i} ${tr.n}${tl}`:'—'}</b></div></div><button id="eqBtn" class="${inLoad?'r':'g'}" style="width:100%;font-size:16px;padding:12px;margin-top:6px">${inLoad?'✗ UNEQUIP':'✓ EQUIP'}</button><button id="eqTraitBtn" class="y" style="width:100%;margin-top:6px">🎲 Kelola Trait</button><button id="eqClose" style="width:100%;margin-top:6px;padding:8px">Tutup</button>`;$('eqBtn').onclick=()=>{if(inLoad){S.load=S.load.filter(x=>x!==iid);toast('✗ Dikeluarkan')}else{if(S.load.length>=5){toast('❌ Penuh');return}S.load.push(iid);toast('✅ '+d.name)};$('ov').style.display='none';updMenu();save()};$('eqTraitBtn').onclick=()=>{TM.selected=iid;TM.pending=null;TM.old=null;TM.kept=null;$('ov').style.display='flex';renderTraitMenu()};$('eqClose').onclick=()=>{$('ov').style.display='none'}}
 
@@ -597,7 +521,7 @@ function redeemMenu(){$('ov').style.display='flex';let h=`<h2 style="margin-bott
 function exportSave(){const data={user:S.user,nickname:S.nickname,gems:S.gems,coins:S.coins,rr:S.rr||0,inv:S.inv,load:S.load,clr:S.clr,nid:S.nid,mats:S.mats,auto:S.auto,fx:S.fx,sound:S.sound,autoUpg:S.autoUpg,traitFilter:S.traitFilter||{},best:S.best,usedCodes:S.usedCodes||{},stats:S.stats||{},gemsSpentWeek:S.gemsSpentWeek||0,gemsSpentToday:S.gemsSpentToday||0,bestWeek:S.bestWeek||0,bestToday:S.bestToday||0,weekKey:S.weekKey||'',dayKey:S.dayKey||'',claimedRewards:S.claimedRewards||{},playTime:S.playTime||0,myLbRanks:S.myLbRanks||{},music:S.music||'none',musicVol:S.musicVol||0.12,customMusicUrl:S.customMusicUrl||'',customMusicName:S.customMusicName||'',customMusicId:S.customMusicId||''};const json=JSON.stringify(data);const code=btoa(unescape(encodeURIComponent(json)));const chunks=code.match(/.{1,80}/g).join('\n');$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📤 Export</h2><div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:8px;padding:10px;text-align:left;max-height:40vh;overflow-y:auto;margin-bottom:8px"><textarea id="expText" readonly style="width:100%;background:transparent;border:none;color:#0ff;font-family:monospace;font-size:10px;resize:none;outline:none" rows="8">${chunks}</textarea></div><div style="font-size:10px;color:#666;margin-bottom:8px">Size: ${(json.length/1024).toFixed(2)} KB</div><button id="expCopy" class="g" style="width:100%;margin-bottom:6px">📋 Copy</button><button id="expDl" class="y" style="width:100%;margin-bottom:6px">💾 Download .txt</button><button id="expClose" style="width:100%">Tutup</button>`;$('expCopy').onclick=()=>{const txt=$('expText');txt.select();txt.setSelectionRange(0,999999);try{if(navigator.clipboard)navigator.clipboard.writeText(txt.value).then(()=>toast('✅ Copy!')).catch(()=>{document.execCommand('copy');toast('✅ Copy!')});else{document.execCommand('copy');toast('✅ Copy!')}}catch(e){toast('❌ Gagal')}};$('expDl').onclick=()=>{const blob=new Blob([code],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='htd_save_'+Date.now()+'.txt';a.click();URL.revokeObjectURL(url);toast('💾 OK')};$('expClose').onclick=()=>{$('ov').style.display='none'}}
 function importSave(){$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📥 Import</h2><textarea id="impText" placeholder="Paste kode..." style="width:100%;height:120px;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#0ff;font-family:monospace;font-size:10px;resize:vertical;outline:none;margin-bottom:8px"></textarea><input type="file" id="impFile" accept=".txt" style="display:none"><button id="impPick" class="y" style="width:100%;margin-bottom:6px">📁 File .txt</button><button id="impGo" class="g" style="width:100%;margin-bottom:6px">▶ Import</button><button id="impClose" style="width:100%">Tutup</button><div id="impMsg" style="font-size:11px;margin-top:8px;min-height:16px"></div>`;$('impPick').onclick=()=>$('impFile').click();$('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('impText').value=ev.target.result.trim();$('impMsg').innerHTML='<span style="color:#2ecc71">✅ Loaded</span>'};r.readAsText(f)};$('impGo').onclick=()=>{const code=$('impText').value.trim().replace(/\s+/g,'');const msg=$('impMsg');if(!code){msg.innerHTML='<span style="color:#e74c3c">❌ Kosong!</span>';return}try{const json=decodeURIComponent(escape(atob(code)));const data=JSON.parse(json);if(!data.inv||!Array.isArray(data.inv))throw new Error();if(!confirm('⚠️ Data DIGANTI. Lanjut?'))return;Object.assign(S,data);if(!S.usedCodes)S.usedCodes={};if(typeof S.rr!=='number')S.rr=0;if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0};if(S.nickname === undefined) S.nickname = null;if(S.autoUpg === undefined) S.autoUpg = false;if(S.sound===undefined)S.sound=true;soundEnabled=S.sound;if(!S.traitFilter) S.traitFilter = {};if(!S.claimedRewards)S.claimedRewards={};if(!S.myLbRanks)S.myLbRanks={};if(typeof S.playTime!=='number')S.playTime=0;if(S.gemsSpentWeek===undefined)S.gemsSpentWeek=0;if(S.gemsSpentToday===undefined)S.gemsSpentToday=0;if(S.bestWeek===undefined)S.bestWeek=0;if(S.bestToday===undefined)S.bestToday=0;if(S.weekKey===undefined)S.weekKey='';if(S.dayKey===undefined)S.dayKey='';if(S.music===undefined)S.music='none';if(typeof S.musicVol!=='number')S.musicVol=0.12;if(S.customMusicUrl===undefined)S.customMusicUrl='';if(S.customMusicName===undefined)S.customMusicName='';if(S.customMusicId===undefined)S.customMusicId='';S.inv=S.inv.filter(u=>{if(!u||!u.id||!DEF[u.id])return false;if(!u.rar||!R[u.rar])u.rar=DEF[u.id].rar;if(!R[u.rar])return false;if(typeof u.lv!=='number'||u.lv<1)u.lv=1;if(typeof u.iid!=='number')u.iid=S.nid++;return true});checkPeriodReset();S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();msg.innerHTML='<span style="color:#2ecc71">✅ OK! Reload...</span>';setTimeout(()=>location.reload(),900)}catch(err){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>'}};$('impClose').onclick=()=>{$('ov').style.display='none'}}
 
-function card(u,fn){const d=DEF[u.id];if(!d)return document.createElement('div');const r=R[u.rar]||R.common;try{const s=stats(u),tr=s.trait,e=document.createElement('div');e.className='card';e.style.borderColor=r.c;const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';const trHTML=tr?`<div style="font-size:9px;color:${tr.c}">${tr.i} ${tr.n}${tl}</div>`:`<div style="font-size:9px;color:#666">— no trait —</div>`;e.innerHTML=`<button class="card-trait-btn" data-i="${u.iid}" title="Trait">🎲</button><div style="font-size:18px">${d.icon}</div><b style="color:#fff;font-size:11px">${d.name}</b><div style="color:${r.c};font-size:9px">${r.n} · ${ROLE[role(d)][0]}</div>${trHTML}<div style="color:#f1c40f;font-size:9px">Max ${maxDep(u)} · 🪙${placeCost(u)}</div><div style="font-size:9px;color:#aaa">DMG ${s.dmg} · RNG ${s.rng}</div>`;e.onclick=fn;const tb=e.querySelector('.card-trait-btn');if(tb){tb.onclick=(ev)=>{ev.stopPropagation();TM.selected=u.iid;TM.pending=null;TM.old=null;TM.kept=null;$('ov').style.display='flex';renderTraitMenu()}}return e}catch(err){console.error('[card]',u,err);const e2=document.createElement('div');e2.className='card';e2.innerHTML='<div style="color:#e74c3c;font-size:9px;padding:4px">⚠️ Corrupt<br>'+u.id+'</div>';return e2}}
+function card(u,fn){const d=DEF[u.id];if(!d)return document.createElement('div');const r=R[u.rar]||R.common;try{const s=stats(u),tr=s.trait,e=document.createElement('div');e.className='card';e.style.borderColor=r.c;const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';const trHTML=tr?`<div style="font-size:9px;color:${tr.c}">${tr.i} ${tr.n}${tl}</div>`:`<div style="font-size:9px;color:#666">— no trait —</div>`;const isGojo=u.id==='gojo'||u.id==='gojo_awakened';const gojoTag=isGojo?`<div style="font-size:9px;color:#00ccff;font-weight:bold">👁️ ${u.id==='gojo'?'UNLIMITED VOID':'HOLLOW PURPLE'}</div>`:'';e.innerHTML=`<button class="card-trait-btn" data-i="${u.iid}" title="Trait">🎲</button><div style="font-size:18px">${d.icon}</div><b style="color:#fff;font-size:11px">${d.name}</b><div style="color:${r.c};font-size:9px">${r.n} · ${ROLE[role(d)][0]}</div>${trHTML}${gojoTag}<div style="color:#f1c40f;font-size:9px">Max ${maxDep(u)} · 🪙${placeCost(u)}</div><div style="font-size:9px;color:#aaa">DMG ${s.dmg} · RNG ${s.rng}</div>`;e.onclick=fn;const tb=e.querySelector('.card-trait-btn');if(tb){tb.onclick=(ev)=>{ev.stopPropagation();TM.selected=u.iid;TM.pending=null;TM.old=null;TM.kept=null;$('ov').style.display='flex';renderTraitMenu()}}return e}catch(err){console.error('[card]',u,err);const e2=document.createElement('div');e2.className='card';e2.innerHTML='<div style="color:#e74c3c;font-size:9px;padding:4px">⚠️ Corrupt<br>'+u.id+'</div>';return e2}}
 
 function updLobbyStats(){
   const el=$('lobbyStats');if(!el)return;
@@ -606,8 +530,11 @@ function updLobbyStats(){
   const totalClr=Object.keys(S.clr).reduce((a,k)=>a+(S.clr[k]||0),0);
   const el_badge=$('lobbyRankBadge');
   if(el_badge){
-    const lv=Math.floor((S.stats.gamesPlayed*1.5)+(S.stats.gamesWon*3))+1;
-    el_badge.textContent='🎮 LV '+lv+' COMMANDER';
+    const lv=getPlayerLevel();
+    const gojoUnlocked=lv>=GOJO_LEVEL_REQ;
+    el_badge.textContent='🎮 LV '+lv+' COMMANDER'+(gojoUnlocked?' ✨':'');
+    el_badge.style.background=gojoUnlocked?'linear-gradient(135deg,#00ccff,#aa00ff)':'linear-gradient(135deg,#ffd700,#ff8800)';
+    el_badge.style.color='#fff';
   }
   const stats=[
     {i:'💎',v:S.gems.toLocaleString(),l:'Gems'},
@@ -718,11 +645,36 @@ function renderStage(){
     }
 }
 
-function summon(n){if(S.gems<100*n){toast('❌ Kurang!');return}if($('ov').style.display==='flex')$('ov').style.display='none';if(!spendGems(100*n)){toast('❌ Kurang!');return}const got=[],soldNames={};let soldCount=0,soldGems=0;
-  for(let i=0;i<n;i++){let x=Math.random(),a=0,r='common';for(const k of['common','rare','epic','legendary','mythic','td','eternal']){a+=R[k].p;if(x<a){r=k;break}}const p=POOL[r],d=p[Math.floor(Math.random()*p.length)];const dup=S.inv.some(u=>u.id===d[0]);if(dup){S.gems+=25;soldCount++;soldGems+=25;soldNames[d[0]]=(soldNames[d[0]]||0)+1;continue}const u={iid:S.nid++,id:d[0],rar:r,lv:1,trait:null};S.inv.push(u);got.push(u)}
+function summon(n){
+  if(S.gems<100*n){toast('❌ Kurang!');return}
+  if($('ov').style.display==='flex')$('ov').style.display='none';
+  if(!spendGems(100*n)){toast('❌ Kurang!');return}
+  const got=[],soldNames={};let soldCount=0,soldGems=0;
+  const playerLvl=getPlayerLevel();
+  for(let i=0;i<n;i++){
+    let x=Math.random(),a=0,r='common';
+    for(const k of['common','rare','epic','legendary','mythic','td','eternal']){a+=R[k].p;if(x<a){r=k;break}}
+    let p=POOL[r];
+    if(r==='mythic' && playerLvl<GOJO_LEVEL_REQ){
+      p=p.filter(x=>x[0]!=='gojo');
+    }
+    const d=p[Math.floor(Math.random()*p.length)];
+    const dup=S.inv.some(u=>u.id===d[0]);
+    if(dup){S.gems+=25;soldCount++;soldGems+=25;soldNames[d[0]]=(soldNames[d[0]]||0)+1;continue}
+    const u={iid:S.nid++,id:d[0],rar:r,lv:1,trait:null};S.inv.push(u);got.push(u)
+  }
   let bestUnit=null;for(const u of got){if(!bestUnit||RAR_ORDER.indexOf(u.rar)>RAR_ORDER.indexOf(bestUnit.rar))bestUnit=u}
   const SPECIAL=['td','secret','transcendent','primordial','eternal','exotic'];const rarType = bestUnit && SPECIAL.includes(bestUnit.rar) ? bestUnit.rar : null;
-  playSummonBurst(rarType, ()=>{let msg='';if(got.length){got.sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar));const best=got[0];msg=`${DEF[best.id].icon} ${DEF[best.id].name} (${R[best.rar].n})!`;if(got.length>1)msg=`✨ ${got.length} baru! Best: `+msg}if(soldCount>0)msg+=(msg?' · ':'')+`♻️ x${soldCount} (+${soldGems}💎)`;if(!msg)msg='Tidak ada baru.';toast(msg);if(bestUnit)SFX.summon(bestUnit.rar);else if(got.length)SFX.summon(got[0].rar);if(bestUnit&&RAR_TRIGGER.includes(bestUnit.rar)){playSummonCinematic(bestUnit,()=>{updMenu();save()})}else{updMenu();save()}})}
+  playSummonBurst(rarType, ()=>{
+    let msg='';
+    if(got.length){got.sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar));const best=got[0];msg=`${DEF[best.id].icon} ${DEF[best.id].name} (${R[best.rar].n})!`;if(got.length>1)msg=`✨ ${got.length} baru! Best: `+msg}
+    if(soldCount>0)msg+=(msg?' · ':'')+`♻️ x${soldCount} (+${soldGems}💎)`;
+    if(!msg)msg='Tidak ada baru.';
+    toast(msg);
+    if(bestUnit)SFX.summon(bestUnit.rar);else if(got.length)SFX.summon(got[0].rar);
+    if(bestUnit&&RAR_TRIGGER.includes(bestUnit.rar)){playSummonCinematic(bestUnit,()=>{updMenu();save()})}else{updMenu();save()}
+  })
+}
 
 const ring=(x,y,r,c,l=.6,w=4)=>{if(!S.fx)return;G.fx.push({t:'ring',x,y,r,c,l,m:l,w})};
 const nova=(x,y,r,c,l=.5)=>{if(!S.fx)return;G.fx.push({t:'nova',x,y,r,c,l,m:l})};
@@ -733,7 +685,7 @@ function shake(i,d){/* DISABLED — no screen shake */}
 function flash(c,d){if(!S.fx)return;G.fc=c;G.flash=d}
 function beam(a,b,c,w=2,trail=false){if(!S.fx)return;G.bm.push({x1:a.x,y1:a.y,x2:b.x,y2:b.y,c,w,l:.15,m:.15,trail})}
 function bolt(a,b,c,w=3){if(!S.fx)return;const dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy)||1,n=Math.max(3,Math.floor(L/18)),nx=-dy/L,ny=dx/L,pts=[{x:a.x,y:a.y}];for(let i=1;i<n;i++){const t=i/n,o=(Math.random()-.5)*22;pts.push({x:a.x+dx*t+nx*o,y:a.y+dy*t+ny*o})}pts.push({x:b.x,y:b.y});G.bm.push({pts,c,w:w+1,l:.22,m:.22})}
-const TH={void_reaper:'#a040ff',void_emperor:'#c060ff',celestial_g:'#ffd84a',celestial_avatar:'#fff08a',phantom_lord:'#ff3ccf',phantom_god:'#ff6fe0',chronomancer:'#3fe0ff',time_lord:'#9ff0ff',void_sovereign:'#ff00ff',star_emperor:'#ff66ff',death_reaper:'#cc00ff',void_god:'#ff00aa',star_god:'#ffe0ff',death_god:'#aa00ff',void_primordial:'#ff0066',star_primordial:'#ffaa00',death_primordial:'#6600ff',eternal_dragon:'#00ffaa',eternal_angel:'#ffffff',eternal_demon:'#00ffaa',light_emperor:'#ffffaa',soul_weaver:'#a060ff',abyss_walker:'#0099aa',gold_empress:'#ffd700',eternal_flame:'#ff5500',frost_empress:'#aaeeff',exotic_nidhogg:'#ff00aa',exotic_metatron:'#ff00aa',exotic_lucifer:'#ff00aa',archdruid:'#00ffaa',void_seer:'#66ccff',temporal_god:'#ffcc00',oracle_rng:'#66ccff',warp_mage:'#ffcc00',omniscient:'#66ccff',accelerator:'#ffcc00',cosmic_sovereign:'#ff00ff',abyss_sovereign:'#ff00ff',cosmic_god:'#ffaaff',cosmic_primordial:'#ff00aa',abyss_god:'#aa66ff',abyss_primordial:'#6600ff',shadow_monarch:'#8e44ad',shadow_sovereign:'#9b59b6',shadow_emperor:'#aa66ff',shadow_god:'#ff00aa',shadow_origin:'#00ffaa',shadow_king:'#ff00aa',flame_god:'#ff4400',nature_god:'#00ff66',chrono_god:'#9966ff',flame_primordial:'#ff0066',nature_primordial:'#00ffaa',chrono_primordial:'#6600ff',necromancer:'#8e44ad',samurai:'#ff2255',paladin:'#ffd700',philosopher:'#ffd700',sniper_god:'#2ecc71',lich:'#aa00ff',shogun:'#ff2255',phoenix:'#ff4400',void_walker:'#9933ff',dragon_lord:'#ff2200',chaos_lord:'#aa00ff',frost_god:'#88ddff',primordial_wyrm:'#ff00aa',celestial_king:'#ffd700',infinity:'#ff00aa',oblivion:'#440088',genesis:'#ffd700',apocalypse:'#ff0066',eternal_phoenix:'#ff4400',eternal_void:'#00ffaa',exotic_chaos:'#ff00aa',exotic_omni:'#ff00aa',void_priest:'#e74c3c',star_weaver:'#e74c3c',chaos_knight:'#e74c3c',shadow_blade_master:'#e74c3c',void_monk:'#e74c3c',eclipse_lord:'#00ffff',aurora_queen:'#00ffff',solar_king:'#00ffff',prism_lord:'#00ffff',storm_emperor:'#00ffff',heaven_emperor:'#ff00ff',hell_emperor:'#ff00ff',purgatory_king:'#ff00ff',void_archon:'#ff00ff',astral_monarch:'#ff00ff',blood_sovereign:'#ff00ff',chaos_god:'#ff00ff',order_god:'#ff00ff',omni_king:'#ffd700',reality_weaver:'#ffd700',dimension_lord:'#ffd700',eternal_flame_king:'#ffd700',ancient_one:'#ff0066',titan_king:'#ff0066',world_serpent:'#ff0066',creation_titan:'#ff0066',eternal_knight:'#00ffaa',eternal_sage:'#00ffaa',eternal_seraphim:'#00ffaa',exotic_amaterasu:'#ff00aa',exotic_shiva:'#ff00aa',exotic_brahma:'#ff00aa'};
+const TH={void_reaper:'#a040ff',void_emperor:'#c060ff',celestial_g:'#ffd84a',celestial_avatar:'#fff08a',phantom_lord:'#ff3ccf',phantom_god:'#ff6fe0',chronomancer:'#3fe0ff',time_lord:'#9ff0ff',void_sovereign:'#ff00ff',star_emperor:'#ff66ff',death_reaper:'#cc00ff',void_god:'#ff00aa',star_god:'#ffe0ff',death_god:'#aa00ff',void_primordial:'#ff0066',star_primordial:'#ffaa00',death_primordial:'#6600ff',eternal_dragon:'#00ffaa',eternal_angel:'#ffffff',eternal_demon:'#00ffaa',light_emperor:'#ffffaa',soul_weaver:'#a060ff',abyss_walker:'#0099aa',gold_empress:'#ffd700',eternal_flame:'#ff5500',frost_empress:'#aaeeff',exotic_nidhogg:'#ff00aa',exotic_metatron:'#ff00aa',exotic_lucifer:'#ff00aa',archdruid:'#00ffaa',void_seer:'#66ccff',temporal_god:'#ffcc00',oracle_rng:'#66ccff',warp_mage:'#ffcc00',omniscient:'#66ccff',accelerator:'#ffcc00',cosmic_sovereign:'#ff00ff',abyss_sovereign:'#ff00ff',cosmic_god:'#ffaaff',cosmic_primordial:'#ff00aa',abyss_god:'#aa66ff',abyss_primordial:'#6600ff',shadow_monarch:'#8e44ad',shadow_sovereign:'#9b59b6',shadow_emperor:'#aa66ff',shadow_god:'#ff00aa',shadow_origin:'#00ffaa',shadow_king:'#ff00aa',flame_god:'#ff4400',nature_god:'#00ff66',chrono_god:'#9966ff',flame_primordial:'#ff0066',nature_primordial:'#00ffaa',chrono_primordial:'#6600ff',necromancer:'#8e44ad',samurai:'#ff2255',paladin:'#ffd700',philosopher:'#ffd700',sniper_god:'#2ecc71',lich:'#aa00ff',shogun:'#ff2255',phoenix:'#ff4400',void_walker:'#9933ff',dragon_lord:'#ff2200',chaos_lord:'#aa00ff',frost_god:'#88ddff',primordial_wyrm:'#ff00aa',celestial_king:'#ffd700',infinity:'#ff00aa',oblivion:'#440088',genesis:'#ffd700',apocalypse:'#ff0066',eternal_phoenix:'#ff4400',eternal_void:'#00ffaa',exotic_chaos:'#ff00aa',exotic_omni:'#ff00aa',void_priest:'#e74c3c',star_weaver:'#e74c3c',chaos_knight:'#e74c3c',shadow_blade_master:'#e74c3c',void_monk:'#e74c3c',eclipse_lord:'#00ffff',aurora_queen:'#00ffff',solar_king:'#00ffff',prism_lord:'#00ffff',storm_emperor:'#00ffff',heaven_emperor:'#ff00ff',hell_emperor:'#ff00ff',purgatory_king:'#ff00ff',void_archon:'#ff00ff',astral_monarch:'#ff00ff',blood_sovereign:'#ff00ff',chaos_god:'#ff00ff',order_god:'#ff00ff',omni_king:'#ffd700',reality_weaver:'#ffd700',dimension_lord:'#ffd700',eternal_flame_king:'#ffd700',ancient_one:'#ff0066',titan_king:'#ff0066',world_serpent:'#ff0066',creation_titan:'#ff0066',eternal_knight:'#00ffaa',eternal_sage:'#00ffaa',eternal_seraphim:'#00ffaa',exotic_amaterasu:'#ff00aa',exotic_shiva:'#ff00aa',exotic_brahma:'#ff00aa',gojo:'#00ccff',gojo_awakened:'#aa00ff'};
 const tc=u=>TH[u.i.id]||R[u.i.rar].c;
 function trail(a,b,c){if(!S.fx)return;for(let i=1;i<9;i++){const k=i/9;G.par.push({x:a.x+(b.x-a.x)*k,y:a.y+(b.y-a.y)*k,vx:(Math.random()-.5)*50,vy:(Math.random()-.5)*50,l:.35,m:.35,c,z:3})}}
 function sigil(u,c){const t=performance.now()/1000,hi=u.i.rar==='td'||u.i.rar==='secret'||u.i.rar==='transcendent'||u.i.rar==='primordial'||u.i.rar==='eternal'||u.i.rar==='exotic',n=hi?6:5;ctx.save();ctx.translate(u.x,u.y+6);ctx.scale(1,.55);ctx.globalCompositeOperation='lighter';ctx.strokeStyle=c;ctx.shadowColor=c;ctx.shadowBlur=10;ctx.globalAlpha=.8;ctx.lineWidth=2;ctx.setLineDash([6,5]);ctx.rotate(t*.6);ctx.beginPath();ctx.arc(0,0,hi?42:36,0,6.283);ctx.stroke();ctx.setLineDash([]);ctx.rotate(-t*1.2);ctx.beginPath();for(let i=0;i<=n;i++){const a=((i*2)%n)/n*6.283,x=Math.cos(a)*30,y=Math.sin(a)*30;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.stroke();if(hi){ctx.rotate(t*2);ctx.beginPath();ctx.arc(0,0,22,0,6.283);ctx.stroke()}ctx.restore()}
@@ -756,7 +708,7 @@ function getSkillProfile(u){
     archer:{style:'arrow',col:'#aaffaa',pat:'default'},swordsman:{style:'slash',col:'#ffcc88',pat:'default'},hunter:{style:'arrow',col:'#ffaa66',pat:'default'},knight:{style:'slash',col:'#88ccff',pat:'default'},berserker:{style:'slash',col:'#ff4422',pat:'default'},monk:{style:'punch',col:'#ffdd88',pat:'default'},samurai:{style:'slash',col:'#ff2255',pat:'multi'},paladin:{style:'slash',col:'#ffd700',pat:'holy'},dragon_kn:{style:'slash',col:'#ff5500',pat:'fire'},archangel:{style:'slash',col:'#ffffcc',pat:'holy'},shadow_bl:{style:'slash',col:'#440088',pat:'shadow'},shadow_blade_master:{style:'slash',col:'#220044',pat:'multi'},valkyrie:{style:'slash',col:'#ffd700',pat:'holy'},chaos_knight:{style:'slash',col:'#aa00ff',pat:'chaos'},
     ice_mage:{style:'beam',col:'#88ddff',pat:'frost'},fire_wizard:{style:'beam',col:'#ff5500',pat:'fire'},thunder_mage:{style:'beam',col:'#ffff44',pat:'lightning'},sniper_god:{style:'beam',col:'#2ecc71',pat:'sniper'},druid:{style:'beam',col:'#22dd66',pat:'leaf'},
     wind_mage:{style:'chain',col:'#88ffcc',pat:'wind'},storm_cal:{style:'chain',col:'#88ccff',pat:'lightning'},void_reaper:{style:'chain',col:'#cc66ff',pat:'void'},void_emperor:{style:'chain',col:'#ff00aa',pat:'void'},void_god:{style:'chain',col:'#ff0066',pat:'void'},infinity:{style:'chain',col:'#ff44ff',pat:'chaos'},
-    celestial_g:{style:'aoe',col:'#ffd84a',pat:'holy'},celestial_avatar:{style:'aoe',col:'#fff5aa',pat:'holy'},eternal_flame:{style:'aoe',col:'#ff5500',pat:'fire'},phantom_lord:{style:'aoe',col:'#ff88ff',pat:'shadow'},abyss_walker:{style:'aoe',col:'#0099aa',pat:'void'},star_weaver:{style:'aoe',col:'#e74c3c',pat:'sparkle'},solar_king:{style:'aoe',col:'#ffdd44',pat:'fire'},storm_emperor:{style:'aoe',col:'#88ddff',pat:'lightning'},
+    celestial_g:{style:'aoe',col:'#ffd84a',pat:'holy'},celestial_avatar:{style:'aoe',col:'#fff5aa',pat:'holy'},eternal_flame:{style:'aoe',col:'#ff5500',pat:'fire'},phantom_lord:{style:'aoe',col:'#ff88ff',pat:'shadow'},abyss_walker:{style:'aoe',col:'#0099aa',pat:'void'},star_weaver:{style:'aoe',col:'#e74c3c',pat:'sparkle'},solar_king:{style:'aoe',col:'#ffdd44',pat:'fire'},storm_emperor:{style:'aoe',col:'#88ddff',pat:'lightning'},gojo:{style:'void_cast',col:'#00ccff',pat:'six_eyes'},gojo_awakened:{style:'purple_cast',col:'#aa00ff',pat:'hollow'},
     assassin:{style:'crit',col:'#ff44cc',pat:'multi'},phantom_god:{style:'crit',col:'#ff00ff',pat:'shadow'},shadow_emperor:{style:'crit',col:'#440066',pat:'multi'},hell_emperor:{style:'crit',col:'#8800ff',pat:'chaos'},oblivion:{style:'crit',col:'#220044',pat:'void'},exotic_lucifer:{style:'crit',col:'#ff0066',pat:'fire'},exotic_shiva:{style:'crit',col:'#ff00aa',pat:'destroy'},apocalypse:{style:'crit',col:'#ff0044',pat:'destroy'},blood_sovereign:{style:'crit',col:'#aa0033',pat:'blood'},
     shieldman:{style:'cc',col:'#88ccff',pat:'frost'},ice_queen:{style:'cc',col:'#aaeeff',pat:'frost'},chronomancer:{style:'cc',col:'#3fe0ff',pat:'time'},time_lord:{style:'cc',col:'#9ff0ff',pat:'time'},frost_empress:{style:'cc',col:'#ccffff',pat:'frost'},frost_god:{style:'cc',col:'#aaeeff',pat:'frost'},chrono_god:{style:'cc',col:'#9966ff',pat:'time'},aurora_queen:{style:'cc',col:'#88ffff',pat:'frost'},
     gold_miner:{style:'econ',col:'#f1c40f',pat:'coin'},merchant:{style:'econ',col:'#ffd700',pat:'coin'},cleric:{style:'econ',col:'#f1c40f',pat:'holy'},banker:{style:'econ',col:'#ffcc00',pat:'coin'},treasurer:{style:'econ',col:'#ffdd00',pat:'coin'},gold_empress:{style:'econ',col:'#ffd700',pat:'coin'},
@@ -767,6 +719,46 @@ function getSkillProfile(u){
 }
 function fxSkill(u,k,t){
   if(!S.fx)return;
+  // Gojo special handling
+  if(k==='gojo_domain'){
+    const prof={style:'void_cast',col:'#00ccff',pat:'six_eyes'};
+    const pc=prof.col;
+    trail(u,t,pc);
+    // Domain cast visual
+    G.fx.push({t:'domain',x:u.x,y:u.y,r:stats(u.i).rng*2,c:'#00ccff',l:1.4,m:1.4});
+    // Charging runes around Gojo
+    for(let i=0;i<6;i++){
+      const ang=(i/6)*6.283;
+      G.fx.push({t:'ring',x:u.x+Math.cos(ang)*30,y:u.y+Math.sin(ang)*30,r:25,c:'#00ccff',l:.7,m:.7,w:2});
+    }
+    ring(u.x,u.y,60,'#88ffff',.6,4);
+    ring(u.x,u.y,90,'#00ccff',.5,3);
+    parts(u.x,u.y,'#00ccff',30,200,1.2);
+    parts(u.x,u.y,'#ffffff',15,150,1.0);
+    // Domain beam to target
+    beam(u,t,pc,6,true);
+    beam(u,t,'#ffffff',3);
+    return;
+  }
+  if(k==='hollow_purple'){
+    const prof={style:'purple_cast',col:'#aa00ff',pat:'hollow'};
+    const pc=prof.col;
+    trail(u,t,pc);
+    // Hollow Purple animation - red & blue merging
+    G.fx.push({t:'hollow',x:u.x,y:u.y,c:'#aa00ff',l:2.4,m:2.4});
+    // Flash of red and blue first
+    G.fx.push({t:'ring',x:u.x,y:u.y,r:50,c:'#ff0033',l:.5,m:.5,w:5});
+    G.fx.push({t:'ring',x:u.x,y:u.y,r:50,c:'#0066ff',l:.5,m:.5,w:5});
+    // Massive charge particles
+    for(let i=0;i<40;i++){
+      const a=Math.random()*6.283,sp=200+Math.random()*200;
+      G.par.push({x:u.x+Math.cos(a)*80,y:u.y+Math.sin(a)*80,vx:-Math.cos(a)*200,vy:-Math.sin(a)*200,l:1.2,m:1.2,c:i%2?'#ff0033':'#0066ff',z:3});
+    }
+    // Center flash
+    flash('#ffffff',.4);
+    setTimeout(()=>{if(G)flash('#aa00ff',.6);},200);
+    return;
+  }
   const c=tc(u),hi=isHi(u.i),top=u.i.rar==='secret'||u.i.rar==='transcendent'||u.i.rar==='primordial'||u.i.rar==='eternal'||u.i.rar==='exotic';
   const prof=getSkillProfile(u)||{style:'default',col:c,pat:'default'};
   const pc=prof.col||c;
@@ -806,11 +798,132 @@ G={pl:[],en:[],mn:[],fx:[],par:[],bm:[],wave:0,lives:BASE,act:false,q:[],qt:0,hp
 function startWave(){if(G.act||G.over)return;if(!G.inf&&G.wave>=MAXW)return;G.cd=0;G.nx=0;G.wave++;G.act=true;G.qt=0;G.q=[];G.we=0;G.skipped=false;$('sk').style.display='none';const w=G.wave;const isBoss=G.inf?(w%10===0):(w===MAXW);if(isBoss){if(G.inf){const cnt=Math.min(12,5+Math.floor(w/5));for(let i=0;i<cnt;i++)G.q.push('normal');G.q.push('boss');const ex=Math.floor(w/10);for(let i=0;i<Math.min(6,ex);i++)G.q.push('tank');for(let i=0;i<Math.min(8,ex);i++)G.q.push('flying');toast('⚠️ BOSS '+w+'!')}else{for(let i=0;i<6;i++)G.q.push('normal');G.q.push('boss');if(S.stage.boss)for(let i=0;i<4;i++)G.q.push('tank');toast('⚠️ BOSS!')}flash('#e74c3c',.5)}else{let n;if(G.inf)n=Math.min(40,3+Math.floor(w*1.3));else n=(w<=5?3:5)+Math.floor(w*.8);for(let i=0;i<n;i++){const r=Math.random();let t='normal';if(G.inf){if(w>=3&&r<.35)t='fast';else if(w>=5&&r>=.35&&r<.55)t='tank';else if(w>=8&&r>=.55&&r<.75)t='flying'}else{if(w>=3&&r<.3)t='fast';else if(w>=5&&r>=.3&&r<.5)t='tank';else if(w>=8&&r>=.5&&r<.65)t='flying'}G.q.push(t)}}const hpRate=G.inf?0.18:0.1;G.hp=S.stage.diff*(1+(w-1)*hpRate);if(isBoss)SFX.bossAlert();else SFX.waveStart();ui()}
 function spawn(t){const d=ET[t],m=t==='boss'&&S.stage.boss?1.5:1;G.en.push({x:G.wp[0].x,y:G.wp[0].y,hp:d.hp*G.hp*m,mx:d.hp*G.hp*m,sp:d.sp,rw:d.rw,c:d.c,r:d.r,t,wi:1,sl:0,sf:1,hf:0,dead:false})}
 function hit(e,d){if(e.dead)return false;e.hp-=d;e.hf=.15;if(e.hp<=0){e.dead=true;if(e.t==='boss')S.stats.bossesKilled++;S.coins+=e.rw;ftext(e.x,e.y-15,'+'+e.rw,'#f1c40f',.7);parts(e.x,e.y,e.c,8,120,.6);return true}return false}
-function fire(u,st,t){const i=u.i,hi=isHi(i),tier=hi?Math.floor(i.lv/3):0,es=EVO_SKILL[i.id];let dmg=st.dmg;if(u.buff>0)dmg=Math.floor(dmg*(1+u.buff));const k=st.skill;if(k.startsWith('support'))dmg=Math.floor(dmg*0.75);const _top=i.rar==='secret'||i.rar==='transcendent'||i.rar==='primordial'||i.rar==='eternal'||i.rar==='exotic';SFX.shoot(hi,_top);
-    if(k==='single'||k==='economy'||k.startsWith('support')){SFX.hit(hi,t.t==='boss');hit(t,dmg);beam(u,t,k==='economy'?'#f1c40f':k==='support'?'#00ffcc':k==='support_range'?'#66ccff':k==='support_spd'?'#ffcc00':hi?'#ffddff':'#ff0',hi?3:2,_top)}
-    else if(k==='summon'){const bonusMax = i.rar==='exotic'?5:i.rar==='eternal'?4:i.rar==='primordial'?3:i.rar==='transcendent'?2:i.rar==='secret'?1:0;const maxMn = 3 + Math.floor(i.lv/3) + bonusMax;const myMn = G.mn.filter(m => m.src === u.pid && !m.dead);if(myMn.length < maxMn){G.mn.push({x: u.x + (Math.random()-.5)*40, y: u.y + (Math.random()-.5)*40,hp: 60 + i.lv*8, mx: 60 + i.lv*8,dmg: Math.floor(st.dmg * 0.6), spd: 160, lt: 10,c: tc(u), src: u.pid, cdT: 0.4, icon: '🗡️', dead: false});ring(u.x, u.y, 40, tc(u), .4, 3);parts(u.x, u.y, tc(u), 8, 100, .4)}else{hit(t, dmg);beam(u, t, tc(u), 2)}}
-    else if(k==='slow'){hit(t,dmg);t.sl=1.5+tier*.4;t.sf=Math.max(.25,.6-tier*.06);beam(u,t,'#6cf',hi?4:2,_top);parts(t.x,t.y,'#6cf',hi?12:5,100,.6)}else if(k==='aoe'){let rad=50+tier*18;if(es&&i.id==='exotic_metatron')rad+=500;G.fx.push({t:'exp',x:t.x,y:t.y,r:rad,l:.35,m:.35});for(const e of G.en)if(Math.hypot(e.x-t.x,e.y-t.y)<=rad)hit(e,dmg)}else if(k==='crit'){let cc=.3+tier*.12,cm=2+tier*.6;if(es&&i.id==='exotic_lucifer')cm=30;const c=Math.random()<cc;hit(t,c?dmg*cm:dmg);beam(u,t,c?'#f00':'#f80',c?4:2,_top);if(c){ftext(t.x,t.y-25,'CRIT '+Math.floor(dmg*cm)+'!','#f00');parts(t.x,t.y,'#f00',hi?25:10,200,.9);if(hi)shake(6,.2)}}else if(k==='chain'){let extra=0;if(es&&i.id==='void_emperor')extra=2;if(es&&i.id==='void_sovereign')extra=3;if(es&&i.id==='void_god')extra=4;if(es&&i.id==='void_primordial')extra=6;if(es&&i.id==='eternal_dragon')extra=8;if(es&&i.id==='exotic_nidhogg')extra=12;if(es&&i.id==='infinity')extra=15;if(es&&i.id==='eternal_void')extra=25;if(es&&i.id==='exotic_chaos')extra=30;const n=3+tier+extra,seen=new Set();let cur=t,src=u;for(let j=0;j<n&&cur;j++){seen.add(cur);hit(cur,Math.floor(dmg*(1-j*.1)));if(hi)bolt(src,cur,['#f0f','#0ff','#fa0','#f6f'][j%4]);else beam(src,cur,'#a6f',3);src=cur;let nx=null,nd=1e9;for(const e of G.en){if(seen.has(e)||e.dead)continue;const d=Math.hypot(src.x-e.x,src.y-e.y);if(d<120&&d<nd){nd=d;nx=e}}cur=nx}}if(hi)fxSkill(u,k,t)}
-function fireUltimate(u,st){const i=u.i,es=EVO_SKILL[i.id],def=ULT_DEF[st.skill]||ULT_DEF.chain;const col=es?es.color:def.c,name=es?es.ult:def.n,type=def.t;const tier=i.lv>=5?Math.floor(i.lv/3):0;const bonusMul=1+tier*0.15;if(type==='scythe'){const len=240,spread=.55,ang=u.aimAngle||0;const dmg=Math.floor(st.dmg*6*bonusMul);for(const e of G.en){if(e.dead)continue;if(inTriangle(e.x,e.y,u.x,u.y,ang,len,spread)){hit(e,dmg);e.sl=Math.max(e.sl,1.8);e.sf=Math.min(e.sf,.35)}}G.fx.push({t:'scythe',x:u.x,y:u.y,a:ang,len,ang:spread,c:col,l:.9,m:.9});parts(u.x,u.y,col,40,280,1.2);flash(col,.3);G.fx.push({t:'banner',s:'⚔️ SCYTHE SWEEP!',c:col,l:1.4,m:1.4})}else if(type==='nova'){const dmg=Math.floor(st.dmg*5*bonusMul),rad=220;G.fx.push({t:'exp',x:u.x,y:u.y,r:rad,l:.35,m:.35});for(const e of G.en){if(e.dead)continue;if(Math.hypot(e.x-u.x,e.y-u.y)<=rad)hit(e,dmg)}ring(u.x,u.y,rad*1.4,'#fff',.9,6);nova(u.x,u.y,rad,'#ffaa00',.8);if(G.lives<BASE){G.lives=Math.min(BASE,G.lives+3)}flash('#ffaa00',.4);G.fx.push({t:'banner',s:'🌟 SUPERNOVA!',c:col,l:1.4,m:1.4})}else if(type==='storm'){const dmg=Math.floor(st.dmg*4*bonusMul);let prev=u;const tg=[...G.en].filter(e=>!e.dead);for(const e of tg){hit(e,dmg);bolt(prev,e,col,4);nova(e.x,e.y,50,col,.4);prev=e}ring(u.x,u.y,300,col,.9,6);flash(col,.4);G.fx.push({t:'banner',s:'☄️ VOID STORM!',c:col,l:1.4,m:1.4})}else if(type==='freeze'){for(const e of G.en){if(e.dead)continue;e.sl=Math.max(e.sl,4);e.sf=Math.min(e.sf,.05)}ring(u.x,u.y,400,'#66ccff',1.2,8);parts(u.x,u.y,'#66ccff',60,300,1.5);flash('#66ccff',.5);G.fx.push({t:'banner',s:'⏰ TIME FREEZE!',c:col,l:1.4,m:1.4})}const _ultTop=i.rar==='secret'||i.rar==='transcendent'||i.rar==='primordial'||i.rar==='eternal'||i.rar==='exotic';SFX.ult(_ultTop);u.ultCd=ULT_CD;toast('⚡ '+name+'!')}
+function fire(u,st,t){
+  const i=u.i,hi=isHi(i),tier=hi?Math.floor(i.lv/3):0,es=EVO_SKILL[i.id];
+  let dmg=st.dmg;if(u.buff>0)dmg=Math.floor(dmg*(1+u.buff));
+  const k=st.skill;
+  if(k.startsWith('support'))dmg=Math.floor(dmg*0.75);
+  const _top=i.rar==='secret'||i.rar==='transcendent'||i.rar==='primordial'||i.rar==='eternal'||i.rar==='exotic';
+  SFX.shoot(hi,_top);
+  if(k==='single'||k==='economy'||k.startsWith('support')){SFX.hit(hi,t.t==='boss');hit(t,dmg);beam(u,t,k==='economy'?'#f1c40f':k==='support'?'#00ffcc':k==='support_range'?'#66ccff':k==='support_spd'?'#ffcc00':hi?'#ffddff':'#ff0',hi?3:2,_top)}
+  else if(k==='summon'){const bonusMax = i.rar==='exotic'?5:i.rar==='eternal'?4:i.rar==='primordial'?3:i.rar==='transcendent'?2:i.rar==='secret'?1:0;const maxMn = 3 + Math.floor(i.lv/3) + bonusMax;const myMn = G.mn.filter(m => m.src === u.pid && !m.dead);if(myMn.length < maxMn){G.mn.push({x: u.x + (Math.random()-.5)*40, y: u.y + (Math.random()-.5)*40,hp: 60 + i.lv*8, mx: 60 + i.lv*8,dmg: Math.floor(st.dmg * 0.6), spd: 160, lt: 10,c: tc(u), src: u.pid, cdT: 0.4, icon: '🗡️', dead: false});ring(u.x, u.y, 40, tc(u), .4, 3);parts(u.x, u.y, tc(u), 8, 100, .4)}else{hit(t, dmg);beam(u, t, tc(u), 2)}}
+  else if(k==='slow'){hit(t,dmg);t.sl=1.5+tier*.4;t.sf=Math.max(.25,.6-tier*.06);beam(u,t,'#6cf',hi?4:2,_top);parts(t.x,t.y,'#6cf',hi?12:5,100,.6)}
+  else if(k==='aoe'){let rad=50+tier*18;if(es&&i.id==='exotic_metatron')rad+=500;G.fx.push({t:'exp',x:t.x,y:t.y,r:rad,l:.35,m:.35});for(const e of G.en)if(Math.hypot(e.x-t.x,e.y-t.y)<=rad)hit(e,dmg)}
+  else if(k==='crit'){let cc=.3+tier*.12,cm=2+tier*.6;if(es&&i.id==='exotic_lucifer')cm=30;const c=Math.random()<cc;hit(t,c?dmg*cm:dmg);beam(u,t,c?'#f00':'#f80',c?4:2,_top);if(c){ftext(t.x,t.y-25,'CRIT '+Math.floor(dmg*cm)+'!','#f00');parts(t.x,t.y,'#f00',hi?25:10,200,.9);if(hi)shake(6,.2)}}
+  else if(k==='chain'){let extra=0;if(es&&i.id==='void_emperor')extra=2;if(es&&i.id==='void_sovereign')extra=3;if(es&&i.id==='void_god')extra=4;if(es&&i.id==='void_primordial')extra=6;if(es&&i.id==='eternal_dragon')extra=8;if(es&&i.id==='exotic_nidhogg')extra=12;if(es&&i.id==='infinity')extra=15;if(es&&i.id==='eternal_void')extra=25;if(es&&i.id==='exotic_chaos')extra=30;const n=3+tier+extra,seen=new Set();let cur=t,src=u;for(let j=0;j<n&&cur;j++){seen.add(cur);hit(cur,Math.floor(dmg*(1-j*.1)));if(hi)bolt(src,cur,['#f0f','#0ff','#fa0','#f6f'][j%4]);else beam(src,cur,'#a6f',3);src=cur;let nx=null,nd=1e9;for(const e of G.en){if(seen.has(e)||e.dead)continue;const d=Math.hypot(src.x-e.x,src.y-e.y);if(d<120&&d<nd){nd=d;nx=e}}cur=nx}}
+  else if(k==='gojo_domain'){
+    // Domain Expansion — 2x range, hits all enemies in domain
+    const rad=st.rng*2;
+    const bonusDmg=Math.floor(dmg*2.2);
+    for(const e of G.en){
+      if(e.dead)continue;
+      if(Math.hypot(e.x-u.x,e.y-u.y)<=rad){
+        hit(e,bonusDmg);
+        e.sl=Math.max(e.sl,1.5);
+        e.sf=Math.min(e.sf,0.5);
+      }
+    }
+    if(!S.fx){/* no visuals when off */}
+    else{
+      G.fx.push({t:'domain',x:u.x,y:u.y,r:rad,c:'#00ccff',l:1.6,m:1.6});
+      ring(u.x,u.y,rad*0.85,'#88ffff',1.2,6);
+      ring(u.x,u.y,rad*0.5,'#00ccff',1,4);
+      parts(u.x,u.y,'#00ccff',50,280,1.5);
+      flash('#00ccff',.35);
+      G.fx.push({t:'banner',s:'♾️ DOMAIN EXPANSION!',c:'#00ccff',l:1.6,m:1.6});
+    }
+    if(hi)fxSkill(u,k,t);
+    return;
+  }
+  else if(k==='hollow_purple'){
+    // Hollow Purple — hits ENTIRE map
+    const bonusDmg=Math.floor(dmg*8);
+    for(const e of G.en){
+      if(e.dead)continue;
+      hit(e,bonusDmg);
+      e.sl=Math.max(e.sl,3);
+      e.sf=Math.min(e.sf,0.3);
+    }
+    if(!S.fx){/* no visuals when off */}
+    else{
+      // Red & blue ball merging into purple
+      G.fx.push({t:'hollow',x:u.x,y:u.y,c:'#aa00ff',l:2.6,m:2.6});
+      // Initial red/blue balls
+      G.fx.push({t:'ring',x:u.x-70,y:u.y,r:40,c:'#ff0033',l:.7,m:.7,w:6});
+      G.fx.push({t:'ring',x:u.x+70,y:u.y,r:40,c:'#0066ff',l:.7,m:.7,w:6});
+      // Massive purple explosion aftermath
+      setTimeout(()=>{
+        if(!G)return;
+        for(let i=0;i<5;i++){
+          G.fx.push({t:'shockwave',x:450,y:275,r:250+i*180,c:'#aa00ff',l:1.5-i*.15,m:1.5-i*.15});
+        }
+        parts(450,275,'#aa00ff',80,400,2.2);
+        parts(450,275,'#ff88ff',40,300,2.0);
+        flash('#aa00ff',.7);
+      },1100);
+      G.fx.push({t:'banner',s:'🟣 HOLLOW PURPLE!',c:'#aa00ff',l:2.6,m:2.6});
+    }
+    if(hi)fxSkill(u,k,t);
+    return;
+  }
+  if(hi)fxSkill(u,k,t);
+}
+function fireUltimate(u,st){const i=u.i,es=EVO_SKILL[i.id],def=ULT_DEF[st.skill]||ULT_DEF.chain;const col=es?es.color:def.c,name=es?es.ult:def.n,type=def.t;const tier=i.lv>=5?Math.floor(i.lv/3):0;const bonusMul=1+tier*0.15;
+  // Gojo custom ultimates
+  if(i.id==='gojo'){
+    // Ultimate = Double Domain Expansion (bigger + more damage)
+    const rad=st.rng*2.5;
+    const dmg=Math.floor(st.dmg*4*bonusMul);
+    for(const e of G.en){
+      if(e.dead)continue;
+      if(Math.hypot(e.x-u.x,e.y-u.y)<=rad){
+        hit(e,dmg);
+        e.sl=Math.max(e.sl,3);
+        e.sf=Math.min(e.sf,0.2);
+      }
+    }
+    if(S.fx){
+      G.fx.push({t:'domain',x:u.x,y:u.y,r:rad,c:'#00ccff',l:2.2,m:2.2});
+      for(let i2=0;i2<3;i2++)ring(u.x,u.y,rad*(0.4+i2*0.25),'#88ffff',1.5,7);
+      parts(u.x,u.y,'#00ccff',100,400,2.2);
+      flash('#00ccff',.5);
+      G.fx.push({t:'banner',s:'♾️ UNLIMITED VOID!',c:'#00ccff',l:2.2,m:2.2});
+    }
+    SFX.ult(true);u.ultCd=ULT_CD;toast('⚡ '+name+'!');return;
+  }
+  if(i.id==='gojo_awakened'){
+    // Ultimate = MAXIMUM Hollow Purple
+    const dmg=Math.floor(st.dmg*15*bonusMul);
+    for(const e of G.en){
+      if(e.dead)continue;
+      hit(e,dmg);
+      e.sl=Math.max(e.sl,5);
+      e.sf=Math.min(e.sf,0.1);
+    }
+    if(S.fx){
+      G.fx.push({t:'hollow',x:u.x,y:u.y,c:'#aa00ff',l:3.2,m:3.2});
+      G.fx.push({t:'ring',x:u.x-90,y:u.y,r:55,c:'#ff0033',l:1,m:1,w:8});
+      G.fx.push({t:'ring',x:u.x+90,y:u.y,r:55,c:'#0066ff',l:1,m:1,w:8});
+      setTimeout(()=>{
+        if(!G)return;
+        for(let i2=0;i2<8;i2++){
+          G.fx.push({t:'shockwave',x:450,y:275,r:200+i2*180,c:i2%2?'#aa00ff':'#ff88ff',l:1.8-i2*.15,m:1.8-i2*.15});
+        }
+        parts(450,275,'#aa00ff',150,500,2.8);
+        parts(450,275,'#ff44ff',80,400,2.5);
+        parts(450,275,'#ffffff',40,300,2.0);
+        flash('#ffffff',.5);
+        setTimeout(()=>{if(G)flash('#aa00ff',.7)},200);
+      },1300);
+      G.fx.push({t:'banner',s:'🟣 MAXIMUM: HOLLOW PURPLE!',c:'#aa00ff',l:3.2,m:3.2});
+    }
+    SFX.ult(true);u.ultCd=ULT_CD;toast('⚡ '+name+'!');return;
+  }
+  if(type==='scythe'){const len=240,spread=.55,ang=u.aimAngle||0;const dmg=Math.floor(st.dmg*6*bonusMul);for(const e of G.en){if(e.dead)continue;if(inTriangle(e.x,e.y,u.x,u.y,ang,len,spread)){hit(e,dmg);e.sl=Math.max(e.sl,1.8);e.sf=Math.min(e.sf,.35)}}G.fx.push({t:'scythe',x:u.x,y:u.y,a:ang,len,ang:spread,c:col,l:.9,m:.9});parts(u.x,u.y,col,40,280,1.2);flash(col,.3);G.fx.push({t:'banner',s:'⚔️ SCYTHE SWEEP!',c:col,l:1.4,m:1.4})}
+  else if(type==='nova'){const dmg=Math.floor(st.dmg*5*bonusMul),rad=220;G.fx.push({t:'exp',x:u.x,y:u.y,r:rad,l:.35,m:.35});for(const e of G.en){if(e.dead)continue;if(Math.hypot(e.x-u.x,e.y-u.y)<=rad)hit(e,dmg)}ring(u.x,u.y,rad*1.4,'#fff',.9,6);nova(u.x,u.y,rad,'#ffaa00',.8);if(G.lives<BASE){G.lives=Math.min(BASE,G.lives+3)}flash('#ffaa00',.4);G.fx.push({t:'banner',s:'🌟 SUPERNOVA!',c:col,l:1.4,m:1.4})}
+  else if(type==='storm'){const dmg=Math.floor(st.dmg*4*bonusMul);let prev=u;const tg=[...G.en].filter(e=>!e.dead);for(const e of tg){hit(e,dmg);bolt(prev,e,col,4);nova(e.x,e.y,50,col,.4);prev=e}ring(u.x,u.y,300,col,.9,6);flash(col,.4);G.fx.push({t:'banner',s:'☄️ VOID STORM!',c:col,l:1.4,m:1.4})}
+  else if(type==='freeze'){for(const e of G.en){if(e.dead)continue;e.sl=Math.max(e.sl,4);e.sf=Math.min(e.sf,.05)}ring(u.x,u.y,400,'#66ccff',1.2,8);parts(u.x,u.y,'#66ccff',60,300,1.5);flash('#66ccff',.5);G.fx.push({t:'banner',s:'⏰ TIME FREEZE!',c:col,l:1.4,m:1.4})}
+  const _ultTop=i.rar==='secret'||i.rar==='transcendent'||i.rar==='primordial'||i.rar==='eternal'||i.rar==='exotic';SFX.ult(_ultTop);u.ultCd=ULT_CD;toast('⚡ '+name+'!')}
 
 function update(dt){if(!G||G.paused||G.over)return;
     for (const u of G.pl) { u.buff = 0; u.buffRng = 0; u.buffSpd = 0; }
@@ -830,7 +943,7 @@ function defeat(boss){SFX.defeat();stopPlayTimer();if(G.inf && G.wave>S.stats.hi
 let lastUi=0,PID=1;const pop=$('pop');
 const cnt=i=>G.pl.filter(p=>p.i.iid===i.iid).length;
 function ui(soft){const now=performance.now();if(soft&&now-lastUi<200)return;lastUi=now;const ultBtn=document.getElementById('ult');if(ultBtn&&G.selP){const pu=G.pl.find(x=>x.pid===G.selP);if(pu&&isHi(pu.i)&&pu.i.lv>=5){const st2=stats(pu.i),es2=EVO_SKILL[pu.i.id];const un2=es2?es2.ult:(ULT_DEF[st2.skill]?ULT_DEF[st2.skill].n:'ULTIMATE');if(pu.ultCd>0){ultBtn.disabled=true;ultBtn.textContent='⏳ '+Math.ceil(pu.ultCd)+'s'}else{ultBtn.disabled=false;ultBtn.textContent='⚡ '+un2}}}$('gc').textContent=Math.floor(S.coins);$('gl').textContent=G.lives;$('gw').textContent=G.wave;$('gwm').textContent=G.inf?' ♾️':'/'+MAXW;if(G.inf){const nb=15-(G.wave%15||15);$('gn').textContent='♾️ W'+G.wave+' · 💎+100 dlm '+nb+'w · 🏆'+(S.best||0)}else{$('gn').textContent=S.stage.n}$('sw').disabled=G.act||G.over||(!G.inf&&G.wave>=MAXW);updateUltShortcut();if(soft)return;hand();info()}
-function hand(){const h=$('hand');h.innerHTML='';const hand=S.inv.filter(u=>S.load.includes(u.iid));if(!hand.length){h.innerHTML='<div style="color:#666;font-size:11px;padding:8px">Semua unit di field / loadout kosong</div>';return}for(const u of hand){const d=DEF[u.id];if(!d)continue;const r=R[u.rar]||R.common,ro=ROLE[role(d)]||['-','#fff'],c=cnt(u),m=maxDep(u),full=c>=m,tr=getTrait(u),e=document.createElement('div');const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';const trHTML=tr?`<div style="color:${tr.c};font-size:9px">${tr.i} ${tr.n}${tl}</div>`:`<div style="color:#666;font-size:9px">—</div>`;e.className='hc'+(full?' dim':'')+(G.sel===u.iid?' sel':'');e.style.borderColor=G.sel===u.iid?'#f1c40f':r.c;e.innerHTML=`<span>${d.icon}</span><div><b style="color:#fff;font-size:10px">${d.name}</b><div style="color:${ro[1]};font-size:8px">${ro[0]}</div>${trHTML}<div style="color:#f1c40f;font-size:9px">🪙${placeCost(u)}</div></div><i>${m-c}/${m}</i>`;e.onclick=()=>{if(full){toast('Batas '+m+' penuh!');return}G.sel=G.sel===u.iid?null:u.iid;G.selP=null;[...h.children].forEach(c=>c.classList.remove('sel'));if(G.sel===u.iid)e.classList.add('sel');info()};h.appendChild(e)}}
+function hand(){const h=$('hand');h.innerHTML='';const hand=S.inv.filter(u=>S.load.includes(u.iid));if(!hand.length){h.innerHTML='<div style="color:#666;font-size:11px;padding:8px">Semua unit di field / loadout kosong</div>';return}for(const u of hand){const d=DEF[u.id];if(!d)continue;const r=R[u.rar]||R.common,ro=ROLE[role(d)]||['-','#fff'],c=cnt(u),m=maxDep(u),full=c>=m,tr=getTrait(u),e=document.createElement('div');const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';const trHTML=tr?`<div style="color:${tr.c};font-size:9px">${tr.i} ${tr.n}${tl}</div>`:`<div style="color:#666;font-size:9px">—</div>`;e.className='hc'+(full?' dim':'')+(G.sel===u.iid?' sel':'');e.style.borderColor=G.sel===u.iid?'#f1c40f':r.c;const isGojo=u.id==='gojo'||u.id==='gojo_awakened';const gojoTag=isGojo?`<div style="color:#00ccff;font-size:8px;font-weight:bold">👁️ ${u.id==='gojo'?'VOID':'PURPLE'}</div>`:'';e.innerHTML=`<span>${d.icon}</span><div><b style="color:#fff;font-size:10px">${d.name}</b><div style="color:${ro[1]};font-size:8px">${ro[0]}</div>${trHTML}${gojoTag}<div style="color:#f1c40f;font-size:9px">🪙${placeCost(u)}</div></div><i>${m-c}/${m}</i>`;e.onclick=()=>{if(full){toast('Batas '+m+' penuh!');return}G.sel=G.sel===u.iid?null:u.iid;G.selP=null;[...h.children].forEach(c=>c.classList.remove('sel'));if(G.sel===u.iid)e.classList.add('sel');info()};h.appendChild(e)}}
 function info(){try{const u=G.pl.find(x=>x.pid===G.selP);if(!u){pop.style.display='none';return}const i=u.i,st=stats(i),mx=MAXL[i.rar]||10,c=upCost(i),d=DEF[i.id];if(!d){pop.style.display='none';return}const rc=RECIPES[i.id],ro=ROLE[role(d)]||['-','#fff'];let ev='';const tr=st.trait;const tl=tr&&tr.tier!==undefined&&TRAITS[tr.id]&&TRAITS[tr.id].tiers.length>1?[' I',' II',' III'][tr.tier]:'';const traitHTML=tr?`<div class="row"><span>🎲</span><b style="color:${tr.c}">${tr.i} ${tr.n}${tl}</b></div>`:`<div class="row"><span>🎲</span><b style="color:#666">—</b></div>`;const es=EVO_SKILL[i.id];const skillName=es?`${es.icon} ${es.name}`:st.skill;const ultName=es?es.ult:(ULT_DEF[st.skill]?ULT_DEF[st.skill].n:'ULT');const ec=(st.skill==='economy')?Math.floor((250+i.lv*100)*(ECO_K[i.rar]||1)*st.income):0;if(rc&&EVOLVE_MIN_RAR.includes(i.rar)){let can=true;ev=`<div style="margin-top:4px;color:#aaa;font-size:10px">🧬 → ${DEF[rc.r].name}</div>`;for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;ev+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}const gc=rc.cost||0,hasG=S.gems>=gc;if(!hasG)can=false;ev+=`<div class="mr" style="border-color:${hasG?'#2ecc71':'#e74c3c'}"><span>💎</span><span>${S.gems}/${gc}</span></div><button id="ev" class="y" ${can?'':'disabled'}>Evolve</button>`}
     const buffedDmg = u.buff > 0 ? Math.floor(st.dmg * (1 + u.buff)) : st.dmg;const buffedRng = u.buffRng > 0 ? Math.floor(st.rng * (1 + u.buffRng)) : st.rng;const buffText = u.buff > 0 ? ` <span style="color:#00ffcc;font-size:9px">(+${Math.floor(u.buff*100)}%)</span>` : '';const buffRngText = u.buffRng > 0 ? ` <span style="color:#66ccff;font-size:9px">(+${Math.floor(u.buffRng*100)}%)</span>` : '';
     pop.innerHTML=`<b>${d.icon} ${d.name}</b> <span style="color:${ro[1]};font-size:11px">${ro[0]}</span><div class="row"><span>Lv</span><b>${i.lv}/${mx}</b></div><div class="row"><span>DMG</span><b>${buffedDmg}${buffText}</b></div><div class="row"><span>RNG</span><b>${buffedRng}${buffRngText}</b></div>${traitHTML}<div class="row"><span>Skill</span><b>${skillName}</b></div>${ec?`<div class="row"><span>🪙/Wave</span><b>+${ec}</b></div>`:''}${st.skill==='support'?`<div class="row"><span>✨ Aura</span><b style="color:#00ffcc">+${Math.floor((0.25+(i.lv*0.03))*100)}% DMG</b></div>`:''}${st.skill==='support_range'?`<div class="row"><span>🔭 Aura</span><b style="color:#66ccff">+${Math.floor((0.25+(i.lv*0.03))*100)}% RNG</b></div>`:''}${st.skill==='support_spd'?`<div class="row"><span>⏩ Aura</span><b style="color:#ffcc00">+${Math.floor((0.25+(i.lv*0.03))*100)}% SPD</b></div>`:''}${u.buffSpd>0?`<div class="row"><span>⚡ Speed Buff</span><b style="color:#ffcc00">+${Math.floor(u.buffSpd*100)}% ATK SPD</b></div>`:''}<div class="row"><span>Max</span><b>${cnt(i)}/${maxDep(i)}</b></div>${isHi(i)?`<div class="row"><span>Ult</span><b>${i.lv>=5?ultName:'Lv5'}</b></div>`:''}${isHi(i)&&i.lv>=5?`<button id="ult" style="width:100%;margin-top:4px;background:linear-gradient(180deg,#ff2266,#aa0033)" ${u.ultCd>0?'disabled':''}>${u.ultCd>0?'⏳'+Math.ceil(u.ultCd)+'s':'⚡'+ultName}</button>`:''}<button id="up" ${i.lv>=mx||S.coins<c?'disabled':''}>${i.lv>=mx?'🏆 MAX':'⬆ '+c+'🪙'}</button><button id="pk" class="r">Angkat</button>${ev}`;
@@ -890,6 +1003,16 @@ function sets(back){
       </div>
       ${customInfo}
     </div>
+    <div style="background:#0a0e27;border-radius:8px;padding:10px;margin:8px 0;text-align:left;border:2px solid #00ccff">
+      <div style="color:#00ccff;font-weight:bold;font-size:13px;margin-bottom:6px">👁️ GOJO UNLOCK INFO</div>
+      <div style="font-size:11px;color:#ccc;line-height:1.6">
+        Unlock: <b style="color:#f1c40f">Player Level ${GOJO_LEVEL_REQ}</b><br>
+        Level kamu: <b style="color:${getPlayerLevel()>=GOJO_LEVEL_REQ?'#2ecc71':'#e74c3c'}">Lv ${getPlayerLevel()}</b><br>
+        Rarity: <b style="color:#e74c3c">Mythic</b> → <b style="color:#ff00ff">Secret</b><br>
+        Skill: <b style="color:#00ccff">♾️ Domain Expansion</b><br>
+        Evolved: <b style="color:#aa00ff">🟣 Hollow Purple</b>
+      </div>
+    </div>
     <button id="sb" class="g">← Kembali</button>`;
   $('t1').onchange=e=>{S.auto=e.target.checked;save()};
   $('t2').onchange=e=>{S.fx=e.target.checked;save();toast(e.target.checked?'✨ Efek ON':'✨ Efek OFF (hemat performa)')};
@@ -912,7 +1035,6 @@ function sets(back){
   if(S.music==='custom'){
     const fileInput = $('musFile');
     const listEl = $('customTrackList');
-
     const renderList = async () => {
       const arr = await Music.listCustomTracks();
       if(arr.length === 0){
@@ -923,52 +1045,26 @@ function sets(back){
         const isPlaying = S.customMusicId === t.id && Music.playing;
         const active = S.customMusicId === t.id;
         return `<div style="display:flex;justify-content:space-between;align-items:center;background:${active?'#0a2050':'#0a0e27'};border:1px solid ${active?'#3498db':'#2a3a6a'};border-radius:6px;padding:6px 8px;margin:3px 0;gap:6px">
-          <div style="flex:1;min-width:0">
-            <div style="color:${active?'#66ccff':'#fff'};font-size:11px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${isPlaying?'▶️ ':''}${t.name}</div>
-          </div>
+          <div style="flex:1;min-width:0"><div style="color:${active?'#66ccff':'#fff'};font-size:11px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${isPlaying?'▶️ ':''}${t.name}</div></div>
           <button class="ct-play" data-id="${t.id}" style="font-size:10px;padding:4px 8px;margin:0;min-height:26px;background:linear-gradient(#2ecc71,#27ae60)">${isPlaying?'▶':'▶ Play'}</button>
           <button class="ct-del" data-id="${t.id}" style="font-size:10px;padding:4px 8px;margin:0;min-height:26px;background:linear-gradient(#e74c3c,#c0392b)">🗑</button>
         </div>`;
       }).join('');
-      listEl.querySelectorAll('.ct-play').forEach(b => {
-        b.onclick = async () => {
-          await Music.playCustomTrack(b.dataset.id);
-          renderList();
-        };
-      });
-      listEl.querySelectorAll('.ct-del').forEach(b => {
-        b.onclick = async () => {
-          if(!confirm('Hapus lagu ini?')) return;
-          await Music.deleteCustomTrack(b.dataset.id);
-          toast('🗑 Lagu dihapus');
-          renderList();
-        };
-      });
+      listEl.querySelectorAll('.ct-play').forEach(b => {b.onclick = async () => {await Music.playCustomTrack(b.dataset.id);renderList();};});
+      listEl.querySelectorAll('.ct-del').forEach(b => {b.onclick = async () => {if(!confirm('Hapus lagu ini?')) return;await Music.deleteCustomTrack(b.dataset.id);toast('🗑 Lagu dihapus');renderList();};});
     };
     renderList();
-
     $('musPickFile').onclick = () => fileInput.click();
     fileInput.onchange = async e => {
       const files = Array.from(e.target.files);
       if(!files.length) return;
       let added = 0, failed = 0;
-      for(const f of files){
-        const r = await Music.addCustomTrack(f);
-        if(r) added++; else failed++;
-      }
+      for(const f of files){const r = await Music.addCustomTrack(f);if(r) added++; else failed++;}
       toast(`✅ ${added} lagu ditambah${failed?`, ${failed} gagal`:''}`);
       fileInput.value = '';
       renderList();
     };
-
-    $('musUrlOk').onclick = () => {
-      const url = $('musUrlIn').value.trim();
-      S.customMusicUrl = url;
-      save();
-      toast(url ? '✅ URL tersimpan' : '🗑 URL dikosongkan');
-      if(url) Music.play('custom');
-    };
-
+    $('musUrlOk').onclick = () => {const url = $('musUrlIn').value.trim();S.customMusicUrl = url;save();toast(url ? '✅ URL tersimpan' : '🗑 URL dikosongkan');if(url) Music.play('custom');};
     $('musStop').onclick = () => { Music.stop(); renderList(); };
   }
   $('sb').onclick=back;
@@ -985,7 +1081,7 @@ function evMenu(){
     h+='<p style="color:#888;font-size:11px;margin-bottom:8px">Hanya unit <b style="color:#e74c3c">Mythic ke atas</b> yang bisa di-evolve</p>';
     h+='<div style="max-height:60vh;overflow-y:auto;width:min(440px,86vw)">';
     if(!list.length){h+='<p style="color:#888;font-size:13px;text-align:center;padding:14px">Belum ada unit Mythic+ yang bisa di-evolve.<br><span style="font-size:11px;color:#666">Kumpulkan material dari Legend Stage!</span></p>';}
-    else {for(const u of list){const rc=RECIPES[u.id];if(!rc) continue;const srcRar=R[u.rar]||R.common;const dstRar=R[(DEF[rc.r]&&DEF[rc.r].rar)||'mythic']||R.mythic;let can=true,rows='';for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;rows+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}const gc=rc.cost||0,hasG=S.gems>=gc;if(!hasG)can=false;rows+=`<div class="mr" style="border-color:${hasG?'#2ecc71':'#e74c3c'}"><span>💎</span><span>${S.gems}/${gc}</span></div>`;const lbl=`${srcRar.n.toUpperCase()} → ${dstRar.n.toUpperCase()}`;const bc=dstRar.c;h+=`<div class="card" style="cursor:default;text-align:left;margin:6px 0;border-color:${bc}"><div style="font-size:10px;color:${bc};font-weight:bold;letter-spacing:1px">${lbl}</div>${DEF[u.id].icon} <b style="color:#fff">${DEF[u.id].name}</b> <span style="color:${srcRar.c};font-size:10px">(${srcRar.n})</span> → ${DEF[rc.r].icon} <b style="color:${bc}">${DEF[rc.r].name}</b> <span style="color:${dstRar.c};font-size:10px">(${dstRar.n})</span>${rows}<button class="y evgo" data-i="${u.iid}" style="width:100%;margin:4px 0 0" ${can?'':'disabled'}>Evolve</button></div>`;}}
+    else {for(const u of list){const rc=RECIPES[u.id];if(!rc) continue;const srcRar=R[u.rar]||R.common;const dstRar=R[(DEF[rc.r]&&DEF[rc.r].rar)||'mythic']||R.mythic;let can=true,rows='';for(const k in rc.m){const hv=S.mats[k]||0,ok=hv>=rc.m[k];if(!ok)can=false;rows+=`<div class="mr" style="border-color:${ok?'#2ecc71':'#e74c3c'}"><span>${MATS[k][1]} ${MATS[k][0]}</span><span>${hv}/${rc.m[k]}</span></div>`}const gc=rc.cost||0,hasG=S.gems>=gc;if(!hasG)can=false;rows+=`<div class="mr" style="border-color:${hasG?'#2ecc71':'#e74c3c'}"><span>💎</span><span>${S.gems}/${gc}</span></div>`;const lbl=`${srcRar.n.toUpperCase()} → ${dstRar.n.toUpperCase()}`;const bc=dstRar.c;const isGojo=u.id==='gojo';h+=`<div class="card" style="cursor:default;text-align:left;margin:6px 0;border-color:${bc}">${isGojo?'<div style="color:#00ccff;font-weight:bold;font-size:11px;letter-spacing:1px;margin-bottom:3px">👁️ SPECIAL — GOJO EVOLUTION</div>':''}<div style="font-size:10px;color:${bc};font-weight:bold;letter-spacing:1px">${lbl}</div>${DEF[u.id].icon} <b style="color:#fff">${DEF[u.id].name}</b> <span style="color:${srcRar.c};font-size:10px">(${srcRar.n})</span> → ${DEF[rc.r].icon} <b style="color:${bc}">${DEF[rc.r].name}</b> <span style="color:${dstRar.c};font-size:10px">(${dstRar.n})</span>${rows}<button class="y evgo" data-i="${u.iid}" style="width:100%;margin:4px 0 0" ${can?'':'disabled'}>Evolve</button></div>`;}}
     h+='</div><button id="evx" class="r" style="margin-top:10px">Tutup</button>';
     ob.innerHTML=h;
     $('evx').onclick=()=>{ov.style.cssText='';ov.style.display='none'};
@@ -1003,10 +1099,7 @@ function renderTraitFilter(){let h = `<h2 style="margin-bottom:6px">🎯 Filter 
 function renderTraitList(){let h = `<h2 style="margin-bottom:6px">📖 Daftar Trait</h2><div style="max-height:60vh;overflow-y:auto;width:min(440px,88vw)">`;const rarOrder = {common:0, legendary:1, mythic:2};const sorted = Object.keys(TRAITS).sort((a,b) => rarOrder[TRAITS[a].rar] - rarOrder[TRAITS[b].rar]);for(const id of sorted){const t = TRAITS[id];h += `<div style="background:#0a0e27;border:2px solid ${t.c};border-radius:8px;padding:10px;margin:6px 0"><b style="color:${t.c};font-size:14px">${t.i} ${t.n}</b> <span style="color:#888;font-size:10px">${t.rar} · ${t.chance}%</span><div style="margin-top:6px">`;t.tiers.forEach((tier, i) => {h += `<div style="font-size:11px;padding:2px 0"><b style="color:#fff">${t.f(tier)}</b></div>`;});h += `</div></div>`;}h += `</div><button id="tlBack" class="r" style="width:100%;margin-top:10px">← Kembali</button>`;$('ob').innerHTML = h;$('tlBack').onclick = () => { renderTraitReroll(); };}
 
 /* ═══════ BACKPACK — MATERIALS VIEW ═══════ */
-function getMaterialDropFrom(matKey){
-  for(const r of REALMS){ if(r.m === matKey) return r.n; }
-  return null;
-}
+function getMaterialDropFrom(matKey){for(const r of REALMS){if(r.m === matKey) return r.n}return null}
 function renderBackpack(){
   const mats = S.mats || {};
   const matUsage = {};
@@ -1024,7 +1117,6 @@ function renderBackpack(){
   ];
   const totalMats = Object.values(mats).reduce((a,b)=>a+(+b||0),0);
   let html = `<div style="text-align:center;color:#aaa;font-size:12px;margin-bottom:10px">Total material dimiliki: <b style="color:#f1c40f">${totalMats}</b> · Unit: <b style="color:#66ccff">${S.inv.length}</b></div>`;
-
   for(const g of groups){
     html += `<div style="color:${g.color};font-weight:bold;font-size:13px;margin:12px 0 6px;border-bottom:1px solid #2a3a6a;padding-bottom:4px;letter-spacing:1px">${g.name}</div>`;
     for(const key of g.keys){
@@ -1033,50 +1125,26 @@ function renderBackpack(){
       const usages = matUsage[key] || [];
       const dropFrom = getMaterialDropFrom(key);
       html += `<div style="background:#151a3a;border:2px solid ${count>0?'#f1c40f':'#2a3a6a'};border-radius:8px;padding:10px;margin-bottom:8px">`;
-      html += `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <div style="font-size:15px;font-weight:bold;color:#fff">${mat[1]} ${mat[0]}</div>
-        <div style="font-size:16px;font-weight:bold;color:${count>0?'#2ecc71':'#666'}">x${count}</div>
-      </div>`;
-      if(dropFrom){
-        html += `<div style="font-size:10px;color:#888;margin-bottom:6px">📍 Drop dari: <b style="color:#f1c40f">${dropFrom}</b></div>`;
-      }
+      html += `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-size:15px;font-weight:bold;color:#fff">${mat[1]} ${mat[0]}</div><div style="font-size:16px;font-weight:bold;color:${count>0?'#2ecc71':'#666'}">x${count}</div></div>`;
+      if(dropFrom){html += `<div style="font-size:10px;color:#888;margin-bottom:6px">📍 Drop dari: <b style="color:#f1c40f">${dropFrom}</b></div>`;}
       if(usages.length > 0){
         const byTarget = {};
-        for(const u of usages){
-          if(!byTarget[u.to]) byTarget[u.to] = {need:u.need, from:[], cost:u.cost};
-          byTarget[u.to].from.push(u.from);
-        }
+        for(const u of usages){if(!byTarget[u.to]) byTarget[u.to] = {need:u.need, from:[], cost:u.cost};byTarget[u.to].from.push(u.from);}
         html += `<div style="font-size:11px;color:#aaa;margin-bottom:4px">🧬 Dibutuhkan untuk evolve:</div>`;
         for(const [toId, info] of Object.entries(byTarget)){
           const target = DEF[toId]; if(!target) continue;
           const targetR = R[target.rar] || R.common;
           const enough = count >= info.need;
           const canCraft = Math.floor(count / info.need);
-          html += `<div style="display:flex;justify-content:space-between;align-items:center;background:#0a0e27;border-left:3px solid ${enough?'#2ecc71':'#e74c3c'};border-radius:4px;padding:5px 8px;margin:3px 0;font-size:11px">
-            <div style="flex:1;min-width:0">
-              <div style="color:${targetR.c};font-weight:bold">${target.icon} ${target.name} <span style="color:#888;font-size:9px">(${targetR.n})</span></div>
-              <div style="color:#666;font-size:10px">dari: ${info.from.map(f=>DEF[f]?DEF[f].icon+' '+DEF[f].name:f).join(', ')}</div>
-            </div>
-            <div style="text-align:right;flex-shrink:0;margin-left:6px">
-              <div style="color:${enough?'#2ecc71':'#e74c3c'};font-weight:bold">${count}/${info.need}</div>
-              <div style="color:#f1c40f;font-size:10px">💎${info.cost}${canCraft>1?` · bisa x${canCraft}`:''}</div>
-            </div>
-          </div>`;
+          html += `<div style="display:flex;justify-content:space-between;align-items:center;background:#0a0e27;border-left:3px solid ${enough?'#2ecc71':'#e74c3c'};border-radius:4px;padding:5px 8px;margin:3px 0;font-size:11px"><div style="flex:1;min-width:0"><div style="color:${targetR.c};font-weight:bold">${target.icon} ${target.name} <span style="color:#888;font-size:9px">(${targetR.n})</span></div><div style="color:#666;font-size:10px">dari: ${info.from.map(f=>DEF[f]?DEF[f].icon+' '+DEF[f].name:f).join(', ')}</div></div><div style="text-align:right;flex-shrink:0;margin-left:6px"><div style="color:${enough?'#2ecc71':'#e74c3c'};font-weight:bold">${count}/${info.need}</div><div style="color:#f1c40f;font-size:10px">💎${info.cost}${canCraft>1?` · bisa x${canCraft}`:''}</div></div></div>`;
         }
-      } else {
-        html += `<div style="font-size:11px;color:#666;text-align:center;padding:4px">Tidak dipakai di recipe manapun</div>`;
-      }
+      } else {html += `<div style="font-size:11px;color:#666;text-align:center;padding:4px">Tidak dipakai di recipe manapun</div>`;}
       html += `</div>`;
     }
   }
   $('backpackContent').innerHTML = html;
 }
-function updateBackpackBadge(){
-  const badge = $('bpBadge'); if(!badge) return;
-  const total = Object.values(S.mats||{}).reduce((a,b)=>a+(+b||0),0);
-  if(total > 0){ badge.textContent = total > 99 ? '99+' : total; badge.style.display = 'inline-block'; }
-  else badge.style.display = 'none';
-}
+function updateBackpackBadge(){const badge = $('bpBadge'); if(!badge) return;const total = Object.values(S.mats||{}).reduce((a,b)=>a+(+b||0),0);if(total > 0){ badge.textContent = total > 99 ? '99+' : total; badge.style.display = 'inline-block'; }else badge.style.display = 'none';}
 
 const _firstAudio=()=>{initAudio();Music.ensure();Music.setVolume(S.musicVol||0.12);if(S.music&&S.music!=='none')setTimeout(()=>Music.play(S.music),200)};
 document.addEventListener('pointerdown',_firstAudio,{once:true});document.addEventListener('touchstart',_firstAudio,{once:true});
@@ -1096,7 +1164,7 @@ $('rdb').onclick=redeemMenu;
 $('backpackBtn').onclick=()=>{renderBackpack();$('backpackModal').style.display='flex'};
 $('closeBackpack').onclick=()=>{$('backpackModal').style.display='none'};
 
-$('profileBtn').onclick=()=>{const lvl = Math.floor((S.stats.gamesPlayed * 1.5) + (S.stats.gamesWon * 3)) + 1;$('profName').textContent = S.nickname || (S.user ? S.user.split('@')[0] : 'Guest');$('profLvl').textContent = `Lv. ${lvl}`;$('editNameBtn').style.display = 'inline-block';window._viewingOtherProfile = false;let uHTML = '';for(let i=0; i<6; i++){const u = S.inv.find(x => x.iid === S.load[i]);if(u&&DEF[u.id]){const r = R[u.rar]||R.common;uHTML += `<div style="background:#151a3a;border:1px solid ${r.c};border-radius:6px;padding:5px;text-align:center;font-size:10px"><div style="font-size:18px">${DEF[u.id].icon}</div><b style="color:#fff;font-size:9px">${DEF[u.id].name}</b><div style="color:${r.c};font-size:8px">Lv ${u.lv}</div></div>`}else{uHTML += `<div style="background:#151a3a;border:1px dashed #2a3a6a;border-radius:6px;padding:5px;text-align:center;font-size:10px;color:#555;display:flex;align-items:center;justify-content:center;height:55px">Empty</div>`}}$('profUnits').innerHTML = uHTML;$('profStats').innerHTML = `<div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Bosses Killed</span><b>${S.stats.bossesKilled}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Games Played</span><b>${S.stats.gamesPlayed}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Games Won</span><b>${S.stats.gamesWon}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Gems Spent</span><b>${S.stats.gemsSpent}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Highest Inf Round</span><b>${S.stats.highestInf}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>MVPs Gained</span><b>${S.stats.mvps}</b></div><div class="row" style="padding:4px 0;color:#66ccff"><span>⏱️ Time Played</span><b style="color:#66ccff">${fmtPlayTime(S.playTime)}</b></div>`;$('profileModal').style.display = 'flex';};
+$('profileBtn').onclick=()=>{const lvl = getPlayerLevel();$('profName').textContent = S.nickname || (S.user ? S.user.split('@')[0] : 'Guest');$('profLvl').textContent = `Lv. ${lvl}`;$('editNameBtn').style.display = 'inline-block';window._viewingOtherProfile = false;let uHTML = '';for(let i=0; i<6; i++){const u = S.inv.find(x => x.iid === S.load[i]);if(u&&DEF[u.id]){const r = R[u.rar]||R.common;uHTML += `<div style="background:#151a3a;border:1px solid ${r.c};border-radius:6px;padding:5px;text-align:center;font-size:10px"><div style="font-size:18px">${DEF[u.id].icon}</div><b style="color:#fff;font-size:9px">${DEF[u.id].name}</b><div style="color:${r.c};font-size:8px">Lv ${u.lv}</div></div>`}else{uHTML += `<div style="background:#151a3a;border:1px dashed #2a3a6a;border-radius:6px;padding:5px;text-align:center;font-size:10px;color:#555;display:flex;align-items:center;justify-content:center;height:55px">Empty</div>`}}$('profUnits').innerHTML = uHTML;$('profStats').innerHTML = `<div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Bosses Killed</span><b>${S.stats.bossesKilled}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Games Played</span><b>${S.stats.gamesPlayed}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Games Won</span><b>${S.stats.gamesWon}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Gems Spent</span><b>${S.stats.gemsSpent}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>Highest Inf Round</span><b>${S.stats.highestInf}</b></div><div class="row" style="border-bottom:1px solid #2a3a6a;padding:4px 0"><span>MVPs Gained</span><b>${S.stats.mvps}</b></div><div class="row" style="padding:4px 0;color:#66ccff"><span>⏱️ Time Played</span><b style="color:#66ccff">${fmtPlayTime(S.playTime)}</b></div>`;$('profileModal').style.display = 'flex';};
 $('closeProfile').onclick = () => { $('profileModal').style.display = 'none'; if (window._viewingOtherProfile) { window._viewingOtherProfile = false; $('leaderboardModal').style.display = 'flex'; } };
 $('editNameBtn').onclick = () => {const currentName = S.nickname || (S.user ? S.user.split('@')[0] : 'Guest');const newName = prompt("Masukkan nama baru (maks 15 karakter):", currentName);if (newName && newName.trim() !== '') {S.nickname = newName.trim().substring(0, 15);save();$('profName').textContent = S.nickname;toast('✅ Nama berhasil diubah!');}};
 
@@ -1144,13 +1212,16 @@ function renderIndex(){
       const canBeEvolved = Object.values(RECIPES).some(rc => rc.r === u.id);
       const evoTag = hasEvo ? '<div style="color:#2ecc71;font-size:8px;">🧬 EVO</div>' : (canBeEvolved ? '<div style="color:#9b59b6;font-size:8px;">⬅️ TARGET</div>' : '');
       const tag = owned ? '<div style="color:#2ecc71;font-size:8px;">✅ OWNED</div>' : '<div style="color:#e74c3c;font-size:8px;">🔒 LOCKED</div>';
-      html += `<div class="idx-card" data-id="${u.id}" style="cursor:pointer;background:#151a3a;border:1px solid ${borderColor};border-radius:6px;padding:5px;text-align:center;opacity:${opacity};filter:${filter};transition:.15s;">
+      const isGojo = u.id==='gojo';
+      const gojoLock = isGojo && !owned ? `<div style="color:#ff00ff;font-size:8px;font-weight:bold">🔒 Lv${GOJO_LEVEL_REQ}</div>` : '';
+      html += `<div class="idx-card" data-id="${u.id}" style="cursor:pointer;background:#151a3a;border:1px solid ${borderColor};border-radius:6px;padding:5px;text-align:center;opacity:${opacity};filter:${filter};transition:.15s;${isGojo?'box-shadow:0 0 12px rgba(0,204,255,.4);':''}">
         <div style="font-size:20px">${u.icon}</div>
         <b style="color:#fff;font-size:10px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.name}</b>
         <div style="color:${R[rar].c};font-size:8px">${R[rar].n}</div>
         <div style="color:${ro[1]};font-size:8px;font-weight:bold">${ro[0]}</div>
         <div style="font-size:8px;color:#aaa;">DMG ${u.dmg} · RNG ${u.rng}</div>
-        ${evoTag}${tag}
+        ${isGojo?'<div style="color:#00ccff;font-size:8px;font-weight:bold">👁️ SPECIAL</div>':''}
+        ${evoTag}${tag}${gojoLock}
       </div>`;
     }
   }
@@ -1170,6 +1241,8 @@ function showIndexDetail(unitId){
   const es = EVO_SKILL[unitId];
   const skillName = es ? `${es.icon} ${es.name}` : u.skill;
   const ownedCount = S.inv.filter(x => x.id === unitId).length;
+  const isGojo = unitId==='gojo';
+  const gojoNote = isGojo ? `<div style="margin-top:8px;background:rgba(0,204,255,.12);border:2px solid #00ccff;border-radius:8px;padding:8px;font-size:11px;text-align:center"><div style="color:#00ccff;font-weight:bold">👁️ GOJO SPECIAL</div><div style="color:#ccc;margin-top:4px">Butuh Player Level <b style="color:#f1c40f">${GOJO_LEVEL_REQ}</b></div><div style="color:${getPlayerLevel()>=GOJO_LEVEL_REQ?'#2ecc71':'#e74c3c'};font-weight:bold">Level kamu: Lv ${getPlayerLevel()} ${getPlayerLevel()>=GOJO_LEVEL_REQ?'✅':'🔒'}</div></div>` : '';
 
   let html = `<div style="text-align:center"><div style="font-size:44px">${u.icon}</div>
     <h2 style="margin:4px 0;color:${r.c};font-size:18px">${u.name}</h2>
@@ -1181,7 +1254,8 @@ function showIndexDetail(unitId){
       <div class="row"><span>Skill</span><b>${skillName}</b></div>
       ${es ? `<div class="row"><span>Desc</span><b style="color:${es.color}">${es.desc}</b></div><div class="row"><span>Ultimate</span><b style="color:${es.color}">${es.ult}</b></div>` : ''}
       <div class="row"><span>Dimiliki</span><b style="color:${ownedCount>0?'#2ecc71':'#e74c3c'}">${ownedCount>0?'✅ x'+ownedCount:'🔒 Belum punya'}</b></div>
-    </div>`;
+    </div>
+    ${gojoNote}`;
 
   const evolveFrom = [];
   for(const [fromId, recipe] of Object.entries(RECIPES)){
@@ -1309,9 +1383,172 @@ function draw(){
   ctx.strokeStyle = theme.path[1];ctx.lineWidth = 30;ctx.beginPath();G.wp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();
   ctx.strokeStyle = 'rgba(255,255,255,0.15)';ctx.lineWidth = 2;ctx.setLineDash([8, 12]);ctx.lineDashOffset = -t * 30;ctx.beginPath();G.wp.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();ctx.setLineDash([]);
   for(const e of G.en){if(e.dead)continue;ctx.fillStyle=e.hf>0?'#fff':e.c;ctx.shadowColor=e.c;ctx.shadowBlur=10;ctx.beginPath();ctx.arc(e.x,e.y,e.r,0,6.283);ctx.fill();ctx.shadowBlur=0;const hpPct=e.hp/e.mx;ctx.fillStyle='#333';ctx.fillRect(e.x-20,e.y-e.r-10,40,4);ctx.fillStyle=hpPct>.5?'#2ecc71':hpPct>.25?'#f1c40f':'#e74c3c';ctx.fillRect(e.x-20,e.y-e.r-10,40*hpPct,4);if(e.sl>0){ctx.strokeStyle='#66ccff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,e.r+3,0,6.283);ctx.stroke()}}
-  for(const u of G.pl){const d=DEF[u.i.id];if(!d)continue;const r=R[u.i.rar]||R.common,c=tc(u),hi=isHi(u.i);const _bob=Math.sin(t*2.5+u.pid*0.7)*2.5;ctx.save();ctx.translate(u.x, u.y+15);ctx.scale(1, 0.42);ctx.fillStyle=r.c;ctx.globalAlpha=0.28;ctx.beginPath();ctx.arc(0,0,26,0,6.283);ctx.fill();ctx.globalAlpha=0.65;ctx.beginPath();ctx.arc(0,0,19,0,6.283);ctx.fill();ctx.globalAlpha=0.95;ctx.beginPath();ctx.arc(0,0,10,0,6.283);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=r.c;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(0,0,22,0,6.283);ctx.stroke();ctx.restore();if(S.fx&&hi){aura(u,c);sigil(u,c);drawHighTierAura(u,c,u.i.rar,t)}ctx.save();ctx.translate(u.x, u.y+_bob);const _fs = hi ? 30 : (u.i.rar==='epic'||u.i.rar==='legendary' ? 26 : 24);ctx.font = `${_fs}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor = c;ctx.shadowBlur = hi ? 22 : 9;ctx.fillText(d.icon, 0, 0);ctx.shadowBlur = hi ? 8 : 4;ctx.fillText(d.icon, 0, 0);ctx.restore();const _bx=u.x+15, _by=u.y-15+_bob;ctx.save();ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillStyle='rgba(0,0,0,0.85)';ctx.beginPath();ctx.arc(_bx,_by,9,0,6.283);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle=r.c;ctx.lineWidth=1.8;ctx.beginPath();ctx.arc(_bx,_by,9,0,6.283);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(u.i.lv,_bx,_by+0.5);ctx.restore();if(hi){ctx.save();ctx.font='bold 9px sans-serif';ctx.textAlign='center';const nm=d.name;const _nw=ctx.measureText(nm).width+10;const _ny=u.y+22;ctx.fillStyle='rgba(0,0,0,0.75)';ctx.strokeStyle=c;ctx.lineWidth=1;ctx.beginPath();ctx.rect(u.x-_nw/2,_ny,_nw,12);ctx.fill();ctx.stroke();ctx.fillStyle=c;ctx.fillText(nm,u.x,_ny+6.5);ctx.restore()}if(G.selP===u.pid){const st=stats(u.i);ctx.save();ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=2;ctx.setLineDash([5,5]);ctx.beginPath();ctx.arc(u.x,u.y,st.rng,0,6.283);ctx.stroke();ctx.setLineDash([]);ctx.restore()}}
+  for(const u of G.pl){const d=DEF[u.i.id];if(!d)continue;const r=R[u.i.rar]||R.common,c=tc(u),hi=isHi(u.i);const _bob=Math.sin(t*2.5+u.pid*0.7)*2.5;ctx.save();ctx.translate(u.x, u.y+15);ctx.scale(1, 0.42);ctx.fillStyle=r.c;ctx.globalAlpha=0.28;ctx.beginPath();ctx.arc(0,0,26,0,6.283);ctx.fill();ctx.globalAlpha=0.65;ctx.beginPath();ctx.arc(0,0,19,0,6.283);ctx.fill();ctx.globalAlpha=0.95;ctx.beginPath();ctx.arc(0,0,10,0,6.283);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=r.c;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(0,0,22,0,6.283);ctx.stroke();ctx.restore();
+    // Gojo special circle
+    if(u.i.id==='gojo'||u.i.id==='gojo_awakened'){
+      if(S.fx){
+        ctx.save();
+        ctx.translate(u.x,u.y);
+        ctx.globalCompositeOperation='lighter';
+        const phase=t*1.5+u.pid*0.7;
+        const col=u.i.id==='gojo'?'#00ccff':'#aa00ff';
+        // Infinity symbol circle
+        for(let i=0;i<3;i++){
+          const rr=40+i*15;
+          const dir=i%2?-1:1;
+          ctx.save();
+          ctx.rotate(phase*dir*0.5);
+          ctx.strokeStyle=col;
+          ctx.globalAlpha=0.6-i*0.15;
+          ctx.lineWidth=2.5-i*0.5;
+          ctx.setLineDash(i===1?[8,6]:[15,10]);
+          ctx.beginPath();
+          ctx.arc(0,0,rr,0,6.283);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.restore();
+        }
+        // Six eyes marker
+        if(u.i.id==='gojo'){
+          ctx.fillStyle='#00ccff';
+          ctx.shadowColor='#00ccff';
+          ctx.shadowBlur=15;
+          ctx.beginPath();
+          ctx.ellipse(0,-35,8,4,0,0,6.283);
+          ctx.fill();
+          ctx.fillStyle='#fff';
+          ctx.beginPath();
+          ctx.arc(0,-35,2,0,6.283);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+    if(S.fx&&hi){aura(u,c);sigil(u,c);drawHighTierAura(u,c,u.i.rar,t)}ctx.save();ctx.translate(u.x, u.y+_bob);const _fs = hi ? 30 : (u.i.rar==='epic'||u.i.rar==='legendary' ? 26 : 24);ctx.font = `${_fs}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor = c;ctx.shadowBlur = hi ? 22 : 9;ctx.fillText(d.icon, 0, 0);ctx.shadowBlur = hi ? 8 : 4;ctx.fillText(d.icon, 0, 0);ctx.restore();const _bx=u.x+15, _by=u.y-15+_bob;ctx.save();ctx.shadowColor='#000';ctx.shadowBlur=4;ctx.fillStyle='rgba(0,0,0,0.85)';ctx.beginPath();ctx.arc(_bx,_by,9,0,6.283);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle=r.c;ctx.lineWidth=1.8;ctx.beginPath();ctx.arc(_bx,_by,9,0,6.283);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(u.i.lv,_bx,_by+0.5);ctx.restore();if(hi){ctx.save();ctx.font='bold 9px sans-serif';ctx.textAlign='center';const nm=d.name;const _nw=ctx.measureText(nm).width+10;const _ny=u.y+22;ctx.fillStyle='rgba(0,0,0,0.75)';ctx.strokeStyle=c;ctx.lineWidth=1;ctx.beginPath();ctx.rect(u.x-_nw/2,_ny,_nw,12);ctx.fill();ctx.stroke();ctx.fillStyle=c;ctx.fillText(nm,u.x,_ny+6.5);ctx.restore()}if(G.selP===u.pid){const st=stats(u.i);ctx.save();ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=2;ctx.setLineDash([5,5]);ctx.beginPath();ctx.arc(u.x,u.y,st.rng,0,6.283);ctx.stroke();ctx.setLineDash([]);ctx.restore()}}
   for(const m of G.mn){if(m.dead) continue;ctx.globalAlpha = Math.min(1, m.lt / 2);ctx.font = '16px sans-serif';ctx.textAlign = 'center';ctx.textBaseline = 'middle';ctx.fillStyle = '#fff';ctx.fillText(m.icon, m.x, m.y);ctx.globalAlpha = 1;}
-  for(const f of G.fx){const a=f.l/(f.m||1);ctx.globalAlpha=a;if(f.t==='ring'){ctx.strokeStyle=f.c;ctx.lineWidth=f.w||4;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a)*2,0,6.283);ctx.stroke()}else if(f.t==='nova'){ctx.fillStyle=f.c;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a),0,6.283);ctx.fill()}else if(f.t==='slash'){ctx.strokeStyle=f.c;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(f.x-20,f.y-20);ctx.lineTo(f.x+20,f.y+20);ctx.stroke()}else if(f.t==='text'){ctx.fillStyle=f.c;ctx.font='bold 16px sans-serif';ctx.textAlign='center';ctx.fillText(f.s,f.x,f.y-(1-a)*30)}else if(f.t==='exp'){ctx.strokeStyle='#fff';ctx.lineWidth=4;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a),0,6.283);ctx.stroke()}else if(f.t==='scythe'){ctx.strokeStyle=f.c;ctx.lineWidth=6;ctx.beginPath();ctx.arc(f.x,f.y,f.len,f.a-f.ang,f.a+f.ang);ctx.stroke()}else if(f.t==='banner'){ctx.fillStyle=f.c;ctx.font='bold 24px sans-serif';ctx.textAlign='center';ctx.fillText(f.s,450,100+(1-a)*50)}else if(f.t==='shockwave'){ctx.strokeStyle=f.c;ctx.globalAlpha=a*0.7;ctx.lineWidth=3;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a),0,6.283);ctx.stroke();ctx.lineWidth=1.5;ctx.globalAlpha=a*0.4;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a)*0.7,0,6.283);ctx.stroke();ctx.lineWidth=1;ctx.globalAlpha=a*0.25;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a)*1.3,0,6.283);ctx.stroke()}ctx.globalAlpha=1;}
+  for(const f of G.fx){const a=f.l/(f.m||1);ctx.globalAlpha=a;
+    if(f.t==='ring'){ctx.strokeStyle=f.c;ctx.lineWidth=f.w||4;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a)*2,0,6.283);ctx.stroke()}
+    else if(f.t==='nova'){ctx.fillStyle=f.c;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a),0,6.283);ctx.fill()}
+    else if(f.t==='slash'){ctx.strokeStyle=f.c;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(f.x-20,f.y-20);ctx.lineTo(f.x+20,f.y+20);ctx.stroke()}
+    else if(f.t==='text'){ctx.fillStyle=f.c;ctx.font='bold 16px sans-serif';ctx.textAlign='center';ctx.fillText(f.s,f.x,f.y-(1-a)*30)}
+    else if(f.t==='exp'){ctx.strokeStyle='#fff';ctx.lineWidth=4;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a),0,6.283);ctx.stroke()}
+    else if(f.t==='scythe'){ctx.strokeStyle=f.c;ctx.lineWidth=6;ctx.beginPath();ctx.arc(f.x,f.y,f.len,f.a-f.ang,f.a+f.ang);ctx.stroke()}
+    else if(f.t==='banner'){ctx.fillStyle=f.c;ctx.font='bold 24px sans-serif';ctx.textAlign='center';ctx.fillText(f.s,450,100+(1-a)*50)}
+    else if(f.t==='shockwave'){ctx.strokeStyle=f.c;ctx.globalAlpha=a*0.7;ctx.lineWidth=3;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a),0,6.283);ctx.stroke();ctx.lineWidth=1.5;ctx.globalAlpha=a*0.4;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a)*0.7,0,6.283);ctx.stroke();ctx.lineWidth=1;ctx.globalAlpha=a*0.25;ctx.beginPath();ctx.arc(f.x,f.y,f.r*(1-a)*1.3,0,6.283);ctx.stroke()}
+    else if(f.t==='domain'){
+      // Domain Expansion visual
+      const prog=1-a;
+      const pc=f.c;
+      ctx.strokeStyle=pc;
+      ctx.lineWidth=6;
+      ctx.globalAlpha=Math.min(1,a*2);
+      ctx.beginPath();
+      ctx.arc(f.x,f.y,f.r*Math.min(1,prog*1.4),0,6.283);
+      ctx.stroke();
+      if(prog>0.15){
+        const innerA=Math.min(1,(prog-0.15)/0.4);
+        const rad=f.r*Math.min(1,prog*1.4);
+        const grad=ctx.createRadialGradient(f.x,f.y,0,f.x,f.y,rad);
+        grad.addColorStop(0,'rgba(136,221,255,'+(0.5*innerA)+')');
+        grad.addColorStop(0.5,'rgba(0,100,180,'+(0.35*innerA)+')');
+        grad.addColorStop(1,'rgba(0,0,50,0)');
+        ctx.fillStyle=grad;
+        ctx.beginPath();
+        ctx.arc(f.x,f.y,rad,0,6.283);
+        ctx.fill();
+        // Rotating runes
+        ctx.save();
+        ctx.translate(f.x,f.y);
+        ctx.rotate(prog*8);
+        ctx.strokeStyle='#88ffff';
+        ctx.lineWidth=2.5;
+        ctx.setLineDash([12,8]);
+        ctx.beginPath();
+        ctx.arc(0,0,rad*0.65,0,6.283);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+        // Void eye in center
+        const eyeR=rad*0.22;
+        const eg=ctx.createRadialGradient(f.x,f.y,0,f.x,f.y,eyeR);
+        eg.addColorStop(0,'#000');
+        eg.addColorStop(0.7,'#001a33');
+        eg.addColorStop(1,'transparent');
+        ctx.fillStyle=eg;
+        ctx.beginPath();
+        ctx.arc(f.x,f.y,eyeR,0,6.283);
+        ctx.fill();
+        ctx.strokeStyle=pc;
+        ctx.lineWidth=2;
+        ctx.beginPath();
+        ctx.arc(f.x,f.y,eyeR,0,6.283);
+        ctx.stroke();
+        // Inner dots
+        for(let i=0;i<8;i++){
+          const ang=i*0.785+prog*5;
+          ctx.fillStyle='#88ffff';
+          ctx.beginPath();
+          ctx.arc(f.x+Math.cos(ang)*eyeR*0.6,f.y+Math.sin(ang)*eyeR*0.6,2,0,6.283);
+          ctx.fill();
+        }
+      }
+    }
+    else if(f.t==='hollow'){
+      // Red & Blue balls merging into purple
+      const prog=1-a;
+      const offR=Math.max(0, 100*(1-Math.min(1,prog*1.5)));
+      const rad=45;
+      // Red ball (left)
+      const rg=ctx.createRadialGradient(f.x-offR,f.y,0,f.x-offR,f.y,rad);
+      rg.addColorStop(0,'#ffcccc');
+      rg.addColorStop(0.35,'#ff0000');
+      rg.addColorStop(0.7,'#aa0000');
+      rg.addColorStop(1,'transparent');
+      ctx.fillStyle=rg;
+      ctx.globalAlpha=a;
+      ctx.beginPath();
+      ctx.arc(f.x-offR,f.y,rad,0,6.283);
+      ctx.fill();
+      // Blue ball (right)
+      const bg=ctx.createRadialGradient(f.x+offR,f.y,0,f.x+offR,f.y,rad);
+      bg.addColorStop(0,'#ccccff');
+      bg.addColorStop(0.35,'#0066ff');
+      bg.addColorStop(0.7,'#0033aa');
+      bg.addColorStop(1,'transparent');
+      ctx.fillStyle=bg;
+      ctx.beginPath();
+      ctx.arc(f.x+offR,f.y,rad,0,6.283);
+      ctx.fill();
+      // Purple merge (appears at prog > 0.5)
+      if(prog>0.4){
+        const pa=Math.min(1,(prog-0.4)/0.35);
+        const pr=rad*(1+pa*2);
+        const pgr=ctx.createRadialGradient(f.x,f.y,0,f.x,f.y,pr);
+        pgr.addColorStop(0,'#ffffff');
+        pgr.addColorStop(0.15,'#ff88ff');
+        pgr.addColorStop(0.4,'#cc00ff');
+        pgr.addColorStop(0.7,'#8800cc');
+        pgr.addColorStop(1,'transparent');
+        ctx.fillStyle=pgr;
+        ctx.globalAlpha=a*pa;
+        ctx.beginPath();
+        ctx.arc(f.x,f.y,pr,0,6.283);
+        ctx.fill();
+        // Radiating purple rays
+        ctx.globalAlpha=a*pa*0.8;
+        ctx.strokeStyle='#ff88ff';
+        ctx.lineWidth=4;
+        for(let i=0;i<12;i++){
+          const ang=i*0.5236+prog*4;
+          ctx.beginPath();
+          ctx.moveTo(f.x+Math.cos(ang)*pr*0.4,f.y+Math.sin(ang)*pr*0.4);
+          ctx.lineTo(f.x+Math.cos(ang)*pr*1.3,f.y+Math.sin(ang)*pr*1.3);
+          ctx.stroke();
+        }
+      }
+    }
+    ctx.globalAlpha=1;
+  }
   for(const b of G.bm){const a=b.l/(b.m||1);ctx.globalAlpha=a;ctx.strokeStyle=b.c;ctx.lineWidth=b.w||2;if(b.trail){ctx.shadowColor=b.c;ctx.shadowBlur=14;ctx.beginPath();if(b.pts){b.pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y))}else{ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.x2,b.y2)}ctx.stroke();ctx.shadowBlur=0;}ctx.beginPath();if(b.pts){b.pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y))}else{ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.x2,b.y2)}ctx.stroke();ctx.globalAlpha=1;}
   for(const p of G.par){const a=p.l/(p.m||1);ctx.globalAlpha=a;ctx.fillStyle=p.c;ctx.fillRect(p.x,p.y,p.z,p.z);ctx.globalAlpha=1;}
   if(G.flash>0){ctx.fillStyle=G.fc;ctx.globalAlpha=G.flash*.5;ctx.fillRect(0,0,900,550);ctx.globalAlpha=1;}
