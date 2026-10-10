@@ -422,8 +422,49 @@ function spawnLobbyParticles(){
 spawnLobbyParticles();
 setInterval(spawnLobbyParticles,15000);
 
-function updMenu(){$('mg').textContent=S.gems;$('mr').textContent=S.rr||0;$('mc').textContent=Math.floor(S.coins);$('mt').innerHTML=Object.keys(MATS).filter(k=>S.mats[k]).map(k=>`<span style="border:1px solid #2a3a6a;border-radius:10px;padding:2px 7px;font-size:11px">${MATS[k][1]} ${S.mats[k]}</span>`).join(' ');$('s1').disabled=S.gems<100;$('s10').disabled=S.gems<1000;$('ls').textContent=S.load.length+'/5';const iv=$('inv');iv.innerHTML='';const _ic=$('invCount');if(_ic)_ic.textContent='('+S.inv.length+')';[...S.inv].sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar)).forEach(u=>{const c=card(u,()=>showEquipModal(u.iid));if(S.load.includes(u.iid))c.classList.add('dim');iv.appendChild(c)});const lo=$('lo');lo.innerHTML='';S.load.forEach(id=>{const u=S.inv.find(x=>x.iid===id);if(!u)return;const c=card(u,()=>{S.load=S.load.filter(x=>x!==id);toast('✗ Keluar');updMenu();save()});lo.appendChild(c)});$('play').disabled=!S.load.length;$('play').textContent=S.load.length?'▶ PLAY NOW':'▶ PLAY (loadout kosong)';renderStage();$('rates').innerHTML=Object.keys(R).map(k=>{const r=R[k];let displayText;if(k==='secret'){displayText='(Drop Legend 1%)'}else if(k==='transcendent'||k==='primordial'||k==='exotic'){displayText='(Evolve)'}else if(r.p===0){displayText='(Locked)'}else{displayText=(r.p*100).toFixed(2)+'%'}return `<span style="color:${r.c}" data-rar="${k}" title="${k==='secret'?'Drop dari Legend Stage (Act 1: 0.25% · Act 2: 0.5% · Act 3: 1%)':''}">${r.n} ${displayText}</span>`}).join('');document.querySelectorAll('#rates span').forEach(el=>{el.onclick=()=>showRarityPool(el.dataset.rar)});updLobbyStats()}
-
+function updMenu(){
+  const _set=(id,val)=>{const el=$(id);if(el)el.textContent=val};
+  const _setHTML=(id,val)=>{const el=$(id);if(el)el.innerHTML=val};
+  _set('mg',S.gems);_set('mr',S.rr||0);_set('mc',Math.floor(S.coins));
+  _setHTML('mt',Object.keys(MATS).filter(k=>S.mats[k]).map(k=>`<span style="border:1px solid #2a3a6a;border-radius:10px;padding:2px 7px;font-size:11px">${MATS[k][1]} ${S.mats[k]}</span>`).join(' '));
+  const _s1=$('s1');if(_s1)_s1.disabled=S.gems<100;
+  const _s10=$('s10');if(_s10)_s10.disabled=S.gems<1000;
+  const _ls=$('ls');if(_ls)_ls.textContent=S.load.length+'/5';
+  const iv=$('inv');if(!iv)return;
+  iv.innerHTML='';
+  const _ic=$('invCount');if(_ic)_ic.textContent='('+S.inv.length+')';
+  [...S.inv].sort((a,b)=>ORD.indexOf(a.rar)-ORD.indexOf(b.rar)).forEach(u=>{
+    const c=card(u,()=>showEquipModal(u.iid));
+    if(S.load.includes(u.iid))c.classList.add('dim');
+    iv.appendChild(c);
+  });
+  const lo=$('lo');
+  if(lo){
+    lo.innerHTML='';
+    S.load.forEach(id=>{
+      const u=S.inv.find(x=>x.iid===id);
+      if(!u)return;
+      const c=card(u,()=>{S.load=S.load.filter(x=>x!==id);toast('✗ Keluar');updMenu();save()});
+      lo.appendChild(c);
+    });
+  }
+  const _play=$('play');
+  if(_play){_play.disabled=!S.load.length;_play.textContent=S.load.length?'▶ PLAY NOW':'▶ PLAY (loadout kosong)'}
+  renderStage();
+  const _rates=$('rates');
+  if(_rates){
+    _rates.innerHTML=Object.keys(R).map(k=>{
+      const r=R[k];let displayText;
+      if(k==='secret'){displayText='(Drop Legend 1%)'}
+      else if(k==='transcendent'||k==='primordial'||k==='exotic'){displayText='(Evolve)'}
+      else if(r.p===0){displayText='(Locked)'}
+      else{displayText=(r.p*100).toFixed(2)+'%'}
+      return `<span style="color:${r.c}" data-rar="${k}">${r.n} ${displayText}</span>`;
+    }).join('');
+    _rates.querySelectorAll('span').forEach(el=>{el.onclick=()=>showRarityPool(el.dataset.rar)});
+  }
+  updLobbyStats();
+}
 function renderStage(){
     const m=$('maps');m.innerHTML='';
     const mk=(t,on,f)=>{const b=document.createElement('button');b.textContent=t;if(on)b.className='g';b.onclick=f;m.appendChild(b)};
