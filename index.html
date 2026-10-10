@@ -23,7 +23,7 @@ button.g{background:linear-gradient(#2ecc71,#27ae60)}button.r{background:linear-
 #rates{display:flex;gap:4px;flex-wrap:wrap;font-size:10px;margin-bottom:6px}
 #rates span{padding:2px 6px;border:1px solid;border-radius:5px;cursor:pointer}
 #cv{display:block;width:100%;max-width:900px;margin:0 auto;background:#111;border:2px solid #2a3a6a;border-radius:8px;cursor:pointer}
-#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9;align-items:center;justify-content:center;padding:14px}
+#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:14;align-items:center;justify-content:center;padding:14px}
 .box{background:#151a3a;border:2px solid #2a3a6a;border-radius:12px;padding:24px;text-align:center;max-width:min(460px,92vw);max-height:90vh;overflow-y:auto}
 #toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:#151a3a;border:2px solid #3498db;border-radius:8px;padding:10px 20px;opacity:0;transition:.3s;pointer-events:none;z-index:20;max-width:90%}
 #toast.show{opacity:1}
@@ -643,7 +643,7 @@ function pmenu(g){if(g&&G&&!G.over)G.paused=true;$('ov').style.display='flex';if
 function evMenu(){
   try {
     const ov=$('ov'),ob=$('ob');
-    ov.style.cssText='display:flex;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9;align-items:center;justify-content:center;padding:14px';
+    ov.style.cssText='display:flex;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:14;align-items:center;justify-content:center;padding:14px';
     ob.style.cssText='';ob.className='box';
     const list=S.inv.filter(u=>canEvolve(u));
     let h='<h2 style="margin-bottom:6px">🧬 Evolve</h2>';
