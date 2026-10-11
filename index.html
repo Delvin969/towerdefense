@@ -580,7 +580,8 @@ ctx.globalAlpha=.7*_p;ctx.strokeStyle=_ac2;ctx.lineWidth=2.5;ctx.setLineDash([16
 ctx.globalAlpha=.55*_p;ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(u.x,u.y,_br-3,0,6.283);ctx.stroke();
 for(let i=0;i<6;i++){const _ang=t*1.5+i*1.047+u.pid*.4;const _ox=u.x+Math.cos(_ang)*_br;const _oy=u.y+Math.sin(_ang)*_br;ctx.globalAlpha=.9*_p;ctx.fillStyle=_ac;ctx.shadowColor=_ac;ctx.shadowBlur=14;ctx.beginPath();ctx.arc(_ox,_oy,4,0,6.283);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(_ox,_oy,1.8,0,6.283);ctx.fill()}
 ctx.shadowBlur=0;ctx.globalAlpha=.95;
-const _lbl=_skill==='support'?'+DMG':(_skill==='support_range'?'+RNG':'+SPD');
+const _ba=Math.round((0.25+(u.i.lv*.03))*100);   // ← hitung nilai buff asli
+const _lbl=(_skill==='support'?'+'+_ba+'% DMG':(_skill==='support_range'?'+'+_ba+'% RNG':'+'+_ba+'% SPD'));
 ctx.font='bold 10px sans-serif';const _lw=ctx.measureText(_lbl).width+12;
 ctx.fillStyle='rgba(0,0,0,.85)';ctx.strokeStyle=_ac;ctx.lineWidth=1.5;
 const _ly=u.y-_br-16;ctx.beginPath();ctx.roundRect(u.x-_lw/2,_ly,_lw,15,4);ctx.fill();ctx.stroke();
@@ -588,7 +589,26 @@ ctx.fillStyle=_ac;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(
 ctx.restore()}
 ctx.save();ctx.translate(u.x,u.y+_bob);const _fs=hi?30:(u.i.rar==='epic'||u.i.rar==='legendary'?26:24);ctx.font=`${_fs}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor=c;ctx.shadowBlur=hi?22:9;ctx.fillText(d.icon,0,0);ctx.restore();
 const _bx=u.x+15,_by=u.y-15+_bob;ctx.save();ctx.fillStyle='rgba(0,0,0,.85)';ctx.beginPath();ctx.arc(_bx,_by,9,0,6.283);ctx.fill();ctx.strokeStyle=r.c;ctx.lineWidth=1.8;ctx.beginPath();ctx.arc(_bx,_by,9,0,6.283);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(u.i.lv,_bx,_by+.5);ctx.restore();
-/* Economy income badge */
+
+/* Buff indicator badge di unit target */
+if((u.buff>0||u.buffRng>0||u.buffSpd>0)&&!DEF[u.i.id].skill.startsWith('support')){
+  const _buffs=[];
+  if(u.buff>0)   _buffs.push({icon:'⚔',txt:'+'+Math.round(u.buff*100)+'%',c:'#00ffcc'});
+  if(u.buffRng>0)_buffs.push({icon:'🎯',txt:'+'+Math.round(u.buffRng*100)+'%',c:'#66ccff'});
+  if(u.buffSpd>0)_buffs.push({icon:'⚡',txt:'+'+Math.round(u.buffSpd*100)+'%',c:'#ffcc00'});
+  const _sx=u.x-(_buffs.length-1)*22/2, _by2=u.y-32+_bob;
+  _buffs.forEach((b,i)=>{
+    const bx=_sx+i*22;
+    ctx.save();
+    ctx.font='bold 8px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    const _w=ctx.measureText(b.txt).width+14;
+    ctx.fillStyle='rgba(0,0,0,.85)';
+    ctx.beginPath();ctx.rect(bx-_w/2,_by2-6,_w,12);ctx.fill();
+    ctx.strokeStyle=b.c;ctx.lineWidth=1.2;ctx.stroke();
+    ctx.fillStyle=b.c;ctx.fillText(b.icon+b.txt,bx,_by2);
+    ctx.restore();
+  });
+}/* Economy income badge */
 if(_skill==='economy'){const _inc=Math.floor((250+u.i.lv*100)*(ECO_K[u.i.rar]||1)*stats(u.i).income);ctx.save();ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';const _txt='+'+_inc+'🪙';const _w=ctx.measureText(_txt).width+8;ctx.fillStyle='rgba(0,0,0,.8)';ctx.strokeStyle='#f1c40f';ctx.lineWidth=1;ctx.beginPath();ctx.rect(u.x-_w/2,_by+10,_w,13);ctx.fill();ctx.stroke();ctx.fillStyle='#f1c40f';ctx.fillText(_txt,u.x,_by+16.5);ctx.restore()}
 /* Aura + sigil + high-tier visual for TD+ */
 if(S.fx&&hi){aura(u,c);sigil(u,c);drawHighTierAura(u,c,u.i.rar,t)}
