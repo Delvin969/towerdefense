@@ -766,6 +766,8 @@ async function searchTradeUsers(){
     res.querySelectorAll('.tpInvite').forEach(el=>{if(!el.disabled)el.onclick=()=>sendTradeRequest(el.dataset.uid,el.dataset.nick)});
   }catch(e){console.warn(e);res.innerHTML='<div style="color:#e74c3c;padding:20px">❌ '+e.message+'</div>'}
 }
+const TRADE_EXPIRE_MS = 30000; // 30 detik
+
 async function sendTradeRequest(toUid,toName){
   if(!isOnline||!currentUser)return toast('❌ Online only!');
   if(toUid===currentUser.uid)return toast('❌ Tidak bisa trade sendiri!');
@@ -778,10 +780,43 @@ async function sendTradeRequest(toUid,toName){
     const targetLv=Math.floor(((td.stats?.gamesPlayed||0)*1.5)+((td.stats?.gamesWon||0)*3))+1;
     if(targetLv<TRADE_MIN_LEVEL)return toast('❌ Player target belum Level '+TRADE_MIN_LEVEL);
     if(!isUserOnline(td.lastSeen))return toast('❌ Player sedang offline');
-    const exist=await fbDb.collection('trades').where('from','==',currentUser.uid).where('to','==',toUid).where('status','==','pending').limit(1).get();
-    if(!exist.empty)return toast('⚠️ Sudah ada permintaan pending');
+
+    // Cek pending yang ada
+    const exist=await fbDb.collection('trades').where('from','==',currentUser.uid).where('to','==',toUid).where('status','==','pending').limit(5).get();
+    let hasActive=false;
+    const now=Date.now();
+    const expirePromises=[];
+    exist.forEach(d=>{
+      const t=d.data();
+      const age=now-(t.createdAt||0);
+      if(age>=TRADE_EXPIRE_MS){
+        // Auto-expire yang sudah > 30 detik
+        expirePromises.push(fbDb.collection('trades').doc(d.id).update({status:'expired',updatedAt:now}));
+      } else {
+        hasActive=true;
+      }
+    });
+    if(expirePromises.length>0)await Promise.all(expirePromises);
+    if(hasActive){
+      // Hitung sisa waktu
+      let minRemain=999999;
+      exist.forEach(d=>{
+        const t=d.data();
+        const age=now-(t.createdAt||0);
+        if(age<TRADE_EXPIRE_MS) minRemain=Math.min(minRemain,Math.ceil((TRADE_EXPIRE_MS-age)/1000));
+      });
+      return toast('⏳ Tunggu '+minRemain+'s lagi (request lama sedang pending)');
+    }
+
     const myName=S.nickname||(S.user?S.user.split('@')[0]:'Player');
-    await fbDb.collection('trades').add({from:currentUser.uid,fromName:myName,to:toUid,toName:toName,status:'pending',fromOfferGems:0,fromOfferRR:0,toOfferGems:0,toOfferRR:0,fromAccept:false,toAccept:false,createdAt:Date.now(),updatedAt:Date.now()});
+    await fbDb.collection('trades').add({
+      from:currentUser.uid,fromName:myName,
+      to:toUid,toName:toName,
+      status:'pending',
+      fromOfferGems:0,fromOfferRR:0,toOfferGems:0,toOfferRR:0,
+      fromAccept:false,toAccept:false,
+      createdAt:Date.now(),updatedAt:Date.now()
+    });
     toast('✅ Permintaan terkirim ke '+toName);
     if(window.SFX)SFX.victory();
   }catch(e){console.warn(e);toast('❌ '+e.message)}
