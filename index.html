@@ -1104,8 +1104,49 @@ function renderTraitMenu(){if(TM.selected!==null){renderTraitReroll();return}let
 function renderTraitReroll(){const u=S.inv.find(x=>x.iid===TM.selected);if(!u)return;const d=DEF[u.id]||{icon:'❓',name:'Unknown'},r=R[u.rar]||R.common;let h=`<h2 style="margin-bottom:6px">🎲 Reroll Trait</h2><div style="background:#0a0e27;border:1px solid #2a3a6a;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between"><span style="color:#aaa">🎲 Token</span><b style="color:#f1c40f">${S.rr||0}</b></div><div style="background:#0a0e27;border:1px solid ${r.c};border-radius:6px;padding:10px;margin-bottom:10px;text-align:left"><div><b style="color:#fff;font-size:14px">${d.icon} ${d.name}</b></div><div style="font-size:12px;color:#888;margin-top:4px">Trait saat ini:</div><div style="font-size:13px;color:${TM.old?TRAITS[TM.old.id].c:'#666'};margin-top:2px">${TM.old?`${TRAITS[TM.old.id].i} <b>${TRAITS[TM.old.id].n}</b>`:'— Tidak ada —'}</div></div>`;if(TM.pending){const pt=TRAITS[TM.pending.id];h+=`<div style="background:#0a0e27;border:2px dashed #f1c40f;border-radius:6px;padding:10px;margin-bottom:10px;text-align:left"><div style="font-size:12px;color:#f1c40f;font-weight:bold">✨ Hasil Reroll:</div><div style="font-size:13px;color:${pt.c};margin-top:4px">${pt.i} <b>${pt.n}</b></div></div><button id="tmApply" class="g" style="width:100%;margin-bottom:6px">✅ Terapkan</button><button id="tmRerollAgain" class="y" style="width:100%;margin-bottom:6px">🎲 Reroll Lagi</button><button id="tmCancel" class="r" style="width:100%;margin-bottom:6px">❌ Batal</button>`}else{h+=`<button id="tmDoReroll" class="y" style="width:100%;margin-bottom:6px" ${S.rr<1?'disabled':''}>🎲 Reroll (1 🎲)</button><button id="tmBack" style="width:100%">← Kembali</button>`}$('ob').innerHTML=h;if($('tmDoReroll'))$('tmDoReroll').onclick=()=>{if(S.rr<1)return toast('❌ Token kurang!');S.rr--;TM.pending=rndTrait();save();renderTraitReroll()};if($('tmRerollAgain'))$('tmRerollAgain').onclick=()=>{if(S.rr<1)return toast('❌ Token kurang!');S.rr--;TM.pending=rndTrait();save();renderTraitReroll()};if($('tmApply'))$('tmApply').onclick=()=>{u.trait=TM.pending;TM.pending=null;save();updMenu();toast('✅ Trait diterapkan!');renderTraitMenu()};if($('tmCancel'))$('tmCancel').onclick=()=>{TM.pending=null;renderTraitReroll()};if($('tmBack'))$('tmBack').onclick=()=>{resetTM();renderTraitMenu()}}
 
 /* ═══════ REDEEM ═══════ */
-function redeemMenu(){$('ov').style.display='flex';let h=`<h2 style="margin-bottom:6px">🎁 Redeem</h2><div style="display:flex;gap:6px;margin:8px 0"><input id="rdi" type="text" placeholder="Kode..." style="flex:1;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#fff;font-size:14px;font-weight:bold;text-transform:uppercase;outline:none"><button id="rdo" class="g" style="margin:0;padding:10px 16px">Redeem</button></div><div id="rdm" style="font-size:12px;min-height:18px;margin-bottom:8px"></div><button id="rdx" class="r" style="width:100%">Tutup</button>`;$('ob').innerHTML=h;$('rdx').onclick=()=>{$('ov').style.display='none';updMenu()};const doRedeem=()=>{const raw=$('rdi').value.trim().toUpperCase(),msg=$('rdm');if(!raw){msg.innerHTML='<span style="color:#e74c3c">❌ Isi kode!</span>';return}if(!REDEEM_CODES[raw]){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>';return}if(S.usedCodes[raw]){msg.innerHTML='<span style="color:#f39c12">⚠️ Sudah dipakai</span>';return}const r=REDEEM_CODES[raw];if(r.reqLevel&&getPlayerLevel()<r.reqLevel){msg.innerHTML='<span style="color:#e74c3c">🔒 Butuh Lv '+r.reqLevel+'</span>';return}S.usedCodes[raw]=Date.now();let lines=[];if(r.gems){S.gems+=r.gems;lines.push(`+${r.gems}💎`)}if(r.rr){S.rr=(S.rr||0)+r.rr;lines.push(`+${r.rr}🎲`)}checkTitles();save();msg.innerHTML=`<span style="color:#2ecc71">✅ ${lines.join(' ')}</span>`;$('rdi').value=''};$('rdo').onclick=doRedeem;$('rdi').addEventListener('keydown',e=>{if(e.key==='Enter')doRedeem()})}
-
+function redeemMenu(){
+  $('ov').style.display='flex';
+  let h=`<h2 style="margin-bottom:6px">🎁 Redeem</h2>
+    <div style="display:flex;gap:6px;margin:8px 0">
+      <input id="rdi" type="text" placeholder="Kode..." style="flex:1;padding:10px;border-radius:8px;border:2px solid #2a3a6a;background:#0a0e27;color:#fff;font-size:14px;font-weight:bold;text-transform:uppercase;outline:none">
+      <button id="rdo" class="g" style="margin:0;padding:10px 16px">Redeem</button>
+    </div>
+    <div id="rdm" style="font-size:12px;min-height:18px;margin-bottom:8px"></div>
+    <div style="border-top:1px solid #2a3a6a;padding-top:8px;margin-bottom:8px">
+      <div style="font-size:11px;color:#aaa;margin-bottom:6px;text-align:left">📋 Daftar Kode Tersedia:</div>`;
+  for(const code in REDEEM_CODES){
+    const c=REDEEM_CODES[code],used=S.usedCodes[code];
+    const lvLock=c.reqLevel&&getPlayerLevel()<c.reqLevel;
+    h+=`<div style="display:flex;justify-content:space-between;align-items:center;background:#0a0e27;border:1px solid ${used?'#333':(lvLock?'#661111':'#2a3a6a')};border-radius:6px;padding:6px 10px;margin:4px 0;font-size:12px;text-align:left">
+      <div style="flex:1;min-width:0">
+        <b style="color:${used?'#666':(lvLock?'#661111':'#f1c40f')};font-family:monospace">${code}</b>${c.reqLevel?` <span style="color:${lvLock?'#e74c3c':'#2ecc71'};font-size:9px">[Lv ${c.reqLevel}]</span>`:''}
+        <div style="color:#888;font-size:10px">${c.desc}</div>
+      </div>
+      <span style="color:${used?'#e74c3c':(lvLock?'#661111':'#2ecc71')};font-size:11px;font-weight:bold;margin-left:6px">${used?'✓ USED':(lvLock?'🔒':'OK')}</span>
+    </div>`;
+  }
+  h+=`</div><button id="rdx" class="r" style="width:100%">Tutup</button>`;
+  $('ob').innerHTML=h;
+  $('rdx').onclick=()=>{$('ov').style.display='none';updMenu()};
+  const doRedeem=()=>{
+    const raw=$('rdi').value.trim().toUpperCase(),msg=$('rdm');
+    if(!raw){msg.innerHTML='<span style="color:#e74c3c">❌ Isi kode!</span>';return}
+    if(!REDEEM_CODES[raw]){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>';return}
+    if(S.usedCodes[raw]){msg.innerHTML='<span style="color:#f39c12">⚠️ Sudah dipakai</span>';return}
+    const r=REDEEM_CODES[raw];
+    if(r.reqLevel&&getPlayerLevel()<r.reqLevel){msg.innerHTML='<span style="color:#e74c3c">🔒 Butuh Lv '+r.reqLevel+'</span>';return}
+    S.usedCodes[raw]=Date.now();
+    let lines=[];
+    if(r.gems){S.gems+=r.gems;lines.push(`+${r.gems}💎`)}
+    if(r.rr){S.rr=(S.rr||0)+r.rr;lines.push(`+${r.rr}🎲`)}
+    checkTitles();save();
+    msg.innerHTML=`<span style="color:#2ecc71">✅ ${lines.join(' ')}</span>`;
+    $('rdi').value='';
+    setTimeout(()=>redeemMenu(),700);
+  };
+  $('rdo').onclick=doRedeem;
+  $('rdi').addEventListener('keydown',e=>{if(e.key==='Enter')doRedeem()});
+}
 /* ═══════ EXPORT/IMPORT ═══════ */
 function exportSave(){const data={...S};const json=JSON.stringify(data);const code=btoa(unescape(encodeURIComponent(json)));const chunks=code.match(/.{1,80}/g).join('\n');$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📤 Export</h2><textarea id="expText" readonly style="width:100%;height:120px;background:#0a0e27;color:#0ff;font-family:monospace;font-size:10px;border:2px solid #2a3a6a;border-radius:8px;padding:8px;outline:none">${chunks}</textarea><button id="expCopy" class="g" style="width:100%;margin-top:6px">📋 Copy</button><button id="expClose" style="width:100%;margin-top:6px">Tutup</button>`;$('expCopy').onclick=()=>{const txt=$('expText');txt.select();try{navigator.clipboard.writeText(txt.value).then(()=>toast('✅ Copy!'));}catch(e){document.execCommand('copy');toast('✅ Copy!')}};$('expClose').onclick=()=>{$('ov').style.display='none'}}
 function importSave(){$('ov').style.display='flex';$('ob').innerHTML=`<h2 style="margin-bottom:6px">📥 Import</h2><textarea id="impText" placeholder="Paste kode..." style="width:100%;height:120px;background:#0a0e27;color:#0ff;font-family:monospace;font-size:10px;border:2px solid #2a3a6a;border-radius:8px;padding:8px;outline:none;margin-bottom:8px"></textarea><button id="impGo" class="g" style="width:100%;margin-bottom:6px">▶ Import</button><button id="impClose" style="width:100%">Tutup</button><div id="impMsg" style="font-size:11px;margin-top:8px"></div>`;$('impGo').onclick=()=>{const code=$('impText').value.trim().replace(/\s+/g,'');const msg=$('impMsg');if(!code)return msg.innerHTML='<span style="color:#e74c3c">❌ Kosong!</span>';try{const json=decodeURIComponent(escape(atob(code)));const data=JSON.parse(json);if(!data.inv||!Array.isArray(data.inv))throw new Error();if(!confirm('⚠️ Data DIGANTI. Lanjut?'))return;Object.assign(S,data);if(!S.stats)S.stats={bossesKilled:0,gamesPlayed:0,gamesWon:0,gemsSpent:0,highestInf:0,mvps:0,evolveCount:0,summonCount:0,questClaimed:0};if(!S.pity)S.pity={};if(!S.qstats)S.qstats={day:{},week:{},month:{}};if(!S.quests)S.quests={day:{claimed:{}},week:{claimed:{}},month:{claimed:{}}};if(typeof S.tradeVersion!=='number')S.tradeVersion=0;if(S.title===undefined)S.title='newbie';if(!Array.isArray(S.titles))S.titles=['newbie'];S.load=(S.load||[]).filter(i=>S.inv.some(u=>u.iid===i));save();msg.innerHTML='<span style="color:#2ecc71">✅ OK!</span>';setTimeout(()=>location.reload(),800)}catch(err){msg.innerHTML='<span style="color:#e74c3c">❌ Kode salah!</span>'}};$('impClose').onclick=()=>{$('ov').style.display='none'}}
