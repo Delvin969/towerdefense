@@ -400,7 +400,9 @@ const ANIM_SPRITES = {
     sizeScale: 1.4,
     offsetY: -14,
     flipOnAttack: true,
-    facesRight: false
+    facesRight: false,
+    muzzleOffset: { x: -28, y: -10 },   // ← mulut naga (hadap kiri = x negatif)
+    attackStyle: 'breath'                // ← gaya napas naga
   },
   exotic_metatron: {
     src: 'exotic_metatron.png',
@@ -411,10 +413,23 @@ const ANIM_SPRITES = {
     sizeScale: 1.3,
     offsetY: -14,
     flipOnAttack: true,
-    facesRight: true
+    facesRight: true,
+    muzzleOffset: { x: 30, y: -6 },     // ← ujung pedang (hadap kanan = x positif)
+    attackStyle: 'slash'                 // ← gaya tebasan
   }
 };
 const _animCache = {};
+/* ═══ Hitung posisi muzzle (mulut/ujung senjata) dengan flip ═══ */
+function getMuzzlePos(u){
+  const cfg = ANIM_SPRITES[u.i.id];
+  if(!cfg || !cfg.muzzleOffset) return { x: u.x, y: u.y };
+  const mo = cfg.muzzleOffset;
+  const flip = u.flip ? -1 : 1;
+  return {
+    x: u.x + mo.x * flip,
+    y: u.y + (mo.y || 0)
+  };
+}
 function _loadAnimSprites(){
   for(const id in ANIM_SPRITES){
     const cfg = ANIM_SPRITES[id];
@@ -633,7 +648,53 @@ else if(idle==='nidhogg_idle'){
   }
 }}
 
-function _castFX(u,cfg,sk){if(!S.fx||!G||S.perf)return;const x=u.x,y=u.y,c1=cfg.c1,c2=cfg.c2,c3=cfg.c3,t=performance.now()/1000;
+function _castFX/* ═══ ATTACK STYLE CUSTOM ═══ */
+const _animC = ANIM_SPRITES[u.i.id];
+if(_animC && _animC.attackStyle && G && S.fx && !S.perf){
+  const mx = u.muzzle ? u.muzzle.x : u.x;
+  const my = u.muzzle ? u.muzzle.y : u.y;
+  const ang = Math.atan2(t.y - u.y, t.x - u.x);
+  const flip = u.flip ? -1 : 1;
+
+  if(_animC.attackStyle === 'breath'){
+    // 🌋 Napas naga — cone api dari mulut
+    for(let i=0;i<14;i++){
+      const spread = (Math.random()-.5) * 0.6;
+      const a = ang + spread;
+      const len = 40 + Math.random()*70;
+      G.par.push({
+        x: mx, y: my,
+        vx: Math.cos(a)*len*2,
+        vy: Math.sin(a)*len*2,
+        l: .5, m: .5,
+        c: i%3===0 ? '#ffffff' : (i%2 ? cfg.c1 : cfg.c2),
+        z: 5
+      });
+    }
+    G.fx.push({t:'ring',x:mx,y:my,r:14,c:cfg.c1,l:.4,m:.4,w:3});
+    G.fx.push({t:'ring',x:mx,y:my,r:24,c:cfg.c3,l:.3,m:.3,w:2});
+  }
+  else if(_animC.attackStyle === 'slash'){
+    // ⚔️ Tebasan — arc dari ujung senjata
+    const arcLen = 60, arcSpread = 0.9;
+    G.fx.push({t:'scythe',x:mx,y:my,a:ang,len:arcLen,ang:arcSpread,c:cfg.c1,l:.5,m:.5});
+    G.fx.push({t:'scythe',x:mx,y:my,a:ang,len:arcLen*.75,ang:arcSpread*.7,c:'#ffffff',l:.35,m:.35});
+    for(let i=0;i<10;i++){
+      const a = ang + (Math.random()-.5)*arcSpread*2;
+      const r = arcLen*.6;
+      G.par.push({
+        x: mx + Math.cos(a)*r,
+        y: my + Math.sin(a)*r,
+        vx: Math.cos(a+1.57)*80*flip,
+        vy: Math.sin(a+1.57)*80*flip,
+        l: .4, m: .4,
+        c: i%3===0 ? '#ffffff' : cfg.c1,
+        z: 5
+      });
+    }
+    G.fx.push({t:'ring',x:mx,y:my,r:18,c:cfg.c3,l:.35,m:.35,w:2});
+  }
+}(u,cfg,sk){if(!S.fx||!G||S.perf)return;const x=u.x,y=u.y,c1=cfg.c1,c2=cfg.c2,c3=cfg.c3,t=performance.now()/1000;
 G.fx.push({t:'ring',x,y,r:18,c:c1,l:.35,m:.35,w:4});G.fx.push({t:'ring',x,y,r:32,c:c2,l:.4,m:.4,w:3});
 for(let k=0;k<10;k++){const a=k/10*6.283,rr=30+Math.random()*20;G.par.push({x:x+Math.cos(a)*rr,y:y+Math.sin(a)*rr,vx:-Math.cos(a)*140,vy:-Math.sin(a)*140,l:.45,m:.45,c:k%3===0?c3:(k%2?c1:c2),z:5})}
 if(sk==='rasenshuriken'){setTimeout(()=>{if(!G)return;for(let k=0;k<8;k++){const a=Math.random()*6.283,rr=60+Math.random()*40;G.par.push({x:x+Math.cos(a)*rr,y:y+Math.sin(a)*rr,vx:-Math.cos(a)*140,vy:-Math.sin(a)*140,l:.45,m:.45,c:c1,z:5})}G.fx.push({t:'orb',x:x+18,y:y-8,r:14,c1:c1,c2:'#0066ff',l:.5,m:.5});G.fx.push({t:'ring',x:x+18,y:y-8,r:22,c:c1,l:.45,m:.45,w:2})},100);setTimeout(()=>{if(!G)return;for(let k=0;k<6;k++){const a=k/6*6.283,ox=x+18+Math.cos(a)*20,oy=y-8+Math.sin(a)*20;G.fx.push({t:'orb',x:ox,y:oy,r:5,c1:k%2?c1:c2,c2:c3,l:.35,m:.35})}ftext(x,y-50,'🌀 RASENSHURIKEN!','#ffaa00',1)},200)}
@@ -713,7 +774,28 @@ case'uzumaki_creation':{const RR=R*1.7;for(const e of G.en){if(e.dead)continue;i
 default:{for(const e of G.en){if(e.dead)continue;if(Math.hypot(e.x-t.x,e.y-t.y)<=R)hit(e,Math.floor(dmg*mul))}}}
 _impactFX(t,cfg,R);SFX.shoot(isHi(u.i),false)}
 
-function fireUnique(u,st,t,sk){const i=u.i,cfg=UNIT_FX[i.id]||{p:'orb',i:'nova',c1:tc(u),c2:tc(u),c3:'#fff',fl:.2};
+function fireUnique(u,st,t,sk){
+  const i=u.i,cfg=UNIT_FX[i.id]||{p:'orb',i:'nova',c1:tc(u),c2:tc(u),c3:'#fff',fl:.2};
+  /* ═══ Pakai muzzle kalau ada ═══ */
+  const _animCfg = ANIM_SPRITES[i.id];
+  const muzzle = (u.muzzle && _animCfg && _animCfg.muzzleOffset) ? u.muzzle : u;
+  const from = { x: muzzle.x, y: muzzle.y };
+
+  _castFX(u,cfg,sk);
+
+  const fast=(cfg.p==='beam'||cfg.p==='chain'||cfg.p==='chain_red'||cfg.p==='shadow'||cfg.p==='spike');
+  const castDelay=fast?80:250,totalMs=fast?80:220,steps=fast?6:10;
+  setTimeout(()=>{
+    if(!G)return;
+    for(let s=0;s<=steps;s++){
+      setTimeout(()=>{
+        if(!G)return;
+        _drawProj(from, t, cfg, s/steps);
+      }, s*(totalMs/steps));
+    }
+  },castDelay);
+  setTimeout(()=>{if(!G)return;_applyMech(u,st,t,sk,cfg)},castDelay+totalMs);
+}
 _castFX(u,cfg,sk);
 const fast=(cfg.p==='beam'||cfg.p==='chain'||cfg.p==='chain_red'||cfg.p==='shadow'||cfg.p==='spike');
 const castDelay=fast?80:250,totalMs=fast?80:220,steps=fast?6:10;
@@ -723,6 +805,22 @@ setTimeout(()=>{if(!G)return;_applyMech(u,st,t,sk,cfg)},castDelay+totalMs)}
 /* ═══ FIRE — dengan ANIMATION TRIGGER ═══ */
 function fire(u,st,t){
   try{
+    function fire(u,st,t){
+  try{
+    const _cfg = ANIM_SPRITES[u.i.id];
+    if(_cfg){
+      u.attackAnim = (_cfg.attackMs || 500) / 1000;
+      if(_cfg.flipOnAttack !== false){
+        const faceRight = _cfg.facesRight !== false;
+        const enemyRight = t.x > u.x;
+        u.flip = faceRight ? !enemyRight : enemyRight;
+      }
+    }
+    /* ═══ TAMBAH: simpan posisi muzzle ═══ */
+    u.muzzle = getMuzzlePos(u);
+    /* ═══ lanjut kode fire yang lama ═══ */
+    const i=u.i,hi=isHi(i),tier=hi?Math.floor(i.lv/3):0;
+    // ... JANGAN DIUBAH SISANYA
     const _cfg = ANIM_SPRITES[u.i.id];
     if(_cfg){
       u.attackAnim = (_cfg.attackMs || 500) / 1000;
