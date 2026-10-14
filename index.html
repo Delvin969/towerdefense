@@ -610,6 +610,24 @@ function togglePanel(id){const p=$(id);if(p)p.classList.toggle('collapsed')}
 const RAR_TRIGGER=['mythic','td','secret','transcendent','primordial','eternal','exotic'];
 const RAR_ORDER=['common','rare','epic','legendary','mythic','td','secret','transcendent','primordial','eternal','exotic'];
 
+ /* ═══════════ SPRITE SYSTEM ═══════════ */
+const SPRITES={
+ exotic_nidhogg:{src:'exotic_nidhogg.png',fw:200,fh:141,w:100,oy:20,facing:'left',idle:[0,1,2,3,2,1],idleMs:240,atk:[4,5,6,7],atkMs:100,atkHold:450}
+};
+for(const k in SPRITES){const s=SPRITES[k];s.ok=false;s.img=new Image();s.img.onload=()=>{s.ok=true};s.img.onerror=()=>console.warn('[sprite] gagal muat',s.src);s.img.src=s.src}
+function drawSprite(u,bob,glow){
+ const s=SPRITES[u.i.id];if(!s||!s.ok)return false;
+ const now=performance.now(),attacking=!!u.atkT&&now-u.atkT<s.atkHold;
+ const seq=attacking?s.atk:s.idle,ms=attacking?s.atkMs:s.idleMs;
+ const fi=seq[Math.floor((now+(u.pid||0)*137)/ms)%seq.length];
+ if(attacking&&u.tgtX!==undefined)u.flip=(u.tgtX>u.x)===(s.facing==='left');
+ const dw=s.w,dh=s.w*s.fh/s.fw;
+ ctx.save();ctx.translate(u.x,u.y+s.oy+(attacking?0:bob*.5));if(u.flip)ctx.scale(-1,1);
+ if(glow&&S.fx&&!S.perf){ctx.shadowColor=glow;ctx.shadowBlur=14}
+ ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+ ctx.drawImage(s.img,fi*s.fw,0,s.fw,s.fh,-dw/2,-dh,dw,dh);
+ ctx.restore();return true}
+   
 /* ═══════════ GAME FX HELPERS ═══════════ */
 const ring=(x,y,r,c,l=.6,w=4)=>{if(!S.fx||S.perf)return;G.fx.push({t:'ring',x,y,r,c,l,m:l,w})};
 const nova=(x,y,r,c,l=.5)=>{if(!S.fx||S.perf)return;G.fx.push({t:'nova',x,y,r,c,l,m:l})};
